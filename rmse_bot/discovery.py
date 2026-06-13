@@ -1,0 +1,172 @@
+"""Move Discovery engine.
+
+Idea (user's): for every significant up/down move, look at the market *conditions
+that preceded it*, then find which conditions carry a real statistical edge.
+Guarded against overfitting by an in-sample / out-of-sample split.
+
+Pipeline:
+  triple_barrier_labels(df)  -> +1 (up move), -1 (down move), 0 (neither)
+  build_features(df)         -> boolean conditions present BEFORE each bar's move
+  discover_edges(feat, lab)  -> per-condition probability of up/down + edge vs baseline
+  run_discovery(df)          -> discover on in-sample, verify on out-of-sample
+"""
+import numpy as np
+import pandas as pd
+from rmse_bot.indicators import ema, rsi, atr
+
+
+def triple_barrier_labels(df: pd.DataFrame, horizon: int = 12,
+                          k_atr: float = 1.5, atr_period: int = 14) -> pd.Series:
+    """Label each bar by which barrier (close ± k*ATR) the future hits first
+    within `horizon` bars. +1 up, -1 down, 0 neither/ambiguous."""
+    a = atr(df, atr_period).values
+    close = df["close"].values
+    high = df["high"].values
+    low = df["low"].values
+    n = len(df)
+    labels = np.zeros(n, dtype=int)
+    for i in range(n):
+        if np.isnan(a[i]) or a[i] == 0:
+            continue
+        upper = close[i] + k_atr * a[i]
+        lower = close[i] - k_atr * a[i]
+        end = min(n, i + 1 + horizon)
+        for j in range(i + 1, end):
+            hit_up = high[j] >= upper
+            hit_dn = low[j] <= lower
+            if hit_up and hit_dn:
+                break          # ambiguous within one bar -> leave 0
+            if hit_up:
+                labels[i] = 1
+                break
+            if hit_dn:
+                labels[i] = -1
+                break
+    return pd.Series(labels, index=df.index)
+
+
+def _bull_engulf(df: pd.DataFrame) -> pd.Series:
+    po, pc = df["open"].shift(1), df["close"].shift(1)
+    co, cc = df["open"], df["close"]
+    cond = (pc < po) & (cc > co) & (cc >= po) & (co <= pc)
+    return cond.fillna(False)
+
+
+def _bear_engulf(df: pd.DataFrame) -> pd.Series:
+    po, pc = df["open"].shift(1), df["close"].shift(1)
+    co, cc = df["open"], df["close"]
+    cond = (pc > po) & (cc < co) & (cc <= po) & (co >= pc)
+    return cond.fillna(False)
+
+
+def _sweep_down(df: pd.DataFrame, lookback: int = 3, ref: int = 20) -> pd.Series:
+    """Price poked below recent support then closed back above it (failed breakdown)."""
+    prior_low = df["low"].shift(lookback).rolling(ref).min()
+    recent_low = df["low"].rolling(lookback).min()
+    return ((recent_low < prior_low) & (df["close"] > prior_low)).fillna(False)
+
+
+def _sweep_up(df: pd.DataFrame, lookback: int = 3, ref: int = 20) -> pd.Series:
+    """Price poked above recent resistance then closed back below it (failed breakout)."""
+    prior_high = df["high"].shift(lookback).rolling(ref).max()
+    recent_high = df["high"].rolling(lookback).max()
+    return ((recent_high > prior_high) & (df["close"] < prior_high)).fillna(False)
+
+
+def build_features(df: pd.DataFrame) -> pd.DataFrame:
+    """Boolean conditions describing the state at each bar (the 'why' candidates)."""
+    out = pd.DataFrame(index=df.index)
+    e200 = ema(df["close"], 200)
+    e9 = ema(df["close"], 9)
+    e21 = ema(df["close"], 21)
+    r = rsi(df["close"], 14)
+    a = atr(df, 14)
+
+    out["trend_up"] = df["close"] > e200
+    out["trend_down"] = df["close"] < e200
+    out["ema_fast_above"] = e9 > e21
+    out["ema_fast_below"] = e9 < e21
+    out["rsi_oversold"] = r < 30
+    out["rsi_overbought"] = r > 70
+    out["rsi_bull"] = (r >= 50) & (r <= 70)
+    out["rsi_bear"] = (r >= 30) & (r < 50)
+
+    atr_med = a.rolling(100, min_periods=20).median()
+    out["high_vol"] = a > atr_med
+    out["low_vol"] = a <= atr_med
+
+    hour = pd.to_datetime(df["time"]).dt.hour
+    out["session_asia"] = (hour >= 0) & (hour < 7)
+    out["session_london"] = (hour >= 7) & (hour < 13)
+    out["session_ny"] = (hour >= 13) & (hour < 21)
+
+    out["sweep_down"] = _sweep_down(df)
+    out["sweep_up"] = _sweep_up(df)
+    out["bull_engulf"] = _bull_engulf(df)
+    out["bear_engulf"] = _bear_engulf(df)
+    return out.fillna(False)
+
+
+def discover_edges(features: pd.DataFrame, labels: pd.Series,
+                   min_count: int = 50) -> pd.DataFrame:
+    """For each boolean condition, P(up move) and P(down move) vs the baseline."""
+    base_up = float((labels == 1).mean())
+    base_dn = float((labels == -1).mean())
+    rows = []
+    for col in features.columns:
+        mask = features[col].astype(bool)
+        cnt = int(mask.sum())
+        if cnt < min_count:
+            continue
+        sub = labels[mask]
+        p_up = float((sub == 1).mean())
+        p_dn = float((sub == -1).mean())
+        rows.append({
+            "condition": col,
+            "count": cnt,
+            "p_up": round(p_up, 3),
+            "p_dn": round(p_dn, 3),
+            "edge_up": round(p_up - base_up, 3),
+            "edge_dn": round(p_dn - base_dn, 3),
+            "net": round(p_up - p_dn, 3),
+        })
+    res = pd.DataFrame(rows)
+    if not res.empty:
+        res = res.sort_values("net", ascending=False).reset_index(drop=True)
+    res.attrs["base_up"] = round(base_up, 3)
+    res.attrs["base_dn"] = round(base_dn, 3)
+    return res
+
+
+def run_discovery(df: pd.DataFrame, split: float = 0.7, horizon: int = 12,
+                  k_atr: float = 1.5, min_count: int = 50) -> pd.DataFrame:
+    """Discover edges on the first `split` of data, then verify each condition's
+    net edge on the held-out remainder. Robust patterns hold in BOTH columns."""
+    feats = build_features(df)
+    labels = triple_barrier_labels(df, horizon=horizon, k_atr=k_atr)
+
+    n = len(df)
+    k = int(n * split)
+    in_f, in_l = feats.iloc[:k], labels.iloc[:k]
+    out_f, out_l = feats.iloc[k:], labels.iloc[k:]
+
+    is_res = discover_edges(in_f, in_l, min_count=min_count)
+    oos_full = discover_edges(out_f, out_l, min_count=1).set_index("condition")
+
+    oos_net, oos_cnt = [], []
+    for cond in is_res["condition"]:
+        if cond in oos_full.index:
+            oos_net.append(oos_full.loc[cond, "net"])
+            oos_cnt.append(int(oos_full.loc[cond, "count"]))
+        else:
+            oos_net.append(float("nan"))
+            oos_cnt.append(0)
+    is_res = is_res.copy()
+    is_res["oos_net"] = oos_net
+    is_res["oos_count"] = oos_cnt
+    # "holds" = same sign of net edge in-sample and out-of-sample
+    is_res["holds"] = [
+        (not np.isnan(o)) and (np.sign(o) == np.sign(n_)) and abs(o) > 0.02
+        for n_, o in zip(is_res["net"], is_res["oos_net"])
+    ]
+    return is_res
