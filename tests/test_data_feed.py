@@ -1,5 +1,22 @@
 import pandas as pd
-from rmse_bot.data_feed import load_csv, normalize_ohlc
+from rmse_bot.data_feed import load_csv, normalize_ohlc, resample_ohlc
+
+
+def test_resample_15m_to_1h():
+    # four 15-min bars -> one 1h bar; open=first, high=max, low=min, close=last
+    df = pd.DataFrame({
+        "time": pd.date_range("2024-01-01 00:00", periods=4, freq="15min"),
+        "open": [1.0, 1.1, 1.2, 1.3],
+        "high": [1.5, 1.4, 1.6, 1.35],
+        "low": [0.9, 1.0, 1.1, 1.25],
+        "close": [1.1, 1.2, 1.3, 1.32],
+    })
+    out = resample_ohlc(df, "1h")
+    assert len(out) == 1
+    assert out["open"].iloc[0] == 1.0
+    assert out["high"].iloc[0] == 1.6
+    assert out["low"].iloc[0] == 0.9
+    assert out["close"].iloc[0] == 1.32
 
 
 def test_normalize_lowercases_and_sorts():
