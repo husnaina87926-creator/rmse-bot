@@ -1,0 +1,26 @@
+account:
+  size_usd: 100
+  risk_per_trade_pct: 1.0
+risk:
+  reward_ratio: 2.0
+  atr_period: 14
+  sl_atr_mult: 1.5
+signal:
+  confidence_threshold: 70
+  ema_fast: 9
+  ema_slow: 21
+  ema_trend: 200
+  rsi_period: 14
+instruments:
+  XAUUSD:
+    contract_size: 100        # oz per 1.0 lot
+    spread_price: 0.30        # price units (USD)
+    slippage_price: 0.10
+    commission_per_lot: 0.0
+    yf_symbol: "GC=F"         # gold futures proxy for backtest
+  EURUSD:
+    contract_size: 100000
+    spread_price: 0.00010
+    slippage_price: 0.00005
+    commission_per_lot: 3.5
+    yf_symbol: "EURUSD=X"
