@@ -158,7 +158,7 @@ Dashboard (Streamlit) <- reads storage (live signals, history, backtest report)
 | Market data | **Twelve Data** free tier | XAU/USD, EUR/USD intraday; free API key |
 | AI vision | **Google Gemini** free tier | vision; generous free daily limit |
 | Alerts | **Telegram Bot** | free, push notifications |
-| Storage/shared state | **Supabase** free Postgres (default) or repo file | Actions + dashboard dono read/write |
+| Storage/shared state | **SQLite/JSON in repo (default)**, Supabase free optional later | start simple; add Supabase only if needed |
 | Economic calendar | free API (e.g., public calendar) | news filter |
 
 **Secrets:** GitHub Secrets + Streamlit secrets mein rakhe jayenge. **Koi key code mein hardcode nahi** (.env gitignored).
@@ -200,6 +200,20 @@ exness: { account_type: standard, spread_pips: {...}, commission_per_lot: {...} 
 6. Real money sirf demo proof ke baad (Phase 2).
 
 ---
+
+## 12a. Build Order (prove-before-deploy)
+
+Strategy ko deploy karne se PEHLE prove karenge:
+1. `data_feed` + `indicators` + `structure`
+2. `risk` + `signal_engine` (4-layer brain core; AI vision stub)
+3. `backtest` + metrics + walk-forward → **PROVE on 2-3yr data**
+4. (gate) numbers acceptable? haan → aage; nahi → strategy revise
+5. `chart_render` + `ai_vision` (Gemini)
+6. `telegram_bot` + `storage`
+7. `dashboard` (Streamlit)
+8. `.github/workflows/run.yml` (deploy, cron 15m)
+
+Prerequisite (step 0): free accounts/keys setup — Telegram bot token, Twelve Data, Gemini. Assistant guides each.
 
 ## 13. Open Items (Phase 2 spec mein resolve honge)
 - MT5/Exness execution connector
