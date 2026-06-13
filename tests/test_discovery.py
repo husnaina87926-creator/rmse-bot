@@ -1,7 +1,8 @@
+import numpy as np
 import pandas as pd
 from rmse_bot.discovery import (
     triple_barrier_labels, build_features, discover_edges,
-    _bull_engulf,
+    run_combo_discovery, _bull_engulf,
 )
 
 
@@ -58,3 +59,22 @@ def test_build_features_returns_boolean_columns():
     assert "sweep_down" in feats.columns
     assert "session_london" in feats.columns
     assert feats.dtypes.apply(lambda d: d == bool).all()
+
+
+def test_run_combo_discovery_structure():
+    # noisy random-walk df so combos have varied counts; just check it runs + shape
+    rng = np.random.default_rng(0)
+    n = 1500
+    steps = rng.normal(0, 1, n).cumsum() + 1000
+    df = pd.DataFrame({
+        "time": pd.date_range("2024-01-01", periods=n, freq="15min", tz="UTC"),
+        "open": steps,
+        "high": steps + rng.uniform(0.1, 1.0, n),
+        "low": steps - rng.uniform(0.1, 1.0, n),
+        "close": steps + rng.normal(0, 0.2, n),
+    })
+    res = run_combo_discovery(df, split=0.7, sizes=(2,), min_count=20,
+                              oos_min_count=10, edge_min=0.05)
+    for col in ["conditions", "size", "net_is", "net_oos", "bias", "holds"]:
+        assert col in res.columns
+    assert res["holds"].dtype == bool

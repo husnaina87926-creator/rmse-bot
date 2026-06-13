@@ -10,6 +10,7 @@ Pipeline:
   discover_edges(feat, lab)  -> per-condition probability of up/down + edge vs baseline
   run_discovery(df)          -> discover on in-sample, verify on out-of-sample
 """
+from itertools import combinations
 import numpy as np
 import pandas as pd
 from rmse_bot.indicators import ema, rsi, atr
@@ -172,3 +173,56 @@ def run_discovery(df: pd.DataFrame, split: float = 0.7, horizon: int = 12,
         for n_, o in zip(is_res["net"], is_res["oos_net"])
     ]
     return is_res
+
+
+def run_combo_discovery(df: pd.DataFrame, split: float = 0.7, sizes=(2, 3),
+                        min_count: int = 300, oos_min_count: int = 100,
+                        edge_min: float = 0.05, horizon: int = 12,
+                        k_atr: float = 1.5) -> pd.DataFrame:
+    """Test 2-3 condition combinations (AND). For each combo with enough samples,
+    measure net edge on in-sample and on held-out (OOS) data. 'holds' = a meaningful
+    edge of the same sign in BOTH samples -- the overfitting guard, doubly important
+    here because we test hundreds of combos."""
+    feats = build_features(df)
+    labels = triple_barrier_labels(df, horizon=horizon, k_atr=k_atr)
+
+    n = len(df)
+    k = int(n * split)
+    in_f, in_l = feats.iloc[:k], labels.iloc[:k]
+    out_f, out_l = feats.iloc[k:], labels.iloc[k:]
+    cols = list(feats.columns)
+
+    rows = []
+    for size in sizes:
+        for combo in combinations(cols, size):
+            cl = list(combo)
+            m_in = in_f[cl].all(axis=1)
+            c_in = int(m_in.sum())
+            if c_in < min_count:
+                continue
+            m_out = out_f[cl].all(axis=1)
+            c_out = int(m_out.sum())
+            si = in_l[m_in]
+            net_in = float((si == 1).mean() - (si == -1).mean())
+            if c_out >= oos_min_count:
+                so = out_l[m_out]
+                net_out = float((so == 1).mean() - (so == -1).mean())
+            else:
+                net_out = float("nan")
+            holds = (not np.isnan(net_out) and np.sign(net_out) == np.sign(net_in)
+                     and abs(net_in) >= edge_min and abs(net_out) >= edge_min)
+            rows.append({
+                "conditions": " & ".join(combo),
+                "size": size,
+                "count_is": c_in,
+                "count_oos": c_out,
+                "net_is": round(net_in, 3),
+                "net_oos": round(net_out, 3) if not np.isnan(net_out) else float("nan"),
+                "bias": "UP" if net_in > 0 else "DOWN",
+                "holds": holds,
+            })
+    res = pd.DataFrame(rows)
+    if not res.empty:
+        res = res.sort_values("net_oos", key=lambda s: s.abs(),
+                              ascending=False, na_position="last").reset_index(drop=True)
+    return res
