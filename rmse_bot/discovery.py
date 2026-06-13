@@ -164,9 +164,11 @@ def run_discovery(df: pd.DataFrame, split: float = 0.7, horizon: int = 12,
     is_res = is_res.copy()
     is_res["oos_net"] = oos_net
     is_res["oos_count"] = oos_cnt
-    # "holds" = same sign of net edge in-sample and out-of-sample
+    # "holds" = a MEANINGFUL edge of the same sign in BOTH samples (not near-zero noise)
+    edge_min = 0.03
     is_res["holds"] = [
-        (not np.isnan(o)) and (np.sign(o) == np.sign(n_)) and abs(o) > 0.02
+        (not np.isnan(o)) and (np.sign(o) == np.sign(n_))
+        and abs(n_) >= edge_min and abs(o) >= edge_min
         for n_, o in zip(is_res["net"], is_res["oos_net"])
     ]
     return is_res
