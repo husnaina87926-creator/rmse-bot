@@ -1,6 +1,6 @@
 import pandas as pd
 from rmse_bot.config import load_config
-from rmse_bot.backtest import simulate_trade, compute_metrics, backtest_edge
+from rmse_bot.backtest import simulate_trade, compute_metrics, backtest_edge, walk_forward
 
 
 def test_simulate_trade_hits_tp():
@@ -50,3 +50,22 @@ def test_backtest_edge_produces_trades():
     res = backtest_edge(df, cfg, instr, rules, lookback=250, max_hold=12)
     assert res.metrics["num_trades"] > 0
     assert "profit_factor" in res.metrics
+
+
+def test_walk_forward_returns_folds():
+    cfg = load_config("config.yaml")
+    instr = cfg["instruments"]["XAUUSD"]
+    n = 6000
+    close = [1000 + i * 0.2 for i in range(n)]   # uptrend so trend_up rule fires
+    df = pd.DataFrame({
+        "time": pd.date_range("2024-01-01", periods=n, freq="15min", tz="UTC"),
+        "open": close,
+        "high": [c + 1.0 for c in close],
+        "low": [c - 1.0 for c in close],
+        "close": close,
+    })
+    rules = [{"direction": "buy", "when": ["trend_up"]}]
+    folds = walk_forward(df, cfg, instr, rules, train_len=3000, test_len=1000,
+                         param_grid=[(2.0, 1.0, 24)], min_train_trades=5)
+    assert len(folds) >= 1
+    assert "test_pf" in folds[0] and "test_return" in folds[0]

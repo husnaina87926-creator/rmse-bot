@@ -91,6 +91,38 @@ def backtest(df_15m: pd.DataFrame, df_1h: pd.DataFrame, cfg: dict,
                           metrics=compute_metrics(trades, cfg["account"]["size_usd"]))
 
 
+def walk_forward(df: pd.DataFrame, cfg: dict, instr: dict, rules: list,
+                 train_len: int, test_len: int, param_grid: list,
+                 min_train_trades: int = 30) -> list:
+    """Rolling walk-forward. For each window: tune the SL/RR/hold config on the
+    train slice, then apply that config to the *following* unseen test slice.
+    Test slices are non-overlapping and tile the whole timeline -> if the edge
+    survives across many different periods, it is regime-robust, not a lucky fit."""
+    results = []
+    n = len(df)
+    start = 0
+    while start + train_len + test_len <= n:
+        train = df.iloc[start:start + train_len].reset_index(drop=True)
+        test = df.iloc[start + train_len:start + train_len + test_len].reset_index(drop=True)
+        best = None
+        for sl, rr, mh in param_grid:
+            m = backtest_edge(train, cfg, instr, rules, sl_atr=sl, rr=rr, max_hold=mh).metrics
+            pf = m["profit_factor"]
+            if m["num_trades"] >= min_train_trades and (best is None or pf > best[0]):
+                best = (pf, sl, rr, mh)
+        if best is not None:
+            _, sl, rr, mh = best
+            tm = backtest_edge(test, cfg, instr, rules, sl_atr=sl, rr=rr, max_hold=mh).metrics
+            results.append({
+                "train_pf": round(best[0], 2), "sl": sl, "rr": rr, "hold": mh,
+                "test_pf": round(tm["profit_factor"], 2), "test_trades": tm["num_trades"],
+                "test_win": round(tm["win_rate"], 2), "test_return": round(tm["total_return"], 2),
+                "start_time": str(test["time"].iloc[0])[:10] if not test.empty else "",
+            })
+        start += test_len
+    return results
+
+
 def backtest_edge(df: pd.DataFrame, cfg: dict, instr: dict, rules: list,
                   sl_atr: float = 1.5, rr: float = 1.5, max_hold: int = 12,
                   lookback: int = 250) -> BacktestResult:
