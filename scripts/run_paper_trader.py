@@ -12,7 +12,7 @@ import datetime as dt
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from rmse_bot.config import load_config
-from rmse_bot.data_feed import fetch_dukascopy
+from rmse_bot.data_feed import fetch_dukascopy, fetch_twelvedata
 from rmse_bot.paper_trader import load_state, save_state, step
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -41,17 +41,22 @@ def main():
     now = dt.datetime.now(dt.timezone.utc)
     start = now - dt.timedelta(days=HISTORY_DAYS)
 
+    td_key = os.environ.get("TWELVE_DATA_KEY")
+    source = "TwelveData" if td_key else "Dukascopy"
     data = {}
     for sym in rules:
         try:
-            data[sym] = fetch_dukascopy(sym, "15m", start, now)
+            if td_key:
+                data[sym] = fetch_twelvedata(sym, "15m", td_key)
+            else:
+                data[sym] = fetch_dukascopy(sym, "15m", start, now)
         except Exception as e:
-            print(f"WARN {sym} fetch failed: {e}")
+            print(f"WARN {sym} fetch failed ({source}): {e}")
 
     state = load_state(STATE_PATH, cfg["account"]["size_usd"])
     step(state, data, cfg, rules, now)
     save_state(state, STATE_PATH)
-    print(f"[{now:%Y-%m-%d %H:%M} UTC] paper step done")
+    print(f"[{now:%Y-%m-%d %H:%M} UTC] paper step done (data: {source})")
     _summary(state)
 
 

@@ -54,3 +54,37 @@ def fetch_dukascopy(symbol: str, interval: str, start, end, offer: str = "bid") 
     raw = dukascopy_python.fetch(instr, iv, side, start, end)
     raw = raw.reset_index().rename(columns={"timestamp": "time"})
     return normalize_ohlc(raw)
+
+
+# Twelve Data free API (fresher live feed, no Windows). Needs a free API key.
+TD_SYMBOLS = {"XAUUSD": "XAU/USD", "EURUSD": "EUR/USD"}
+TD_INTERVALS = {"15m": "15min", "1h": "1h"}
+
+
+def _parse_twelvedata(data: dict) -> pd.DataFrame:
+    """Turn a Twelve Data time_series JSON payload into a canonical UTC-aware OHLC frame."""
+    if data.get("status") == "error" or "values" not in data:
+        raise RuntimeError(f"Twelve Data error: {data.get('message', data)}")
+    df = pd.DataFrame(data["values"]).rename(columns={"datetime": "time"})
+    out = normalize_ohlc(df)
+    if out["time"].dt.tz is None:                     # keep tz-aware UTC for safe comparisons
+        out["time"] = out["time"].dt.tz_localize("UTC")
+    return out
+
+
+def fetch_twelvedata(symbol: str, interval: str, apikey: str,
+                     outputsize: int = 400) -> pd.DataFrame:
+    import json
+    import urllib.request
+    import urllib.parse
+    params = urllib.parse.urlencode({
+        "symbol": TD_SYMBOLS.get(symbol, symbol),
+        "interval": TD_INTERVALS.get(interval, interval),
+        "outputsize": outputsize,
+        "timezone": "UTC",
+        "apikey": apikey,
+    })
+    url = "https://api.twelvedata.com/time_series?" + params
+    with urllib.request.urlopen(url, timeout=30) as r:
+        data = json.loads(r.read().decode())
+    return _parse_twelvedata(data)

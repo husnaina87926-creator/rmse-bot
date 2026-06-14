@@ -1,5 +1,23 @@
 import pandas as pd
-from rmse_bot.data_feed import load_csv, normalize_ohlc, resample_ohlc
+import pytest
+from rmse_bot.data_feed import load_csv, normalize_ohlc, resample_ohlc, _parse_twelvedata
+
+
+def test_parse_twelvedata_ok():
+    data = {"status": "ok", "values": [
+        {"datetime": "2026-06-14 22:30:00", "open": "4280", "high": "4290", "low": "4275", "close": "4285"},
+        {"datetime": "2026-06-14 22:15:00", "open": "4270", "high": "4282", "low": "4268", "close": "4280"},
+    ]}
+    out = _parse_twelvedata(data)
+    assert list(out.columns) == ["time", "open", "high", "low", "close"]
+    assert out["close"].iloc[0] == 4280.0          # sorted ascending (older first)
+    assert out["close"].iloc[-1] == 4285.0
+    assert str(out["time"].dt.tz) == "UTC"          # tz-aware
+
+
+def test_parse_twelvedata_error_raises():
+    with pytest.raises(RuntimeError):
+        _parse_twelvedata({"status": "error", "message": "bad key"})
 
 
 def test_resample_15m_to_1h():
