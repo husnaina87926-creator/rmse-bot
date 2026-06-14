@@ -23,6 +23,9 @@ RULES = {
     "EURUSD": [{"direction": "buy", "when": ["rsi_oversold", "high_vol"]}],
 }
 
+# Config tuned on in-sample (first 70%), validated on unseen 30%.
+STRATEGY = {"sl_atr": 2.0, "rr": 1.0, "max_hold": 24}
+
 
 def _report(tag, res):
     m = res.metrics
@@ -38,8 +41,8 @@ def main():
         cut = int(len(df) * 0.7)
         oos = df.iloc[cut:].reset_index(drop=True)
         print(f"\n=== {sym} === rule: {rules[0]['direction']} when {rules[0]['when']}")
-        _report("FULL 2.4yr", backtest_edge(df, cfg, cfg["instruments"][sym], rules))
-        _report("UNSEEN 30%", backtest_edge(oos, cfg, cfg["instruments"][sym], rules))
+        _report("FULL 2.4yr", backtest_edge(df, cfg, cfg["instruments"][sym], rules, **STRATEGY))
+        _report("UNSEEN 30%", backtest_edge(oos, cfg, cfg["instruments"][sym], rules, **STRATEGY))
 
 
 if __name__ == "__main__":
