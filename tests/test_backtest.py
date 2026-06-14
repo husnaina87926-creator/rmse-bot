@@ -1,5 +1,6 @@
 import pandas as pd
-from rmse_bot.backtest import simulate_trade, compute_metrics
+from rmse_bot.config import load_config
+from rmse_bot.backtest import simulate_trade, compute_metrics, backtest_edge
 
 
 def test_simulate_trade_hits_tp():
@@ -31,3 +32,21 @@ def test_metrics_basic():
 def test_metrics_empty():
     m = compute_metrics([], start_balance=100)
     assert m["num_trades"] == 0
+
+
+def test_backtest_edge_produces_trades():
+    cfg = load_config("config.yaml")
+    instr = cfg["instruments"]["XAUUSD"]
+    n = 500
+    close = [1000 + i * 0.5 for i in range(n)]   # steady uptrend -> trend_up true
+    df = pd.DataFrame({
+        "time": pd.date_range("2024-01-01", periods=n, freq="15min", tz="UTC"),
+        "open": close,
+        "high": [c + 1.0 for c in close],
+        "low": [c - 1.0 for c in close],
+        "close": close,
+    })
+    rules = [{"direction": "buy", "when": ["trend_up"]}]
+    res = backtest_edge(df, cfg, instr, rules, lookback=250, max_hold=12)
+    assert res.metrics["num_trades"] > 0
+    assert "profit_factor" in res.metrics

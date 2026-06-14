@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+import numpy as np
 import pandas as pd
 from rmse_bot.signal_engine import generate_signal
 from rmse_bot.risk import position_size, trade_cost
@@ -86,5 +87,61 @@ def backtest(df_15m: pd.DataFrame, df_1h: pd.DataFrame, cfg: dict,
                        "outcome": outcome, "pnl": pnl, "balance": balance,
                        "confidence": sig.confidence, "reason": sig.reason})
         i += 96   # no overlapping trades
+    return BacktestResult(trades=trades,
+                          metrics=compute_metrics(trades, cfg["account"]["size_usd"]))
+
+
+def backtest_edge(df: pd.DataFrame, cfg: dict, instr: dict, rules: list,
+                  sl_atr: float = 1.5, rr: float = 1.5, max_hold: int = 12,
+                  lookback: int = 250) -> BacktestResult:
+    """Backtest a discovery-derived rule set. A rule = {'direction','when':[features]}.
+    When all of a rule's boolean features are true on a bar, open a trade with an
+    ATR-based SL/TP; exit at TP/SL or at market after `max_hold` bars (time exit).
+    Features are precomputed once (O(n)). Costs/sizing reuse the shared risk module."""
+    from rmse_bot.discovery import build_features
+    from rmse_bot.indicators import atr
+
+    feats = build_features(df)
+    a = atr(df, cfg["risk"]["atr_period"]).values
+    close = df["close"].values
+    balance = cfg["account"]["size_usd"]
+    trades = []
+    n = len(df)
+    i = lookback
+    while i < n - 1:
+        row = feats.iloc[i]
+        matched = None
+        for rule in rules:
+            if all(bool(row[c]) for c in rule["when"]):
+                matched = rule
+                break
+        if matched is None or np.isnan(a[i]) or a[i] == 0:
+            i += 1
+            continue
+        entry = float(close[i])
+        direction = matched["direction"]
+        if direction == "buy":
+            sl, tp = entry - sl_atr * a[i], entry + rr * sl_atr * a[i]
+        else:
+            sl, tp = entry + sl_atr * a[i], entry - rr * sl_atr * a[i]
+        future = df.iloc[i + 1:i + 1 + max_hold]
+        if future.empty:
+            break
+        outcome = simulate_trade(direction, entry, sl, tp, future)
+        lots = position_size(balance, cfg["account"]["risk_per_trade_pct"],
+                             entry, sl, instr["contract_size"])
+        cost = trade_cost(lots, instr)
+        if outcome == "tp":
+            gross = abs(tp - entry)
+        elif outcome == "sl":
+            gross = -abs(entry - sl)
+        else:  # time exit at market
+            exit_price = float(future["close"].iloc[-1])
+            gross = (exit_price - entry) if direction == "buy" else (entry - exit_price)
+        pnl = gross * instr["contract_size"] * lots - cost
+        balance += pnl
+        trades.append({"time": df["time"].iloc[i], "dir": direction,
+                       "outcome": outcome, "pnl": pnl, "balance": balance})
+        i += max_hold
     return BacktestResult(trades=trades,
                           metrics=compute_metrics(trades, cfg["account"]["size_usd"]))
