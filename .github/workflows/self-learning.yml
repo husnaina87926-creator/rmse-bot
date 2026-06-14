@@ -1,0 +1,48 @@
+name: self-learning
+
+# Weekly: re-mine edges, build the candidate registry, run champion-vs-challenger
+# backtests, and commit an advisory report. Does NOT change the live strategy.
+
+on:
+  schedule:
+    - cron: "0 23 * * 0"        # Sundays 23:00 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: self-learning
+  cancel-in-progress: false
+
+jobs:
+  learn:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas numpy PyYAML dukascopy-python
+
+      - name: Run self-learning
+        run: python scripts/run_self_learning.py
+
+      - name: Commit report + registry
+        run: |
+          git config user.name "rmse-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git pull --no-edit --rebase || true
+          git add reports/ state/candidate_registry.json
+          if git diff --staged --quiet; then
+            echo "no learning change"
+          else
+            git commit -m "learn: weekly candidate registry + recommendations [skip ci]"
+            git push
+          fi
