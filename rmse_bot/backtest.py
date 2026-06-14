@@ -27,6 +27,44 @@ def simulate_trade(direction: str, entry: float, sl: float, tp: float,
     return "open"
 
 
+def simulate_trade_dynamic(direction: str, entry: float, sl: float, tp: float,
+                           atr_val: float, future: pd.DataFrame,
+                           be_trigger_atr: float = 0.0, trail_atr: float = 0.0):
+    """Walk future bars with optional break-even and trailing stops.
+    - be_trigger_atr>0: once price is +be_trigger_atr*ATR in profit, move stop to entry.
+    - trail_atr>0: trail the stop trail_atr*ATR behind the best price seen.
+    Exits are checked against the stop established up to the PREVIOUS bar (no intrabar
+    look-ahead); the stop only ratchets after a bar survives. Returns (label, exit_price)."""
+    cur_sl = sl
+    best = entry
+    moved_be = False
+    for _, bar in future.iterrows():
+        high, low = bar["high"], bar["low"]
+        if direction == "buy":
+            if low <= cur_sl:
+                return ("win" if cur_sl > entry else "loss", cur_sl)
+            if high >= tp:
+                return ("tp", tp)
+            best = max(best, high)
+            if be_trigger_atr and not moved_be and best >= entry + be_trigger_atr * atr_val:
+                cur_sl = max(cur_sl, entry)
+                moved_be = True
+            if trail_atr:
+                cur_sl = max(cur_sl, best - trail_atr * atr_val)
+        else:
+            if high >= cur_sl:
+                return ("win" if cur_sl < entry else "loss", cur_sl)
+            if low <= tp:
+                return ("tp", tp)
+            best = min(best, low)
+            if be_trigger_atr and not moved_be and best <= entry - be_trigger_atr * atr_val:
+                cur_sl = min(cur_sl, entry)
+                moved_be = True
+            if trail_atr:
+                cur_sl = min(cur_sl, best + trail_atr * atr_val)
+    return ("time", float(future["close"].iloc[-1]))
+
+
 def compute_metrics(trades: list, start_balance: float) -> dict:
     if not trades:
         return {"num_trades": 0, "win_rate": 0, "profit_factor": 0,
@@ -125,7 +163,8 @@ def walk_forward(df: pd.DataFrame, cfg: dict, instr: dict, rules: list,
 
 def backtest_edge(df: pd.DataFrame, cfg: dict, instr: dict, rules: list,
                   sl_atr: float = 1.5, rr: float = 1.5, max_hold: int = 12,
-                  lookback: int = 250) -> BacktestResult:
+                  lookback: int = 250, be_atr: float = 0.0,
+                  trail_atr: float = 0.0) -> BacktestResult:
     """Backtest a discovery-derived rule set. A rule = {'direction','when':[features]}.
     When all of a rule's boolean features are true on a bar, open a trade with an
     ATR-based SL/TP; exit at TP/SL or at market after `max_hold` bars (time exit).
@@ -159,18 +198,14 @@ def backtest_edge(df: pd.DataFrame, cfg: dict, instr: dict, rules: list,
         future = df.iloc[i + 1:i + 1 + max_hold]
         if future.empty:
             break
-        outcome = simulate_trade(direction, entry, sl, tp, future)
+        outcome, exit_price = simulate_trade_dynamic(
+            direction, entry, sl, tp, a[i], future,
+            be_trigger_atr=be_atr, trail_atr=trail_atr)
         lots = position_size(balance, cfg["account"]["risk_per_trade_pct"],
                              entry, sl, instr["contract_size"])
         cost = trade_cost(lots, instr)
-        if outcome == "tp":
-            gross = abs(tp - entry)
-        elif outcome == "sl":
-            gross = -abs(entry - sl)
-        else:  # time exit at market
-            exit_price = float(future["close"].iloc[-1])
-            gross = (exit_price - entry) if direction == "buy" else (entry - exit_price)
-        pnl = gross * instr["contract_size"] * lots - cost
+        move = (exit_price - entry) if direction == "buy" else (entry - exit_price)
+        pnl = move * instr["contract_size"] * lots - cost
         balance += pnl
         trades.append({"time": df["time"].iloc[i], "dir": direction,
                        "outcome": outcome, "pnl": pnl, "balance": balance})

@@ -24,7 +24,8 @@ RULES = {
 }
 
 # Config tuned on in-sample (first 70%), validated on unseen 30%.
-STRATEGY = {"sl_atr": 2.0, "rr": 1.0, "max_hold": 24}
+# break-even stop (be_atr=1.0) improved PF on both instruments out-of-sample.
+STRATEGY = {"sl_atr": 2.0, "rr": 1.0, "max_hold": 24, "be_atr": 1.0}
 
 
 def _report(tag, res):

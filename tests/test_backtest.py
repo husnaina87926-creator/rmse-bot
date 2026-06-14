@@ -1,6 +1,29 @@
 import pandas as pd
 from rmse_bot.config import load_config
-from rmse_bot.backtest import simulate_trade, compute_metrics, backtest_edge, walk_forward
+from rmse_bot.backtest import (
+    simulate_trade, simulate_trade_dynamic, compute_metrics, backtest_edge, walk_forward,
+)
+
+
+def test_dynamic_trailing_locks_profit():
+    # buy: trail 1*ATR(5)=5 behind best; price runs to ~120 then pulls back to 115
+    future = pd.DataFrame({
+        "high": [106, 121, 117], "low": [104, 119, 115], "close": [105, 120, 116],
+    }, dtype=float)
+    label, exit_price = simulate_trade_dynamic(
+        "buy", entry=100, sl=95, tp=200, atr_val=5.0, future=future, trail_atr=1.0)
+    assert exit_price == 116          # stopped out at trailed stop (best 121 - 5)
+    assert label == "win"             # locked above entry
+
+
+def test_dynamic_breakeven_moves_stop_to_entry():
+    # buy: BE trigger 1*ATR(5) -> at +5 move stop to entry(100); then dips to 100
+    future = pd.DataFrame({
+        "high": [106, 101], "low": [98, 99], "close": [105, 100],
+    }, dtype=float)
+    label, exit_price = simulate_trade_dynamic(
+        "buy", entry=100, sl=90, tp=200, atr_val=5.0, future=future, be_trigger_atr=1.0)
+    assert exit_price == 100          # stopped at break-even, not the original 90
 
 
 def test_simulate_trade_hits_tp():

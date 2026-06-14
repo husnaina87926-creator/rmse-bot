@@ -57,24 +57,42 @@ def _close(state: dict, pos: dict, exit_price: float, outcome: str,
 
 def manage_open_positions(state: dict, data_by_symbol: dict, cfg: dict) -> None:
     max_hold = cfg["strategy"]["max_hold"]
+    be_atr = cfg.get("exits", {}).get("breakeven_atr", 0.0)
+    trail_atr = cfg.get("exits", {}).get("trail_atr", 0.0)
     still_open = []
     for pos in state["open"]:
         df = data_by_symbol.get(pos["symbol"])
         closed = False
         if df is not None and not df.empty:
             fut = df[pd.to_datetime(df["time"]) > pd.to_datetime(pos["open_time"])]
+            entry, tp = pos["entry"], pos["tp"]
+            atr_val = pos.get("atr", 0.0)
+            cur_sl, best, moved_be = pos["sl"], entry, False
             for cnt, (_, bar) in enumerate(fut.iterrows(), start=1):
+                high, low = bar["high"], bar["low"]
                 hit, price = None, None
                 if pos["direction"] == "buy":
-                    if bar["low"] <= pos["sl"]:
-                        hit, price = "sl", pos["sl"]
-                    elif bar["high"] >= pos["tp"]:
-                        hit, price = "tp", pos["tp"]
+                    if low <= cur_sl:
+                        hit, price = ("win" if cur_sl > entry else "loss"), cur_sl
+                    elif high >= tp:
+                        hit, price = "tp", tp
+                    else:
+                        best = max(best, high)
+                        if be_atr and atr_val > 0 and not moved_be and best >= entry + be_atr * atr_val:
+                            cur_sl, moved_be = max(cur_sl, entry), True
+                        if trail_atr and atr_val > 0:
+                            cur_sl = max(cur_sl, best - trail_atr * atr_val)
                 else:
-                    if bar["high"] >= pos["sl"]:
-                        hit, price = "sl", pos["sl"]
-                    elif bar["low"] <= pos["tp"]:
-                        hit, price = "tp", pos["tp"]
+                    if high >= cur_sl:
+                        hit, price = ("win" if cur_sl < entry else "loss"), cur_sl
+                    elif low <= tp:
+                        hit, price = "tp", tp
+                    else:
+                        best = min(best, low)
+                        if be_atr and atr_val > 0 and not moved_be and best <= entry - be_atr * atr_val:
+                            cur_sl, moved_be = min(cur_sl, entry), True
+                        if trail_atr and atr_val > 0:
+                            cur_sl = min(cur_sl, best + trail_atr * atr_val)
                 if hit is None and cnt >= max_hold:
                     hit, price = "time", float(bar["close"])
                 if hit:
@@ -90,13 +108,24 @@ def scan_for_entries(state: dict, data_by_symbol: dict, cfg: dict,
                      rules_by_symbol: dict) -> None:
     from rmse_bot.discovery import build_features
     from rmse_bot.indicators import atr
+    from datetime import datetime, timezone
 
     strat = cfg["strategy"]
+    rcfg = cfg.get("risk", {})
+    max_open = rcfg.get("max_open_trades", 999)
     open_syms = {p["symbol"] for p in state["open"]}
     used_margin = sum(p.get("margin", 0.0) for p in state["open"])
 
+    # risk gate: daily loss limit (stop opening new trades after a bad day)
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    today_pnl = sum(t["pnl"] for t in state["closed"]
+                    if str(t.get("close_time", ""))[:10] == today)
+    loss_cap = -abs(rcfg.get("max_daily_loss_pct", 100.0)) / 100.0 * cfg["account"]["size_usd"]
+    if today_pnl <= loss_cap:
+        return
+
     for sym, rules in rules_by_symbol.items():
-        if sym in open_syms:
+        if sym in open_syms or len(state["open"]) >= max_open:
             continue
         df = data_by_symbol.get(sym)
         if df is None or len(df) < 250:
@@ -129,7 +158,7 @@ def scan_for_entries(state: dict, data_by_symbol: dict, cfg: dict,
         state["open"].append({
             "symbol": sym, "direction": d, "entry": entry, "sl": sl, "tp": tp,
             "lots": lots, "open_time": str(df["time"].iloc[-1]),
-            "cost": trade_cost(lots, instr), "margin": margin,
+            "cost": trade_cost(lots, instr), "margin": margin, "atr": ai,
         })
 
 
