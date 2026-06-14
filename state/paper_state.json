@@ -1,0 +1,12 @@
+{
+  "balance": 100.0,
+  "open": [],
+  "closed": [],
+  "history": [
+    {
+      "time": "2026-06-14 07:43:38.570740+00:00",
+      "balance": 100.0,
+      "open_positions": 0
+    }
+  ]
+}

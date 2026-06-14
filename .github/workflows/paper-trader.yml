@@ -1,0 +1,48 @@
+name: paper-trader
+
+# Free 24/7 forward test: runs the virtual trader every ~15 minutes and commits the
+# updated virtual-account state back to the repo. (GitHub cron can be delayed a few
+# minutes; that's fine for a 15m strategy.) Scheduled workflows run on the default branch.
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch: {}        # allows manual "Run workflow" button
+
+permissions:
+  contents: write              # needed to commit state back
+
+concurrency:
+  group: paper-trader
+  cancel-in-progress: false
+
+jobs:
+  trade:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas numpy PyYAML dukascopy-python
+
+      - name: Run one paper-trading step
+        run: python scripts/run_paper_trader.py
+
+      - name: Commit updated state
+        run: |
+          git config user.name "rmse-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add state/paper_state.json
+          if git diff --staged --quiet; then
+            echo "no state change"
+          else
+            git commit -m "paper: update virtual account state [skip ci]"
+            git push
+          fi

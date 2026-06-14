@@ -1,6 +1,7 @@
 account:
   size_usd: 100
   risk_per_trade_pct: 1.0
+  leverage: 500              # Exness-style; margin = notional / leverage
 risk:
   reward_ratio: 2.0
   atr_period: 14
@@ -11,16 +12,29 @@ signal:
   ema_slow: 21
   ema_trend: 200
   rsi_period: 14
+strategy:                   # validated edge config (walk-forward)
+  sl_atr: 2.0
+  rr: 1.0
+  max_hold: 24              # bars (15m) -> 6 hours
+edge_rules:
+  XAUUSD:
+    - direction: buy
+      when: [trend_up, rsi_overbought, high_vol]
+  EURUSD:
+    - direction: buy
+      when: [rsi_oversold, high_vol]
 instruments:
   XAUUSD:
     contract_size: 100        # oz per 1.0 lot
     spread_price: 0.30        # price units (USD)
     slippage_price: 0.10
     commission_per_lot: 0.0
+    swap_per_lot: 0.50        # overnight fee per lot per day
     yf_symbol: "GC=F"         # gold futures proxy for backtest
   EURUSD:
     contract_size: 100000
     spread_price: 0.00010
     slippage_price: 0.00005
     commission_per_lot: 3.5
+    swap_per_lot: 0.10
     yf_symbol: "EURUSD=X"
