@@ -44,5 +44,6 @@ jobs:
             echo "no state change"
           else
             git commit -m "paper: update virtual account state [skip ci]"
+            git pull --no-edit --rebase || true
             git push
           fi

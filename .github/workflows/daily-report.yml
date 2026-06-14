@@ -1,0 +1,48 @@
+name: daily-report
+
+# Once a day (22:10 UTC, ~after NY close) write a dated digest to reports/ and append
+# to reports/SUMMARY.csv, then commit them. Separates each day's results into history.
+
+on:
+  schedule:
+    - cron: "10 22 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-report
+  cancel-in-progress: false
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas numpy PyYAML
+
+      - name: Generate daily report
+        run: python scripts/run_daily_report.py
+
+      - name: Commit reports
+        run: |
+          git config user.name "rmse-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git pull --no-edit --rebase || true
+          git add reports/
+          if git diff --staged --quiet; then
+            echo "no report change"
+          else
+            git commit -m "report: daily digest [skip ci]"
+            git push
+          fi
