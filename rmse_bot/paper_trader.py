@@ -124,6 +124,13 @@ def scan_for_entries(state: dict, data_by_symbol: dict, cfg: dict,
     if today_pnl <= loss_cap:
         return
 
+    # risk gate: cap number of trades opened per calendar day
+    max_per_day = rcfg.get("max_trades_per_day", 999)
+    opened_today = (sum(1 for t in state["closed"] if str(t.get("open_time", ""))[:10] == today)
+                    + sum(1 for p in state["open"] if str(p.get("open_time", ""))[:10] == today))
+    if opened_today >= max_per_day:
+        return
+
     for sym, rules in rules_by_symbol.items():
         if sym in open_syms or len(state["open"]) >= max_open:
             continue

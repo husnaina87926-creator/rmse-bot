@@ -87,6 +87,21 @@ def test_daily_loss_limit_blocks_new_entries():
     assert len(state["open"]) == 0              # blocked by daily loss limit
 
 
+def test_max_trades_per_day_blocks_new_entries():
+    cfg = load_config("config.yaml")
+    cfg["risk"]["max_trades_per_day"] = 5
+    from datetime import datetime, timezone
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    state = new_state(100)
+    # 5 trades already opened today -> cap reached
+    state["closed"] = [{"symbol": "XAUUSD", "pnl": 0.5,
+                        "open_time": f"{today} 0{i}:00:00+00:00",
+                        "close_time": f"{today} 0{i}:30:00+00:00"} for i in range(5)]
+    rules = {"XAUUSD": [{"direction": "buy", "when": ["trend_up"]}]}
+    scan_for_entries(state, {"XAUUSD": _uptrend()}, cfg, rules)
+    assert len(state["open"]) == 0              # blocked by per-day cap
+
+
 def test_state_persistence(tmp_path):
     p = tmp_path / "state.json"
     s = new_state(100)

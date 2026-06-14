@@ -1,13 +1,14 @@
 account:
   size_usd: 100
-  risk_per_trade_pct: 1.0
+  risk_per_trade_pct: 3.0    # aggressive-but-survivable (20% blew up in backtest)
   leverage: 500              # Exness-style; margin = notional / leverage
 risk:
   reward_ratio: 2.0
   atr_period: 14
   sl_atr_mult: 1.5
-  max_daily_loss_pct: 5.0     # stop opening new trades if today's loss exceeds this
-  max_open_trades: 3
+  max_daily_loss_pct: 6.0     # stop opening new trades if today's loss exceeds this
+  max_open_trades: 5
+  max_trades_per_day: 5       # cap new trades opened per calendar day
 exits:
   breakeven_atr: 1.0          # move stop to entry once +1 ATR in profit (validated)
   trail_atr: 0.0              # trailing disabled (hurt the momentum edge in tests)
