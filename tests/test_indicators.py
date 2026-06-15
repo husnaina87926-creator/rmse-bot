@@ -1,5 +1,23 @@
 import pandas as pd
-from rmse_bot.indicators import ema, rsi, atr
+from rmse_bot.indicators import ema, rsi, atr, adx
+
+
+def test_adx_high_in_strong_trend():
+    # steadily rising series = strong uptrend -> ADX should be high (>25)
+    close = [100 + i for i in range(60)]
+    df = pd.DataFrame({"high": [c + 0.5 for c in close],
+                       "low": [c - 0.5 for c in close],
+                       "close": close}, dtype=float)
+    assert adx(df, 14).iloc[-1] > 25
+
+
+def test_adx_low_in_chop():
+    # oscillating series = no trend -> ADX should be low (<25)
+    close = [100 + (i % 2) for i in range(60)]
+    df = pd.DataFrame({"high": [c + 0.5 for c in close],
+                       "low": [c - 0.5 for c in close],
+                       "close": close}, dtype=float)
+    assert adx(df, 14).iloc[-1] < 25
 
 
 def test_ema_first_value_equals_first_price():

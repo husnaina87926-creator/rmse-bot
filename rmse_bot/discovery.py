@@ -13,7 +13,7 @@ Pipeline:
 from itertools import combinations
 import numpy as np
 import pandas as pd
-from rmse_bot.indicators import ema, rsi, atr
+from rmse_bot.indicators import ema, rsi, atr, adx
 
 
 def triple_barrier_labels(df: pd.DataFrame, horizon: int = 12,
@@ -95,6 +95,10 @@ def build_features(df: pd.DataFrame) -> pd.DataFrame:
     atr_med = a.rolling(100, min_periods=20).median()
     out["high_vol"] = a > atr_med
     out["low_vol"] = a <= atr_med
+
+    adx_v = adx(df, 14)
+    out["strong_trend"] = adx_v > 25          # regime: trending (vs choppy)
+    out["weak_trend"] = adx_v <= 20
 
     hour = pd.to_datetime(df["time"]).dt.hour
     out["session_asia"] = (hour >= 0) & (hour < 7)
