@@ -15,11 +15,11 @@ def test_current_conditions_reads_strategy():
 def test_candidate_rules_filters_new_robust_only():
     registry = [
         {"conditions": ["rsi_overbought", "high_vol"], "net_oos": 0.12,
-         "holds": True, "bias": "UP", "in_strategy": True},     # already used -> skip
+         "wf_pass": True, "bias": "UP", "in_strategy": True},    # already used -> skip
         {"conditions": ["sweep_up", "session_ny"], "net_oos": 0.09,
-         "holds": True, "bias": "UP", "in_strategy": False},    # NEW robust -> keep
-        {"conditions": ["bull_engulf"], "net_oos": 0.01,
-         "holds": False, "bias": "UP", "in_strategy": False},   # weak / not held -> skip
+         "wf_pass": True, "bias": "UP", "in_strategy": False},   # NEW + walk-forward robust -> keep
+        {"conditions": ["bull_engulf"], "net_oos": 0.09,
+         "wf_pass": False, "bias": "UP", "in_strategy": False},  # failed walk-forward -> skip
     ]
     cands = candidate_rules(registry, edge_min=0.05)
     assert len(cands) == 1

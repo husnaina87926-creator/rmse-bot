@@ -2,8 +2,25 @@ import numpy as np
 import pandas as pd
 from rmse_bot.discovery import (
     triple_barrier_labels, build_features, discover_edges,
-    run_combo_discovery, _bull_engulf,
+    run_combo_discovery, walk_forward_edges, _bull_engulf,
 )
+
+
+def test_walk_forward_edges_consistent_passes():
+    n = 500
+    feats = pd.DataFrame({"cond": [True] * n})
+    labels = pd.Series([1] * n)            # up move every window -> consistent edge
+    res = walk_forward_edges(feats, labels, ["cond"], n_windows=5, min_count=10)
+    assert res["wf_pass"] is True
+    assert res["consistency"] == 1.0
+
+
+def test_walk_forward_edges_inconsistent_fails():
+    n = 500
+    feats = pd.DataFrame({"cond": [True] * n})
+    labels = pd.Series([1] * 250 + [-1] * 250)   # sign flips across windows -> not robust
+    res = walk_forward_edges(feats, labels, ["cond"], n_windows=5, min_count=10)
+    assert res["wf_pass"] is False
 
 
 def _ramp_df(start, step, n):

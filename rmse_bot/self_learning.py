@@ -7,7 +7,10 @@ candidate runs a champion-vs-challenger backtest to see if ADDING it would help.
 It does NOT blindly edit the live strategy (that path = overfitting ruin). It produces
 recommendations + an audit trail; promotion stays a deliberate, forward-tested step.
 """
-from rmse_bot.discovery import run_discovery, run_combo_discovery
+from rmse_bot.discovery import (
+    run_discovery, run_combo_discovery,
+    build_features, triple_barrier_labels, walk_forward_edges,
+)
 from rmse_bot.backtest import backtest_edge
 
 # exit/strategy config validated earlier (break-even, 1:1, 6h hold)
@@ -20,44 +23,49 @@ def current_conditions(cfg: dict, symbol: str) -> set:
 
 
 def build_registry(symbol: str, df, cfg: dict, min_count: int = 300) -> list:
-    """Every condition/combo with its OOS edge + whether it holds + whether already used.
-    This is the 'note everything' registry the user asked for."""
+    """Every condition/combo with its OOS edge, single-split holds, AND walk-forward
+    robustness (does the edge survive across many windows). 'note everything' registry."""
     cur = current_conditions(cfg, symbol)
+    feats = build_features(df)
+    labels = triple_barrier_labels(df)
     rows = []
+
+    def add(conds, net_oos, holds, bias):
+        # walk-forward only for single-split survivors (cheap + that's all candidates need)
+        wf = walk_forward_edges(feats, labels, list(conds)) if holds else {"wf_pass": False, "consistency": 0.0}
+        rows.append({
+            "symbol": symbol, "conditions": list(conds), "net_oos": net_oos,
+            "holds": holds, "wf_pass": bool(wf["wf_pass"]),
+            "wf_consistency": wf["consistency"], "bias": bias,
+            "in_strategy": tuple(sorted(conds)) in cur,
+        })
 
     singles = run_discovery(df, split=0.7, min_count=min_count)
     for _, r in singles.iterrows():
-        conds = (r["condition"],)
-        rows.append({
-            "symbol": symbol, "conditions": list(conds),
-            "net_oos": float(r["oos_net"]) if r["oos_net"] == r["oos_net"] else 0.0,
-            "holds": bool(r["holds"]),
-            "bias": "UP" if r["net"] > 0 else "DOWN",
-            "in_strategy": tuple(sorted(conds)) in cur,
-        })
+        net = float(r["oos_net"]) if r["oos_net"] == r["oos_net"] else 0.0
+        add((r["condition"],), net, bool(r["holds"]), "UP" if r["net"] > 0 else "DOWN")
 
     combos = run_combo_discovery(df, split=0.7, sizes=(2, 3), min_count=min_count)
     for _, r in combos.iterrows():
+        net = float(r["net_oos"]) if r["net_oos"] == r["net_oos"] else 0.0
         conds = tuple(c.strip() for c in r["conditions"].split("&"))
-        rows.append({
-            "symbol": symbol, "conditions": list(conds),
-            "net_oos": float(r["net_oos"]) if r["net_oos"] == r["net_oos"] else 0.0,
-            "holds": bool(r["holds"]),
-            "bias": r["bias"],
-            "in_strategy": tuple(sorted(conds)) in cur,
-        })
+        add(conds, net, bool(r["holds"]), r["bias"])
+
     return rows
 
 
 def candidate_rules(registry: list, edge_min: float = 0.05) -> list:
-    """Robust NEW candidates: hold out-of-sample, not already used, meaningful edge."""
+    """Robust NEW candidates: must pass WALK-FORWARD (edge survives across windows),
+    not already used, meaningful edge. Walk-forward is the stronger overfitting guard
+    that single-split 'holds' missed."""
     out = []
     for r in registry:
-        if r["holds"] and not r["in_strategy"] and abs(r["net_oos"]) >= edge_min:
+        if r.get("wf_pass") and not r["in_strategy"] and abs(r["net_oos"]) >= edge_min:
             out.append({
                 "direction": "buy" if r["bias"] == "UP" else "sell",
                 "when": r["conditions"],
                 "net_oos": r["net_oos"],
+                "wf_consistency": r.get("wf_consistency", 0.0),
             })
     return out
 

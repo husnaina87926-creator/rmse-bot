@@ -179,6 +179,35 @@ def run_discovery(df: pd.DataFrame, split: float = 0.7, horizon: int = 12,
     return is_res
 
 
+def walk_forward_edges(features: pd.DataFrame, labels: pd.Series, conditions: list,
+                       n_windows: int = 5, min_count: int = 40,
+                       edge_min: float = 0.05) -> dict:
+    """Stronger-than-one-split test: does a condition-set's edge survive across MANY
+    sequential time windows? Returns wf_pass (consistent same-sign edge in >=60% of
+    windows), consistency, and mean net edge. This catches edges that pass a single
+    OOS split by luck (overfitting) but don't hold across regimes."""
+    mask = features[list(conditions)].all(axis=1)
+    n = len(features)
+    size = max(1, n // n_windows)
+    nets = []
+    for w in range(n_windows):
+        lo = w * size
+        hi = n if w == n_windows - 1 else (w + 1) * size
+        m = mask.iloc[lo:hi]
+        if int(m.sum()) < min_count:
+            continue
+        sub = labels.iloc[lo:hi][m]
+        nets.append(float((sub == 1).mean() - (sub == -1).mean()))
+    if len(nets) < 3:
+        return {"wf_pass": False, "consistency": 0.0, "mean_net": 0.0}
+    mean_net = sum(nets) / len(nets)
+    pos = mean_net > 0
+    same = [x for x in nets if (x > 0) == pos and abs(x) >= edge_min]
+    consistency = len(same) / len(nets)
+    return {"wf_pass": consistency >= 0.6 and abs(mean_net) >= edge_min,
+            "consistency": round(consistency, 2), "mean_net": round(mean_net, 3)}
+
+
 def run_combo_discovery(df: pd.DataFrame, split: float = 0.7, sizes=(2, 3),
                         min_count: int = 300, oos_min_count: int = 100,
                         edge_min: float = 0.05, horizon: int = 12,
