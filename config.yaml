@@ -60,3 +60,9 @@ instruments:
     slippage_price: 0.20
     commission_per_lot: 0.0
     swap_per_lot: 0.20
+  BTCUSDT:                     # Binance crypto (research; costs ~0.1% taker fee approximated)
+    contract_size: 1
+    spread_price: 20.0
+    slippage_price: 20.0
+    commission_per_lot: 0.0
+    swap_per_lot: 0.0
