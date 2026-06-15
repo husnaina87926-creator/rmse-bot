@@ -23,12 +23,11 @@ strategy:                   # validated edge config (walk-forward)
   rr: 1.0
   max_hold: 24              # bars (15m) -> 6 hours
 edge_rules:
+  # EURUSD dropped 2026-06-14: lost money on EVERY tested strategy (ours, Turtle, RSI-2)
+  # over 2.4yr — the edge is in gold. Re-add only if a robust EUR edge is found later.
   XAUUSD:
     - direction: buy
       when: [trend_up, rsi_overbought, high_vol]
-  EURUSD:
-    - direction: buy
-      when: [rsi_oversold, high_vol]
 instruments:
   XAUUSD:
     contract_size: 100        # oz per 1.0 lot
