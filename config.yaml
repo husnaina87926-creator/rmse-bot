@@ -48,3 +48,15 @@ instruments:
     commission_per_lot: 3.5
     swap_per_lot: 0.10
     yf_symbol: "EURUSD=X"
+  XAGUSD:                      # silver (research/diversification)
+    contract_size: 5000
+    spread_price: 0.030
+    slippage_price: 0.010
+    commission_per_lot: 0.0
+    swap_per_lot: 0.10
+  SPX500:                      # S&P 500 index (research/diversification)
+    contract_size: 1
+    spread_price: 0.50
+    slippage_price: 0.20
+    commission_per_lot: 0.0
+    swap_per_lot: 0.20

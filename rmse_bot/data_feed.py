@@ -40,6 +40,8 @@ def resample_ohlc(df: pd.DataFrame, rule: str) -> pd.DataFrame:
 DUKAS_INSTRUMENTS = {
     "XAUUSD": "INSTRUMENT_FX_METALS_XAU_USD",
     "EURUSD": "INSTRUMENT_FX_MAJORS_EUR_USD",
+    "XAGUSD": "INSTRUMENT_FX_METALS_XAG_USD",          # silver
+    "SPX500": "INSTRUMENT_IDX_AMERICA_E_SANDP_500",     # S&P 500 index
 }
 DUKAS_INTERVALS = {"15m": "INTERVAL_MIN_15", "1h": "INTERVAL_HOUR_1"}
 
