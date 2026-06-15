@@ -12,6 +12,11 @@ risk:
 exits:
   breakeven_atr: 1.0          # move stop to entry once +1 ATR in profit (validated)
   trail_atr: 0.0              # trailing disabled (hurt the momentum edge in tests)
+news_filter:
+  enabled: true               # skip new trades around high-impact news (NFP/CPI/FOMC)
+  currencies: [USD]           # gold is USD-priced
+  impacts: [High]
+  window_min: 30              # block +/- 30 min around an event
 signal:
   confidence_threshold: 70
   ema_fast: 9

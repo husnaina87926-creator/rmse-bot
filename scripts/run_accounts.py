@@ -17,6 +17,7 @@ from rmse_bot.config import load_config
 from rmse_bot.data_feed import fetch_dukascopy, fetch_twelvedata
 from rmse_bot.paper_trader import load_state, save_state, step
 from rmse_bot.champion_challenger import build_accounts, compare_accounts
+from rmse_bot.news_filter import fetch_calendar, is_news_blocked
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REGISTRY = os.path.join(ROOT, "state", "candidate_registry.json")
@@ -47,15 +48,29 @@ def main():
     now = dt.datetime.now(dt.timezone.utc)
     data, source = _fetch(symbols, now)
 
+    # high-impact news filter (fail-open: if it can't fetch, don't block trading)
+    nf = cfg.get("news_filter", {})
+    news_blocked = False
+    if nf.get("enabled"):
+        try:
+            events = fetch_calendar()
+            news_blocked = is_news_blocked(now, events,
+                                           currencies=nf.get("currencies", ["USD"]),
+                                           impacts=nf.get("impacts", ["High"]),
+                                           window_min=nf.get("window_min", 30))
+        except Exception as e:
+            print(f"WARN news fetch failed: {e}")
+
     named_states = []
     for acc in accounts:
         path = os.path.join(ROOT, acc["state"])
         state = load_state(path, cfg["account"]["size_usd"])
-        step(state, data, cfg, acc["rules"], now)
+        step(state, data, cfg, acc["rules"], now, news_blocked=news_blocked)
         save_state(state, path)
         named_states.append((acc["name"], state))
 
-    print(f"[{now:%Y-%m-%d %H:%M} UTC] accounts step done (data: {source}, {len(accounts)} accounts)")
+    print(f"[{now:%Y-%m-%d %H:%M} UTC] accounts step done (data: {source}, "
+          f"{len(accounts)} accounts, news_blocked={news_blocked})")
     for r in compare_accounts(named_states):
         print(f"  {r['name']:<14} balance=${r['balance']:.2f}  trades={r['trades']}  "
               f"open={r['open']}  win={r['win']:.0%}  pnl=${r['pnl']:.2f}")

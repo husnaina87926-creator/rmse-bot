@@ -105,7 +105,10 @@ def manage_open_positions(state: dict, data_by_symbol: dict, cfg: dict) -> None:
 
 
 def scan_for_entries(state: dict, data_by_symbol: dict, cfg: dict,
-                     rules_by_symbol: dict) -> None:
+                     rules_by_symbol: dict, news_blocked: bool = False) -> None:
+    if news_blocked:                       # high-impact news nearby -> no new trades
+        return
+
     from rmse_bot.discovery import build_features
     from rmse_bot.indicators import atr
     from datetime import datetime, timezone
@@ -170,9 +173,9 @@ def scan_for_entries(state: dict, data_by_symbol: dict, cfg: dict,
 
 
 def step(state: dict, data_by_symbol: dict, cfg: dict, rules_by_symbol: dict,
-         now) -> dict:
+         now, news_blocked: bool = False) -> dict:
     manage_open_positions(state, data_by_symbol, cfg)
-    scan_for_entries(state, data_by_symbol, cfg, rules_by_symbol)
+    scan_for_entries(state, data_by_symbol, cfg, rules_by_symbol, news_blocked=news_blocked)
     state["history"].append({"time": str(now), "balance": round(state["balance"], 2),
                              "open_positions": len(state["open"])})
     return state
