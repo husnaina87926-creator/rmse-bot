@@ -1,7 +1,7 @@
 account:
   size_usd: 100
-  risk_per_trade_pct: 3.0    # aggressive-but-survivable (20% blew up in backtest)
-  leverage: 500              # Exness-style; margin = notional / leverage
+  risk_per_trade_pct: 4.0    # highest-safe (10yr regime: CAGR 6.7%, maxDD ~31%; 5%+ = danger)
+  leverage: 500              # leverage is NOT risk (only sets margin); 500 already ample
 risk:
   reward_ratio: 2.0
   atr_period: 14
