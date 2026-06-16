@@ -105,7 +105,8 @@ def manage_open_positions(state: dict, data_by_symbol: dict, cfg: dict) -> None:
 
 
 def scan_for_entries(state: dict, data_by_symbol: dict, cfg: dict,
-                     rules_by_symbol: dict, news_blocked: bool = False) -> None:
+                     rules_by_symbol: dict, news_blocked: bool = False,
+                     regime_by_symbol: dict = None) -> None:
     if news_blocked:                       # high-impact news nearby -> no new trades
         return
 
@@ -137,6 +138,8 @@ def scan_for_entries(state: dict, data_by_symbol: dict, cfg: dict,
     for sym, rules in rules_by_symbol.items():
         if sym in open_syms or len(state["open"]) >= max_open:
             continue
+        if regime_by_symbol is not None and not regime_by_symbol.get(sym, True):
+            continue                       # daily regime not up for this symbol -> skip
         df = data_by_symbol.get(sym)
         if df is None or len(df) < 250:
             continue
@@ -173,9 +176,10 @@ def scan_for_entries(state: dict, data_by_symbol: dict, cfg: dict,
 
 
 def step(state: dict, data_by_symbol: dict, cfg: dict, rules_by_symbol: dict,
-         now, news_blocked: bool = False) -> dict:
+         now, news_blocked: bool = False, regime_by_symbol: dict = None) -> dict:
     manage_open_positions(state, data_by_symbol, cfg)
-    scan_for_entries(state, data_by_symbol, cfg, rules_by_symbol, news_blocked=news_blocked)
+    scan_for_entries(state, data_by_symbol, cfg, rules_by_symbol,
+                     news_blocked=news_blocked, regime_by_symbol=regime_by_symbol)
     state["history"].append({"time": str(now), "balance": round(state["balance"], 2),
                              "open_positions": len(state["open"])})
     return state

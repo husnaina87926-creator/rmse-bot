@@ -17,6 +17,10 @@ news_filter:
   currencies: [USD]           # gold is USD-priced
   impacts: [High]
   window_min: 30              # block +/- 30 min around an event
+regime_filter:                # only trade when DAILY trend is up (10yr: +$7 -> +$110, survives bear)
+  enabled: true
+  ema_period: 100
+  rise_n: 20
 signal:
   confidence_threshold: 70
   ema_fast: 9

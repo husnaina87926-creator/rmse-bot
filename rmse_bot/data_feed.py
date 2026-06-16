@@ -43,7 +43,7 @@ DUKAS_INSTRUMENTS = {
     "XAGUSD": "INSTRUMENT_FX_METALS_XAG_USD",          # silver
     "SPX500": "INSTRUMENT_IDX_AMERICA_E_SANDP_500",     # S&P 500 index
 }
-DUKAS_INTERVALS = {"15m": "INTERVAL_MIN_15", "1h": "INTERVAL_HOUR_1"}
+DUKAS_INTERVALS = {"15m": "INTERVAL_MIN_15", "1h": "INTERVAL_HOUR_1", "1d": "INTERVAL_DAY_1"}
 
 
 def fetch_dukascopy(symbol: str, interval: str, start, end, offer: str = "bid") -> pd.DataFrame:
@@ -60,7 +60,7 @@ def fetch_dukascopy(symbol: str, interval: str, start, end, offer: str = "bid") 
 
 # Twelve Data free API (fresher live feed, no Windows). Needs a free API key.
 TD_SYMBOLS = {"XAUUSD": "XAU/USD", "EURUSD": "EUR/USD"}
-TD_INTERVALS = {"15m": "15min", "1h": "1h"}
+TD_INTERVALS = {"15m": "15min", "1h": "1h", "1d": "1day"}
 
 
 def _parse_twelvedata(data: dict) -> pd.DataFrame:

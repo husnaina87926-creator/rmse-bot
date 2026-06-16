@@ -18,6 +18,7 @@ from rmse_bot.data_feed import fetch_dukascopy, fetch_twelvedata
 from rmse_bot.paper_trader import load_state, save_state, step
 from rmse_bot.champion_challenger import build_accounts, compare_accounts
 from rmse_bot.news_filter import fetch_calendar, is_news_blocked
+from rmse_bot.regime import regime_up_now
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REGISTRY = os.path.join(ROOT, "state", "candidate_registry.json")
@@ -61,16 +62,34 @@ def main():
         except Exception as e:
             print(f"WARN news fetch failed: {e}")
 
+    # daily-regime filter: only trade a symbol when its DAILY trend is up (fail-open)
+    rcfg = cfg.get("regime_filter", {})
+    regime_by_symbol = {}
+    if rcfg.get("enabled"):
+        td = os.environ.get("TWELVE_DATA_KEY")
+        for sym in symbols:
+            try:
+                if td:
+                    daily = fetch_twelvedata(sym, "1d", td, outputsize=250)
+                else:
+                    daily = fetch_dukascopy(sym, "1d", now - dt.timedelta(days=400), now)
+                regime_by_symbol[sym] = regime_up_now(daily, rcfg.get("ema_period", 100),
+                                                      rcfg.get("rise_n", 20))
+            except Exception as e:
+                print(f"WARN regime {sym} failed (fail-open): {e}")
+                regime_by_symbol[sym] = True
+
     named_states = []
     for acc in accounts:
         path = os.path.join(ROOT, acc["state"])
         state = load_state(path, cfg["account"]["size_usd"])
-        step(state, data, cfg, acc["rules"], now, news_blocked=news_blocked)
+        step(state, data, cfg, acc["rules"], now, news_blocked=news_blocked,
+             regime_by_symbol=regime_by_symbol)
         save_state(state, path)
         named_states.append((acc["name"], state))
 
     print(f"[{now:%Y-%m-%d %H:%M} UTC] accounts step done (data: {source}, "
-          f"{len(accounts)} accounts, news_blocked={news_blocked})")
+          f"{len(accounts)} accounts, news_blocked={news_blocked}, regime={regime_by_symbol})")
     for r in compare_accounts(named_states):
         print(f"  {r['name']:<14} balance=${r['balance']:.2f}  trades={r['trades']}  "
               f"open={r['open']}  win={r['win']:.0%}  pnl=${r['pnl']:.2f}")

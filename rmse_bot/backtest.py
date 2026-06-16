@@ -164,7 +164,7 @@ def walk_forward(df: pd.DataFrame, cfg: dict, instr: dict, rules: list,
 def backtest_edge(df: pd.DataFrame, cfg: dict, instr: dict, rules: list,
                   sl_atr: float = 1.5, rr: float = 1.5, max_hold: int = 12,
                   lookback: int = 250, be_atr: float = 0.0,
-                  trail_atr: float = 0.0) -> BacktestResult:
+                  trail_atr: float = 0.0, regime_mask=None) -> BacktestResult:
     """Backtest a discovery-derived rule set. A rule = {'direction','when':[features]}.
     When all of a rule's boolean features are true on a bar, open a trade with an
     ATR-based SL/TP; exit at TP/SL or at market after `max_hold` bars (time exit).
@@ -180,6 +180,9 @@ def backtest_edge(df: pd.DataFrame, cfg: dict, instr: dict, rules: list,
     n = len(df)
     i = lookback
     while i < n - 1:
+        if regime_mask is not None and not regime_mask[i]:   # daily regime not up -> skip
+            i += 1
+            continue
         row = feats.iloc[i]
         matched = None
         for rule in rules:
