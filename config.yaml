@@ -37,6 +37,21 @@ edge_rules:
   XAUUSD:
     - direction: buy
       when: [trend_up, rsi_overbought, high_vol]
+crypto_rules:                 # separate from gold edge_rules; for future Binance crypto bot
+  BTCUSDT:
+    timeframe: 4h
+    fee_pct: 0.2              # Binance taker round-turn
+    rules:
+      - direction: sell
+        when: [rsi_bear, high_vol, strong_trend]   # 4h: 62% win, PF 1.32, +$49
+    exit: {sl_atr: 2.0, rr: 1.0, max_hold: 24, be_atr: 0.0}
+  ETHUSDT:
+    timeframe: 4h
+    fee_pct: 0.2
+    rules:
+      - direction: sell
+        when: [rsi_bear, high_vol, strong_trend]   # 4h: 61% win, PF 1.56, +$67 (same edge as BTC!)
+    exit: {sl_atr: 2.0, rr: 1.0, max_hold: 24, be_atr: 0.0}
 instruments:
   XAUUSD:
     contract_size: 100        # oz per 1.0 lot
@@ -68,5 +83,11 @@ instruments:
     contract_size: 1
     spread_price: 60.0
     slippage_price: 60.0
+    commission_per_lot: 0.0
+    swap_per_lot: 0.0
+  ETHUSDT:                     # Binance crypto (research; ~0.2% round-turn approximated)
+    contract_size: 1
+    spread_price: 3.0
+    slippage_price: 3.0
     commission_per_lot: 0.0
     swap_per_lot: 0.0
