@@ -42,6 +42,7 @@ crypto_rules:                 # separate from gold edge_rules; for Binance crypt
   # BTC CAGR 14.7% win63% maxDD15% | ETH CAGR 14.6% win61% maxDD20% | same edge both = robust
   timeframe: 4h
   fee_pct: 0.2                # Binance taker round-turn
+  risk_pct: 6.0              # highest-safe (8.5yr: CAGR 21.5%, maxDD 23%; 8%+ = aggressive)
   exit: {sl_atr: 2.0, rr: 1.0, max_hold: 24, be_atr: 0.0}
   symbols: [BTCUSDT, ETHUSDT]
   rules:
