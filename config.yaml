@@ -38,16 +38,19 @@ edge_rules:
     - direction: buy
       when: [trend_up, rsi_overbought, high_vol]
 crypto_rules:                 # separate from gold edge_rules; for Binance crypto bot
-  # 8.5yr-validated (2018-2026, all regimes): SHORT only in DOWN daily-regime.
-  # BTC CAGR 10.9% win64% maxDD13% | ETH CAGR 7.3% win58% maxDD17% | same edge both = robust
-  regime: down                # short ONLY when daily trend is DOWN (avoid shorting bulls)
+  # 8.5yr-validated ALL-WEATHER (2018-2026, all regimes): momentum WITH the daily regime.
+  # BTC CAGR 14.7% win63% maxDD15% | ETH CAGR 14.6% win61% maxDD20% | same edge both = robust
   timeframe: 4h
   fee_pct: 0.2                # Binance taker round-turn
   exit: {sl_atr: 2.0, rr: 1.0, max_hold: 24, be_atr: 0.0}
   symbols: [BTCUSDT, ETHUSDT]
   rules:
-    - direction: sell
+    - direction: sell         # down regime: short bearish momentum
+      regime: down
       when: [rsi_bear, high_vol, strong_trend]
+    - direction: buy          # up regime: long bullish momentum
+      regime: up
+      when: [rsi_overbought, high_vol, strong_trend]
 instruments:
   XAUUSD:
     contract_size: 100        # oz per 1.0 lot
