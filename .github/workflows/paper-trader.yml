@@ -32,10 +32,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install pandas numpy PyYAML dukascopy-python
 
-      - name: Run one paper-trading step (champion + challengers)
+      - name: Run all bots (gold + BTC + ETH)
         env:
           TWELVE_DATA_KEY: ${{ secrets.TWELVE_DATA_KEY }}
-        run: python scripts/run_accounts.py
+        run: python scripts/run_bots.py
 
       - name: Commit updated state
         run: |

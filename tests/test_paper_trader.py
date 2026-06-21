@@ -76,7 +76,8 @@ def test_breakeven_stop_caps_loss_at_entry():
 
 def test_daily_loss_limit_blocks_new_entries():
     cfg = load_config("config.yaml")
-    cfg["risk"]["max_daily_loss_pct"] = 5.0     # cap = -$5 on $100
+    cfg["account"]["size_usd"] = 100            # cap math on a $100 account
+    cfg["risk"]["max_daily_loss_pct"] = 5.0     # cap = -$5
     from datetime import datetime, timezone
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     state = new_state(100)
@@ -100,6 +101,29 @@ def test_max_trades_per_day_blocks_new_entries():
     rules = {"XAUUSD": [{"direction": "buy", "when": ["trend_up"]}]}
     scan_for_entries(state, {"XAUUSD": _uptrend()}, cfg, rules)
     assert len(state["open"]) == 0              # blocked by per-day cap
+
+
+def _downtrend(n=300, start=2000.0, step=0.5):
+    close = [start - step * i for i in range(n)]
+    return pd.DataFrame({
+        "time": pd.date_range("2024-01-01", periods=n, freq="4h", tz="UTC"),
+        "open": close, "high": [c + 1.0 for c in close],
+        "low": [c - 1.0 for c in close], "close": close,
+    })
+
+
+def test_regime_specific_rule_fires_only_in_matching_regime():
+    cfg = load_config("config.yaml")
+    rules = {"XAUUSD": [{"direction": "sell", "regime": "down", "when": ["trend_down"]}]}
+    df = _downtrend()
+    # matching regime -> opens a short
+    s1 = new_state(5000)
+    scan_for_entries(s1, {"XAUUSD": df}, cfg, rules, regime_state_by_symbol={"XAUUSD": "down"})
+    assert len(s1["open"]) == 1 and s1["open"][0]["direction"] == "sell"
+    # wrong regime -> no trade
+    s2 = new_state(5000)
+    scan_for_entries(s2, {"XAUUSD": df}, cfg, rules, regime_state_by_symbol={"XAUUSD": "up"})
+    assert len(s2["open"]) == 0
 
 
 def test_state_persistence(tmp_path):

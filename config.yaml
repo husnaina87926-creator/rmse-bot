@@ -1,7 +1,7 @@
 account:
-  size_usd: 100
-  risk_per_trade_pct: 4.0    # highest-safe (10yr regime: CAGR 6.7%, maxDD ~31%; 5%+ = danger)
-  leverage: 500              # leverage is NOT risk (only sets margin); 500 already ample
+  size_usd: 5000             # per-account starting balance (gold, BTC, ETH each get this)
+  risk_per_trade_pct: 10.0   # user-set (aggressive: ~39%+ drawdown; paper/forward-test)
+  leverage: 500              # gold leverage (leverage = margin only, not risk)
 risk:
   reward_ratio: 2.0
   atr_period: 14
@@ -36,13 +36,15 @@ edge_rules:
   # over 2.4yr — the edge is in gold. Re-add only if a robust EUR edge is found later.
   XAUUSD:
     - direction: buy
+      regime: up               # long only when daily trend up (regime filter)
       when: [trend_up, rsi_overbought, high_vol]
 crypto_rules:                 # separate from gold edge_rules; for Binance crypto bot
   # 8.5yr-validated ALL-WEATHER (2018-2026, all regimes): momentum WITH the daily regime.
   # BTC CAGR 14.7% win63% maxDD15% | ETH CAGR 14.6% win61% maxDD20% | same edge both = robust
   timeframe: 4h
   fee_pct: 0.2                # Binance taker round-turn
-  risk_pct: 6.0              # highest-safe (8.5yr: CAGR 21.5%, maxDD 23%; 8%+ = aggressive)
+  risk_pct: 10.0             # user-set (aggressive)
+  leverage: 20               # crypto futures-style leverage (margin only)
   exit: {sl_atr: 2.0, rr: 1.0, max_hold: 24, be_atr: 0.0}
   symbols: [BTCUSDT, ETHUSDT]
   rules:

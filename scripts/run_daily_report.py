@@ -37,16 +37,24 @@ def _update_summary(date_str: str, row: str) -> None:
 
 def main():
     cfg = load_config(os.path.join(ROOT, "config.yaml"))
-    start_bal = cfg["account"]["size_usd"]
-    state = load_state(STATE_PATH, start_bal)
+    per = cfg["account"]["size_usd"]
     date_str = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%d")
 
-    closed = state["closed"]
+    # aggregate all 3 accounts (gold + btc + eth)
+    closed, open_count = [], 0
+    for name in ["gold", "btc", "eth"]:
+        s = load_state(os.path.join(ROOT, "state", f"{name}.json"), per)
+        closed += s.get("closed", [])
+        open_count += len(s.get("open", []))
+    closed.sort(key=lambda t: str(t.get("close_time", "")))
+    start_bal = per * 3
+
     day = compute_stats(daily_slice(closed, date_str), start_bal)
     cum = compute_stats(closed, start_bal)
+    cum["balance"] = round(start_bal + cum["total_pnl"], 2)   # combined across accounts
 
     os.makedirs(REPORTS_DIR, exist_ok=True)
-    md = render_daily_md(date_str, day, cum, open_count=len(state["open"]))
+    md = render_daily_md(date_str, day, cum, open_count=open_count)
     with open(os.path.join(REPORTS_DIR, f"{date_str}.md"), "w") as f:
         f.write(md)
     _update_summary(date_str, render_summary_row(date_str, day, cum))

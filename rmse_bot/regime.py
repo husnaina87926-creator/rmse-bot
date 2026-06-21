@@ -32,3 +32,18 @@ def regime_up_now(daily_df: pd.DataFrame, ema_period: int = 100, rise_n: int = 2
     if daily_df is None or len(daily_df) < ema_period:
         return False
     return bool(_daily_up(daily_df["close"], ema_period, rise_n).iloc[-1])
+
+
+def regime_state(daily_df: pd.DataFrame, ema_period: int = 100, rise_n: int = 20):
+    """Latest daily regime: 'up' (price>EMA & rising), 'down' (price<EMA & falling), else None."""
+    if daily_df is None or len(daily_df) < ema_period:
+        return None
+    close = daily_df["close"]
+    e = ema(close, ema_period)
+    c, ev = close.iloc[-1], e.iloc[-1]
+    eprev = e.iloc[-1 - rise_n] if len(e) > rise_n else ev
+    if c > ev and ev > eprev:
+        return "up"
+    if c < ev and ev < eprev:
+        return "down"
+    return None
