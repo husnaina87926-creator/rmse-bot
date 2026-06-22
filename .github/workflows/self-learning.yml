@@ -1,7 +1,7 @@
 name: self-learning
 
-# Weekly: re-mine edges, build the candidate registry, run champion-vs-challenger
-# backtests, and commit an advisory report. Does NOT change the live strategy.
+# Weekly: discover new candidate edges (gold/BTC/ETH), forward-test them as challengers,
+# and PROMOTE (into state/live_rules.json) any that beat their champion on forward data.
 
 on:
   schedule:
@@ -34,15 +34,15 @@ jobs:
       - name: Run self-learning
         run: python scripts/run_self_learning.py
 
-      - name: Commit report + registry
+      - name: Commit candidates + promotions + report
         run: |
           git config user.name "rmse-bot"
           git config user.email "bot@users.noreply.github.com"
           git pull --no-edit --rebase || true
-          git add reports/ state/candidate_registry.json
+          git add -A state/ reports/
           if git diff --staged --quiet; then
             echo "no learning change"
           else
-            git commit -m "learn: weekly candidate registry + recommendations [skip ci]"
+            git commit -m "learn: weekly candidates + promotions [skip ci]"
             git push
           fi

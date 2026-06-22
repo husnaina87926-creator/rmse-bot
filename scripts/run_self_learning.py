@@ -1,8 +1,11 @@
-"""Self-learning run (advisory). Re-mines edges, builds a candidate registry, and
-runs champion-vs-challenger backtests. Writes an audit report + registry; does NOT
-auto-edit the live strategy (promotion stays deliberate + forward-tested).
+"""Weekly self-improvement brain (wired to the 3-account bot).
 
-Run from project root:  python scripts/run_self_learning.py
+1) Discover a robust NEW candidate edge per instrument (gold/BTC/ETH) -> state/candidates.json
+   (each then forward-tests in a challenger account via run_bots).
+2) Promotion check: if a challenger has beaten its champion over enough FORWARD trades,
+   promote its candidate into state/live_rules.json (the bot reads these). Overfit
+   candidates fail the forward gate and are never promoted.
+Writes reports/learning_<date>.md. Run from project root: python scripts/run_self_learning.py
 """
 import sys
 import os
@@ -12,75 +15,82 @@ import datetime as dt
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from rmse_bot.config import load_config
-from rmse_bot.data_feed import load_csv, fetch_dukascopy
-from rmse_bot.self_learning import build_registry, candidate_rules, evaluate_challenger
+from rmse_bot.data_feed import fetch_dukascopy
+from rmse_bot.binance_feed import fetch_binance_klines
+from rmse_bot.paper_trader import load_state, new_state, save_state
+from rmse_bot.self_improve import (
+    load_live_rules, save_live_rules, rules_for, top_candidate, should_promote,
+)
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-REPORTS_DIR = os.path.join(ROOT, "reports")
-STATE_DIR = os.path.join(ROOT, "state")
-HISTORY_DAYS = 400
-MIN_COUNT = 200
-
-
-def _get_data(sym, now, start):
-    path = os.path.join(ROOT, "data", f"{sym}_15m.csv")
-    if os.path.exists(path):
-        return load_csv(path)
-    return fetch_dukascopy(sym, "15m", start, now)
+STATE = os.path.join(ROOT, "state")
+REPORTS = os.path.join(ROOT, "reports")
+NAME = {"XAUUSD": "gold", "BTCUSDT": "btc", "ETHUSDT": "eth"}
+MIN_FWD_TRADES = 30
 
 
 def main():
     cfg = load_config(os.path.join(ROOT, "config.yaml"))
     now = dt.datetime.now(dt.timezone.utc)
-    start = now - dt.timedelta(days=HISTORY_DAYS)
-    date_str = now.strftime("%Y-%m-%d")
+    start_bal = cfg["account"]["size_usd"]
+    live = load_live_rules(os.path.join(STATE, "live_rules.json"))
+    cand_path = os.path.join(STATE, "candidates.json")
+    candidates = json.load(open(cand_path)) if os.path.exists(cand_path) else {}
+    symbols = ["XAUUSD"] + list(cfg["crypto_rules"]["symbols"])
+    md = [f"# Self-Improvement Report — {now:%Y-%m-%d}\n",
+          "_Discover candidates -> forward-test as challengers -> promote only if they beat champion live._\n"]
 
-    md = [f"# RMSE_BOT Self-Learning Report — {date_str}\n",
-          "_Advisory only. The bot records edges and tests them; it does NOT auto-change "
-          "the live strategy. Promote a candidate only after forward-testing._\n"]
-    registry_all = []
-    promotions = []
+    # --- 1. promotion check (forward-proven candidates) ---
+    promoted = []
+    for sym in symbols:
+        nm = NAME[sym]
+        champ = load_state(os.path.join(STATE, f"{nm}.json"), start_bal)
+        chal_path = os.path.join(STATE, f"{nm}_chal.json")
+        if not os.path.exists(chal_path) or sym not in candidates:
+            continue
+        chal = load_state(chal_path, start_bal)
+        if should_promote(champ, chal, start_bal, MIN_FWD_TRADES):
+            live[sym] = rules_for(sym, cfg, live) + [candidates[sym]["rule"]]
+            promoted.append((sym, candidates[sym]["rule"]))
+            candidates.pop(sym, None)
+            os.remove(chal_path)                 # reset; a fresh candidate will be tested next
+    if promoted:
+        save_live_rules(live, os.path.join(STATE, "live_rules.json"))
+    md.append(f"\n## Promotions this run: {len(promoted)}\n")
+    for sym, r in promoted:
+        md.append(f"  - {sym}: PROMOTED `{r['direction']} {' & '.join(r['when'])}` (beat champion on forward data)\n")
 
-    for sym in cfg["edge_rules"]:
-        df = _get_data(sym, now, start)
-        reg = build_registry(sym, df, cfg, min_count=MIN_COUNT)
-        registry_all += reg
-        held = sorted([r for r in reg if r["holds"]], key=lambda x: abs(x["net_oos"]), reverse=True)
-        cands = candidate_rules(reg)
-
-        md.append(f"\n## {sym}  ({len(df)} bars)\n")
-        md.append(f"- OOS-held edges: **{len(held)}**  |  new candidates (not in strategy): **{len(cands)}**\n")
-        md.append("\n**Robust edges (held out-of-sample):**\n")
-        for r in held[:10]:
-            tag = "IN-STRATEGY" if r["in_strategy"] else "NEW"
-            md.append(f"  - `[{tag}]` {' & '.join(r['conditions'])} → {r['bias']} (OOS net {r['net_oos']:+.3f})\n")
-
-        if cands:
-            md.append("\n**Champion vs Challenger — would adding the new edge help?**\n")
-            for c in sorted(cands, key=lambda x: abs(x["net_oos"]), reverse=True)[:8]:
-                ev = evaluate_challenger(sym, df, cfg, c)
-                mark = "✅ PROMOTE?" if ev["verdict"] == "PROMOTE-CANDIDATE" else "❌ reject"
-                md.append(f"  - {mark} `+[{' & '.join(c['when'])}]`  "
-                          f"champ ${ev['champ_return']} (PF {ev['champ_pf']}) → "
-                          f"chall ${ev['chall_return']} (PF {ev['chall_pf']})\n")
-                if ev["verdict"] == "PROMOTE-CANDIDATE":
-                    promotions.append(ev)
+    # --- 2. discover fresh candidates per instrument ---
+    md.append("\n## Candidate discovery\n")
+    for sym in symbols:
+        try:
+            if sym == "XAUUSD":
+                df = fetch_dukascopy(sym, "15m", now - dt.timedelta(days=500), now)
+            else:
+                df = fetch_binance_klines(sym, "4h", now - dt.timedelta(days=1000), now)
+        except Exception as e:
+            md.append(f"  - {sym}: data fetch failed ({e})\n")
+            continue
+        cur = rules_for(sym, cfg, live)
+        cand = top_candidate(sym, df, cfg, cur)
+        if cand:
+            # only reset the challenger if the candidate changed
+            if candidates.get(sym, {}).get("rule") != cand["rule"]:
+                p = os.path.join(STATE, f"{NAME[sym]}_chal.json")
+                if os.path.exists(p):
+                    os.remove(p)
+            candidates[sym] = cand
+            md.append(f"  - {sym}: candidate `{cand['rule']['direction']} {' & '.join(cand['rule']['when'])}`"
+                      f" (backtest ret ${cand['return']}, PF {cand['pf']}) -> forward-testing\n")
         else:
-            md.append("\n_No new robust candidates this run._\n")
+            md.append(f"  - {sym}: no new robust candidate\n")
 
-    md.append(f"\n## Summary\n- Promotion candidates to forward-test: **{len(promotions)}**\n")
-    for p in promotions:
-        md.append(f"  - {p['symbol']}: add `{' & '.join(p['candidate'])}` "
-                  f"({p['direction']}) — improves ${p['champ_return']}→${p['chall_return']}\n")
-
-    os.makedirs(REPORTS_DIR, exist_ok=True)
-    os.makedirs(STATE_DIR, exist_ok=True)
-    with open(os.path.join(REPORTS_DIR, f"learning_{date_str}.md"), "w") as f:
+    os.makedirs(STATE, exist_ok=True)
+    os.makedirs(REPORTS, exist_ok=True)
+    with open(cand_path, "w") as f:
+        json.dump(candidates, f, indent=2)
+    with open(os.path.join(REPORTS, f"learning_{now:%Y-%m-%d}.md"), "w") as f:
         f.write("".join(md))
-    with open(os.path.join(STATE_DIR, "candidate_registry.json"), "w") as f:
-        json.dump({"date": date_str, "registry": registry_all,
-                   "promotions": promotions}, f, indent=2)
-
     print("".join(md))
 
 

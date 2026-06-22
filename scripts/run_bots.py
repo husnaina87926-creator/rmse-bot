@@ -1,15 +1,16 @@
-"""Unified multi-bot runner: 3 independent paper accounts, each $5000.
+"""Unified multi-bot runner: 3 champion accounts + their challengers, each $5000.
 
-  gold (XAUUSD) — TwelveData 15m, momentum LONG only in up-regime, USD news filter
-  btc  (BTCUSDT) — Binance 4h, all-weather (short down-regime / long up-regime)
-  eth  (ETHUSDT) — Binance 4h, all-weather
+  gold (XAUUSD) — TwelveData 15m, momentum LONG (up-regime), USD news filter
+  btc/eth — Binance 4h, all-weather (short down-regime / long up-regime)
 
-Each has its own state file, balance, fees, leverage, risk. Runs every ~15 min
-(crypto 4h positions are just managed between 4h closes). No key needed for crypto.
+Each instrument also runs a CHALLENGER (live rules + a self-learning candidate) so new
+edges are forward-tested before promotion. Live rules come from state/live_rules.json
+(promoted by self-improvement), falling back to config. No key needed for crypto.
 Run from project root:  python scripts/run_bots.py
 """
 import sys
 import os
+import json
 import datetime as dt
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -20,12 +21,14 @@ from rmse_bot.binance_feed import fetch_binance_klines
 from rmse_bot.regime import regime_state
 from rmse_bot.paper_trader import load_state, save_state, step, default_params
 from rmse_bot.news_filter import fetch_calendar, is_news_blocked
+from rmse_bot.self_improve import load_live_rules, rules_for
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+STATE = os.path.join(ROOT, "state")
 
 
 def crypto_params(cfg):
-    cr = cfg["crypto_rules"]; ex = cr["exit"]
+    cr, ex = cfg["crypto_rules"], cfg["crypto_rules"]["exit"]
     p = default_params(cfg)
     p.update(sl_atr=ex["sl_atr"], rr=ex["rr"], max_hold=ex["max_hold"],
              be_atr=ex.get("be_atr", 0.0), risk_pct=cr["risk_pct"], leverage=cr["leverage"])
@@ -39,15 +42,16 @@ def main():
     start_bal = cfg["account"]["size_usd"]
     rf = cfg.get("regime_filter", {})
     ep, rn = rf.get("ema_period", 100), rf.get("rise_n", 20)
+    live = load_live_rules(os.path.join(STATE, "live_rules.json"))
+    cand_path = os.path.join(STATE, "candidates.json")
+    candidates = json.load(open(cand_path)) if os.path.exists(cand_path) else {}
 
-    accounts = [{"name": "gold", "symbol": "XAUUSD", "kind": "gold",
-                 "rules": cfg["edge_rules"], "params": default_params(cfg)}]
+    accts = [{"name": "gold", "symbol": "XAUUSD", "kind": "gold", "params": default_params(cfg)}]
     for sym in cfg["crypto_rules"]["symbols"]:
-        accounts.append({"name": sym[:3].lower(), "symbol": sym, "kind": "crypto",
-                         "rules": {sym: cfg["crypto_rules"]["rules"]}, "params": crypto_params(cfg)})
+        accts.append({"name": sym[:3].lower(), "symbol": sym, "kind": "crypto", "params": crypto_params(cfg)})
 
     print(f"[{now:%Y-%m-%d %H:%M} UTC] bots step")
-    for acc in accounts:
+    for acc in accts:
         sym = acc["symbol"]
         try:
             if acc["kind"] == "gold":
@@ -72,18 +76,29 @@ def main():
             except Exception as e:
                 print(f"  WARN news: {e}")
 
-        path = os.path.join(ROOT, "state", f"{acc['name']}.json")
-        state = load_state(path, start_bal)
-        step(state, {sym: trade}, cfg, acc["rules"], now, params=acc["params"],
-             regime_state_by_symbol={sym: reg}, news_blocked=news_blocked)
-        save_state(state, path)
+        champ_rules = rules_for(sym, cfg, live)
+        data, rs = {sym: trade}, {sym: reg}
 
-        closed = state["closed"]
-        wins = [t for t in closed if t["pnl"] > 0]
-        wr = len(wins) / len(closed) if closed else 0
-        print(f"  {acc['name']:5} {sym:8} regime={reg or '-':4} "
-              f"balance=${state['balance']:.2f} open={len(state['open'])} "
-              f"closed={len(closed)} win={wr:.0%}")
+        # champion
+        cs = load_state(os.path.join(STATE, f"{acc['name']}.json"), start_bal)
+        step(cs, data, cfg, {sym: champ_rules}, now, params=acc["params"],
+             regime_state_by_symbol=rs, news_blocked=news_blocked)
+        save_state(cs, os.path.join(STATE, f"{acc['name']}.json"))
+
+        # challenger (champion + self-learning candidate), if any
+        chal_line = ""
+        cand = candidates.get(sym)
+        if cand:
+            chs = load_state(os.path.join(STATE, f"{acc['name']}_chal.json"), start_bal)
+            step(chs, data, cfg, {sym: champ_rules + [cand["rule"]]}, now, params=acc["params"],
+                 regime_state_by_symbol=rs, news_blocked=news_blocked)
+            save_state(chs, os.path.join(STATE, f"{acc['name']}_chal.json"))
+            chal_line = f" | chal ${chs['balance']:.0f}/{len(chs['closed'])}tr"
+
+        wins = [t for t in cs["closed"] if t["pnl"] > 0]
+        wr = len(wins) / len(cs["closed"]) if cs["closed"] else 0
+        print(f"  {acc['name']:5} {sym:8} regime={reg or '-':4} balance=${cs['balance']:.2f} "
+              f"open={len(cs['open'])} closed={len(cs['closed'])} win={wr:.0%}{chal_line}")
 
 
 if __name__ == "__main__":
