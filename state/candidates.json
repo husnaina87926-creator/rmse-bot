@@ -1,0 +1,41 @@
+{
+  "XAUUSD": {
+    "rule": {
+      "direction": "buy",
+      "when": [
+        "rsi_overbought",
+        "high_vol"
+      ]
+    },
+    "score": 75335.01,
+    "return": 75335.01,
+    "pf": 1.49
+  },
+  "BTCUSDT": {
+    "rule": {
+      "direction": "buy",
+      "when": [
+        "low_vol",
+        "weak_trend"
+      ],
+      "regime": "up"
+    },
+    "score": 1734.52,
+    "return": 1734.52,
+    "pf": 1.09
+  },
+  "ETHUSDT": {
+    "rule": {
+      "direction": "buy",
+      "when": [
+        "trend_down",
+        "ema_fast_above",
+        "weak_trend"
+      ],
+      "regime": "up"
+    },
+    "score": 1394.77,
+    "return": 1859.7,
+    "pf": 1.16
+  }
+}
