@@ -25,7 +25,7 @@ from rmse_bot.self_improve import (
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATE = os.path.join(ROOT, "state")
 REPORTS = os.path.join(ROOT, "reports")
-NAME = {"XAUUSD": "gold", "BTCUSDT": "btc", "ETHUSDT": "eth"}
+NAME = {"XAUUSD": "gold", "BTCUSDT": "btc", "ETHUSDT": "eth", "SOLUSDT": "sol"}
 MIN_FWD_TRADES = 30
 
 
