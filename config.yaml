@@ -38,12 +38,16 @@ edge_rules:
     - direction: buy
       regime: up               # long only when daily trend up (regime filter)
       when: [trend_up, rsi_overbought, high_vol]
-  SOLUSDT:                     # SOL's OWN discovered edge (added 2026-06-27). Short bearish
-    # momentum in down-regime. Robust: positive in 5/6 exit configs over 5.9yr (uniform exit
-    # rr1.0 -> +$3448 PF1.39 win62%). Same setup as BTC/ETH; only the entry rule differs.
+  SOLUSDT:                     # SOL ALL-WEATHER (added 2026-06-27, long side added same day).
+    # Down-regime: SOL's OWN discovered short (rsi_oversold, robust 5/6 exits, +$3448 uniform).
+    # Up-regime: same momentum long as BTC/ETH (robust 6/6 exits, +$1853 uniform).
+    # Combined all-weather over 5.9yr: +$6160, 78 trades, win 59%, CAGR +14.6% (~= BTC/ETH).
     - direction: sell
       regime: down
       when: [rsi_oversold, high_vol, strong_trend]
+    - direction: buy
+      regime: up
+      when: [rsi_overbought, high_vol, strong_trend]
 crypto_rules:                 # separate from gold edge_rules; for Binance crypto bot
   # 8.5yr-validated ALL-WEATHER (2018-2026, all regimes): momentum WITH the daily regime.
   # BTC CAGR 14.7% win63% maxDD15% | ETH CAGR 14.6% win61% maxDD20% | same edge both = robust
