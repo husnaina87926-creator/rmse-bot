@@ -7,35 +7,44 @@
         "high_vol"
       ]
     },
-    "score": 75335.01,
-    "return": 75335.01,
-    "pf": 1.49
+    "score": 65104.16,
+    "return": 65104.16,
+    "pf": 1.48
   },
   "BTCUSDT": {
     "rule": {
       "direction": "buy",
       "when": [
-        "low_vol",
         "weak_trend"
       ],
       "regime": "up"
     },
-    "score": 1734.52,
-    "return": 1734.52,
-    "pf": 1.09
+    "score": 1432.31,
+    "return": 2864.62,
+    "pf": 1.06
   },
   "ETHUSDT": {
     "rule": {
-      "direction": "buy",
+      "direction": "sell",
       "when": [
-        "trend_down",
-        "ema_fast_above",
-        "weak_trend"
+        "rsi_oversold"
       ],
-      "regime": "up"
+      "regime": "down"
     },
-    "score": 1394.77,
-    "return": 1859.7,
-    "pf": 1.16
+    "score": 1805.89,
+    "return": 2407.85,
+    "pf": 1.22
+  },
+  "SOLUSDT": {
+    "rule": {
+      "direction": "sell",
+      "when": [
+        "sweep_up"
+      ],
+      "regime": "down"
+    },
+    "score": 4969.29,
+    "return": 6625.72,
+    "pf": 1.2
   }
 }
