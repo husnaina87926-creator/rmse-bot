@@ -56,7 +56,9 @@ crypto_rules:                 # separate from gold edge_rules; for Binance crypt
   risk_pct: 10.0             # user-set (aggressive)
   leverage: 20               # crypto futures-style leverage (margin only)
   exit: {sl_atr: 2.0, rr: 1.0, max_hold: 24, be_atr: 0.0}
-  symbols: [BTCUSDT, ETHUSDT, SOLUSDT]   # SOL added 2026-06-27 (own edge via edge_rules)
+  # ADA + DOGE added 2026-06-30: standard all-weather, robust (positive both split-halves).
+  # ADA CAGR +24.6% (~=BTC/ETH) | DOGE +7.8% (its robust ceiling; couldn't be improved w/o overfit)
+  symbols: [BTCUSDT, ETHUSDT, SOLUSDT, ADAUSDT, DOGEUSDT]
   rules:
     - direction: sell         # down regime: short bearish momentum
       regime: down
@@ -107,5 +109,17 @@ instruments:
     contract_size: 1
     spread_price: 0.07         # ~0.1% of price each side at ~$71
     slippage_price: 0.07
+    commission_per_lot: 0.0
+    swap_per_lot: 0.0
+  ADAUSDT:                     # Binance crypto (added 2026-06-30; ~0.2% round-turn approximated)
+    contract_size: 1
+    spread_price: 0.00015      # ~0.1% of price each side at ~$0.14
+    slippage_price: 0.00015
+    commission_per_lot: 0.0
+    swap_per_lot: 0.0
+  DOGEUSDT:                    # Binance crypto (added 2026-06-30; ~0.2% round-turn approximated)
+    contract_size: 1
+    spread_price: 0.00007      # ~0.1% of price each side at ~$0.072
+    slippage_price: 0.00007
     commission_per_lot: 0.0
     swap_per_lot: 0.0

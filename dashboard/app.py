@@ -1,6 +1,6 @@
 """RMSE_BOT dashboard — futuristic, mobile-first, multi-account (Streamlit).
 
-Shows 4 independent paper accounts (gold, BTC, ETH, SOL), each $5000, plus a combined total.
+Shows 6 independent paper accounts (gold, BTC, ETH, SOL, ADA, DOGE), each $5000, plus a combined total.
 Reads live state from the GitHub repo (raw, always fresh; local fallback).
 Deploy: share.streamlit.io -> repo husnaina87926-creator/rmse-bot, branch main, file dashboard/app.py
 """
@@ -15,7 +15,8 @@ RAW = "https://raw.githubusercontent.com/husnaina87926-creator/rmse-bot/main"
 START = 5000.0
 CYAN, PURPLE, GREEN, RED, GOLD = "#00e5ff", "#a855f7", "#00ffa3", "#ff4d6d", "#ffd24a"
 ACCOUNTS = [("gold", "🥇 Gold", GOLD), ("btc", "₿ BTC", "#f7931a"),
-            ("eth", "⟠ ETH", "#8a92b2"), ("sol", "◎ SOL", "#14f195")]
+            ("eth", "⟠ ETH", "#8a92b2"), ("sol", "◎ SOL", "#14f195"),
+            ("ada", "🔷 ADA", "#0033ad"), ("dog", "🐕 DOGE", "#c2a633")]
 
 st.set_page_config(page_title="RMSE_BOT", page_icon="🤖", layout="wide",
                    initial_sidebar_state="collapsed")
@@ -105,7 +106,7 @@ def table(headers, rows):
 states = {k: load_json(f"state/{k}.json") for k, _, _ in ACCOUNTS}
 
 st.markdown('<div class="hero">⚡ RMSE&nbsp;BOT</div>', unsafe_allow_html=True)
-st.markdown('<div class="sub">4 autonomous paper accounts · gold (long) + BTC/ETH (all-weather) + SOL (own edge) · live forward-test</div>',
+st.markdown('<div class="sub">6 autonomous paper accounts · gold + BTC/ETH/SOL/ADA/DOGE (all-weather) · live forward-test</div>',
             unsafe_allow_html=True)
 if st.button("🔄 Refresh"):
     st.cache_data.clear()
@@ -126,7 +127,7 @@ kpis = [("Total Balance", f"${total_bal:,.0f}", f"{total_bal-start_total:+,.0f} 
          GREEN if total_bal >= start_total else RED),
         ("Total P&L", f"${total_pnl:+,.0f}", f"realized ({len(ACCOUNTS)} accounts)", pnl_c),
         ("Total Trades", f"{total_trades}", f"{total_open} open now", CYAN),
-        ("Accounts", f"{len(ACCOUNTS)}", "gold · BTC · ETH · SOL", PURPLE)]
+        ("Accounts", f"{len(ACCOUNTS)}", "gold · BTC · ETH · SOL · ADA · DOGE", PURPLE)]
 st.markdown('<div class="kpi-grid">' + "".join(
     f'<div class="kpi"><div class="kpi-t">{t}</div><div class="kpi-v" style="color:{c}">{v}</div>'
     f'<div class="kpi-s">{sb}</div></div>' for t, v, sb, c in kpis) + '</div>', unsafe_allow_html=True)
