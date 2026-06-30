@@ -109,18 +109,31 @@ table.ft td{ padding:10px 14px; border-top:1px solid rgba(255,255,255,.045); fon
 .pill.sl,.pill.loss{ background:rgba(255,93,115,.16); color:var(--red); }
 .pill.time{ background:rgba(55,194,224,.15); color:var(--cyan); }
 
-/* sidebar */
-section[data-testid="stSidebar"]{ background:linear-gradient(180deg,#141925,#0e121b); border-right:1px solid rgba(255,255,255,.04); }
-section[data-testid="stSidebar"] .stRadio > div{ gap:8px; }
-section[data-testid="stSidebar"] .stRadio label{ background:linear-gradient(150deg,#212940,#161b29);
-   box-shadow:var(--clay-sm); border-radius:14px; padding:10px 14px !important; margin:0; transition:transform .18s ease; font-weight:600; }
-section[data-testid="stSidebar"] .stRadio label:hover{ transform:translateX(3px); }
-.stButton>button{ background:linear-gradient(150deg,#212940,#161b29); color:var(--gold); border:none;
-   border-radius:14px; font-family:'Plus Jakarta Sans'; font-weight:700; font-size:.82rem; box-shadow:var(--clay-sm);
-   padding:9px 16px; transition:transform .18s ease; width:100%; }
-.stButton>button:hover{ transform:translateY(-2px); color:#ffd98a; }
-.stButton>button:active{ transform:scale(.96); }
-div[role="radiogroup"][aria-label] label{ font-size:.86rem; }
+/* ---------- sidebar nav (big clay cards) ---------- */
+section[data-testid="stSidebar"]{ min-width:312px !important; width:312px !important;
+   background:linear-gradient(180deg,#161c2a,#0d111a); border-right:1px solid rgba(255,255,255,.05); }
+section[data-testid="stSidebar"] .block-container{ padding:1.5rem 1.1rem; }
+.side-title{ font-family:'Plus Jakarta Sans'; font-size:1.55rem; font-weight:800; letter-spacing:-.6px; line-height:1;
+   background:linear-gradient(95deg,var(--gold),#ffe0a0 45%,var(--violet)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.side-clock{ color:var(--muted); font-size:.82rem; font-weight:600; margin:6px 0 20px; }
+.nav-cap{ color:#73809f; font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:1.6px; margin:4px 0 12px; }
+section[data-testid="stSidebar"] .stButton>button{ text-align:left; justify-content:flex-start;
+   background:linear-gradient(150deg,#232c44,#161c2b); color:var(--text); border:none; border-radius:17px;
+   font-family:'Plus Jakarta Sans'; font-weight:700; font-size:1rem; letter-spacing:.2px; box-shadow:var(--clay-sm);
+   padding:14px 18px; margin-bottom:11px; width:100%; transition:transform .16s ease, box-shadow .16s ease; }
+section[data-testid="stSidebar"] .stButton>button:hover{ transform:translateX(5px); box-shadow:var(--clay); color:#ffe0a0; }
+section[data-testid="stSidebar"] .stButton>button[kind="primary"]{ background:linear-gradient(150deg,var(--gold),var(--violet));
+   color:#0e1018; box-shadow:var(--clay); }
+section[data-testid="stSidebar"] .stButton>button[kind="primary"]:hover{ color:#0e1018; transform:translateX(5px); }
+section[data-testid="stSidebar"] .stButton>button:active{ transform:scale(.97); }
+/* horizontal range radio -> clay pills */
+div[role="radiogroup"]{ gap:9px; flex-wrap:wrap; }
+div[role="radiogroup"] label{ background:linear-gradient(150deg,#212940,#161b29); box-shadow:var(--clay-sm);
+   border-radius:13px; padding:7px 16px; font-weight:700; font-family:'Plus Jakarta Sans'; font-size:.82rem;
+   cursor:pointer; transition:transform .15s ease; }
+div[role="radiogroup"] label:hover{ transform:translateY(-2px); }
+div[role="radiogroup"] label:has(input:checked){ background:linear-gradient(150deg,var(--gold),var(--violet)); color:#0e1018; box-shadow:var(--clay); }
+div[role="radiogroup"] label > div:first-child{ display:none; }
 .foot{ color:#67738f; font-size:.78rem; margin-top:24px; line-height:1.5; }
 @media (prefers-reduced-motion: reduce){ *{ transition:none !important; animation:none !important; } }
 @media (max-width:640px){ .hero{font-size:1.35rem;} .kpi-v{font-size:1.3rem;} .big-price{font-size:1.6rem;} .block-container{padding:.6rem;} }
@@ -239,11 +252,21 @@ def badge(color, glyph):
 states = {k: load_json(f"state/{k}.json") for k, *_ in ACCOUNTS}
 now_pkt = datetime.now(PKT).strftime("%Y-%m-%d %H:%M")
 
-# ---------------- sidebar ----------------
-st.sidebar.markdown('<div class="hero">◈ RMSE&nbsp;BOT</div>', unsafe_allow_html=True)
-st.sidebar.markdown(f'<div class="sub">🕒 {now_pkt} PKT</div>', unsafe_allow_html=True)
-page = st.sidebar.radio("nav", ["Overview"] + [lbl for _, lbl, *_ in ACCOUNTS], label_visibility="collapsed")
-if st.sidebar.button("⟳  Refresh data"):
+# ---------------- sidebar nav (clay cards) ----------------
+if "page" not in st.session_state:
+    st.session_state.page = "Overview"
+st.sidebar.markdown('<div class="side-title">◈ RMSE&nbsp;BOT</div>', unsafe_allow_html=True)
+st.sidebar.markdown(f'<div class="side-clock">🕒 {now_pkt} PKT · live forward-test</div>', unsafe_allow_html=True)
+st.sidebar.markdown('<div class="nav-cap">Navigate</div>', unsafe_allow_html=True)
+NAV = [("Overview", "◧  Overview")] + [(lbl, f"{gl}  {lbl}") for _, lbl, _, gl, _ in ACCOUNTS]
+for pg, disp in NAV:
+    if st.sidebar.button(disp, key=f"nav_{pg}", use_container_width=True,
+                         type=("primary" if st.session_state.page == pg else "secondary")):
+        st.session_state.page = pg
+        st.rerun()
+page = st.session_state.page
+st.sidebar.markdown('<div style="height:14px"></div>', unsafe_allow_html=True)
+if st.sidebar.button("⟳  Refresh data", key="refresh_btn", use_container_width=True):
     st.cache_data.clear()
     st.rerun()
 st.sidebar.markdown('<div class="foot">Paper trading · virtual $5000 / account.<br>Times PKT (UTC+5). '
