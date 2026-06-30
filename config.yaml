@@ -56,9 +56,12 @@ crypto_rules:                 # separate from gold edge_rules; for Binance crypt
   risk_pct: 10.0             # user-set (aggressive)
   leverage: 20               # crypto futures-style leverage (margin only)
   exit: {sl_atr: 2.0, rr: 1.0, max_hold: 24, be_atr: 0.0}
-  # ADA + DOGE added 2026-06-30: standard all-weather, robust (positive both split-halves).
-  # ADA CAGR +24.6% (~=BTC/ETH) | DOGE +7.8% (its robust ceiling; couldn't be improved w/o overfit)
-  symbols: [BTCUSDT, ETHUSDT, SOLUSDT, ADAUSDT, DOGEUSDT]
+  # ADA + DOGE added 2026-06-30. + 8 more 2026-06-30 (OP/SEI/VET/GALA/XTZ/SAND/MANA/HBAR):
+  # all-weather, robustness-screened (positive in BOTH split-halves). CAGR range +14%..+45%.
+  # NOTE: alts are highly correlated (amplifies crypto beta, not true diversification); mid-cap
+  # real spreads are higher than the 0.1%/side modelled here. Added mainly for daily activity.
+  symbols: [BTCUSDT, ETHUSDT, SOLUSDT, ADAUSDT, DOGEUSDT,
+            OPUSDT, SEIUSDT, VETUSDT, GALAUSDT, XTZUSDT, SANDUSDT, MANAUSDT, HBARUSDT]
   rules:
     - direction: sell         # down regime: short bearish momentum
       regime: down
@@ -123,3 +126,12 @@ instruments:
     slippage_price: 0.00007
     commission_per_lot: 0.0
     swap_per_lot: 0.0
+  # 8 robust all-weather coins added 2026-06-30 (spread/slip ~0.1% of price each side):
+  OPUSDT:    {contract_size: 1, spread_price: 0.0001,   slippage_price: 0.0001,   commission_per_lot: 0.0, swap_per_lot: 0.0}
+  SEIUSDT:   {contract_size: 1, spread_price: 0.00005,  slippage_price: 0.00005,  commission_per_lot: 0.0, swap_per_lot: 0.0}
+  VETUSDT:   {contract_size: 1, spread_price: 0.0000045, slippage_price: 0.0000045, commission_per_lot: 0.0, swap_per_lot: 0.0}
+  GALAUSDT:  {contract_size: 1, spread_price: 0.0000023, slippage_price: 0.0000023, commission_per_lot: 0.0, swap_per_lot: 0.0}
+  XTZUSDT:   {contract_size: 1, spread_price: 0.0002,   slippage_price: 0.0002,   commission_per_lot: 0.0, swap_per_lot: 0.0}
+  SANDUSDT:  {contract_size: 1, spread_price: 0.00005,  slippage_price: 0.00005,  commission_per_lot: 0.0, swap_per_lot: 0.0}
+  MANAUSDT:  {contract_size: 1, spread_price: 0.00006,  slippage_price: 0.00006,  commission_per_lot: 0.0, swap_per_lot: 0.0}
+  HBARUSDT:  {contract_size: 1, spread_price: 0.00007,  slippage_price: 0.00007,  commission_per_lot: 0.0, swap_per_lot: 0.0}

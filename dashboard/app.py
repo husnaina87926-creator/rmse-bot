@@ -29,7 +29,15 @@ ACCOUNTS = [
     ("eth", "Ethereum", "#9aa6c4", "Ξ", "ETHUSDT"),
     ("sol", "Solana", "#14f195", "◎", "SOLUSDT"),
     ("ada", "Cardano", "#4d8df7", "₳", "ADAUSDT"),
-    ("dog", "Dogecoin", "#cba64a", "Ð", "DOGEUSDT"),
+    ("doge", "Dogecoin", "#cba634", "Ð", "DOGEUSDT"),
+    ("op", "Optimism", "#ff5168", "OP", "OPUSDT"),
+    ("sei", "Sei", "#c4504a", "SE", "SEIUSDT"),
+    ("vet", "VeChain", "#15bdff", "VE", "VETUSDT"),
+    ("gala", "Gala", "#ff7a5c", "GA", "GALAUSDT"),
+    ("xtz", "Tezos", "#4d8df7", "ꜩ", "XTZUSDT"),
+    ("sand", "The Sandbox", "#36c5f4", "SA", "SANDUSDT"),
+    ("mana", "Decentraland", "#ff5a78", "MA", "MANAUSDT"),
+    ("hbar", "Hedera", "#a8b3cc", "ℏ", "HBARUSDT"),
 ]
 ACC = {k: (lbl, col, gl, sym) for k, lbl, col, gl, sym in ACCOUNTS}
 
@@ -85,7 +93,7 @@ h1,h2,h3{ font-family:'Plus Jakarta Sans',sans-serif !important; letter-spacing:
 .acard:hover{ transform:translateY(-4px); }
 .ac-top{ display:flex; align-items:center; gap:12px; margin-bottom:13px; }
 .badge{ width:48px; height:48px; border-radius:16px; display:flex; align-items:center; justify-content:center;
-   font-family:'Plus Jakarta Sans'; font-weight:800; font-size:1.25rem; color:#10131c; flex:0 0 auto;
+   font-family:'Plus Jakarta Sans'; font-weight:800; font-size:1.08rem; color:#10131c; flex:0 0 auto;
    box-shadow:5px 5px 12px rgba(0,0,0,.45), -3px -3px 9px rgba(255,255,255,.05),
               inset 2px 2px 5px rgba(255,255,255,.45), inset -3px -3px 7px rgba(0,0,0,.30); }
 .ac-nm{ font-family:'Plus Jakarta Sans'; font-weight:700; font-size:1.02rem; }

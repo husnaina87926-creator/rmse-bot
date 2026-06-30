@@ -48,7 +48,7 @@ def main():
 
     accts = [{"name": "gold", "symbol": "XAUUSD", "kind": "gold", "params": default_params(cfg)}]
     for sym in cfg["crypto_rules"]["symbols"]:
-        accts.append({"name": sym[:3].lower(), "symbol": sym, "kind": "crypto", "params": crypto_params(cfg)})
+        accts.append({"name": sym[:-4].lower(), "symbol": sym, "kind": "crypto", "params": crypto_params(cfg)})
 
     print(f"[{now:%Y-%m-%d %H:%M} UTC] bots step")
     for acc in accts:

@@ -26,7 +26,9 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATE = os.path.join(ROOT, "state")
 REPORTS = os.path.join(ROOT, "reports")
 NAME = {"XAUUSD": "gold", "BTCUSDT": "btc", "ETHUSDT": "eth", "SOLUSDT": "sol",
-        "ADAUSDT": "ada", "DOGEUSDT": "dog"}
+        "ADAUSDT": "ada", "DOGEUSDT": "doge", "OPUSDT": "op", "SEIUSDT": "sei",
+        "VETUSDT": "vet", "GALAUSDT": "gala", "XTZUSDT": "xtz", "SANDUSDT": "sand",
+        "MANAUSDT": "mana", "HBARUSDT": "hbar"}
 MIN_FWD_TRADES = 30
 
 
