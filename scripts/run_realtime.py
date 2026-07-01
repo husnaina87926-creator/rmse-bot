@@ -119,7 +119,8 @@ async def gold_timer():
 async def crypto_ws():
     loop = asyncio.get_running_loop()
     streams = "/".join(f"{s.lower()}@kline_4h" for s in CRYPTO)
-    url = f"wss://stream.binance.com:9443/stream?streams={streams}"
+    # public-data WS (mirrors data-api.binance.vision REST) — not geo-restricted like stream.binance.com
+    url = f"wss://data-stream.binance.vision/stream?streams={streams}"
     while True:
         try:
             async with websockets.connect(url, ping_interval=20, ping_timeout=20) as ws:
