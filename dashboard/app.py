@@ -49,7 +49,7 @@ def darken(hexc, f=0.62):
 
 
 st.set_page_config(page_title="RMSE_BOT", page_icon="◈", layout="wide",
-                   initial_sidebar_state="expanded")
+                   initial_sidebar_state="collapsed")
 
 st.markdown("""
 <style>
@@ -80,8 +80,9 @@ h1,h2,h3{ font-family:'Plus Jakarta Sans',sans-serif !important; letter-spacing:
 
 /* clay surface */
 .clay{ background:linear-gradient(150deg,var(--surf-hi),var(--surf-lo)); border-radius:var(--r-card); box-shadow:var(--clay); }
-.kpi-grid{ display:flex; flex-wrap:wrap; gap:16px; }
-.kpi{ flex:1 1 165px; background:linear-gradient(150deg,var(--surf-hi),var(--surf-lo));
+.kpi-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; }
+.acard-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(215px,1fr)); gap:14px; }
+.kpi{ background:linear-gradient(150deg,var(--surf-hi),var(--surf-lo));
    border-radius:var(--r-kpi); box-shadow:var(--clay); padding:17px 19px; transition:transform .22s cubic-bezier(.34,1.4,.4,1), box-shadow .22s ease; }
 .kpi:hover{ transform:translateY(-3px); }
 .kpi-t{ font-size:.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:1.3px; font-weight:600; }
@@ -117,34 +118,36 @@ table.ft td{ padding:10px 14px; border-top:1px solid rgba(255,255,255,.045); fon
 .pill.sl,.pill.loss{ background:rgba(255,93,115,.16); color:var(--red); }
 .pill.time{ background:rgba(55,194,224,.15); color:var(--cyan); }
 
-/* ---------- sidebar nav (big clay cards) ---------- */
-section[data-testid="stSidebar"]{ min-width:312px !important; width:312px !important;
-   background:linear-gradient(180deg,#161c2a,#0d111a); border-right:1px solid rgba(255,255,255,.05); }
-section[data-testid="stSidebar"] .block-container{ padding:1.5rem 1.1rem; }
-.side-title{ font-family:'Plus Jakarta Sans'; font-size:1.55rem; font-weight:800; letter-spacing:-.6px; line-height:1;
-   background:linear-gradient(95deg,var(--gold),#ffe0a0 45%,var(--violet)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-.side-clock{ color:var(--muted); font-size:.82rem; font-weight:600; margin:6px 0 20px; }
-.nav-cap{ color:#73809f; font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:1.6px; margin:4px 0 12px; }
-section[data-testid="stSidebar"] .stButton>button{ text-align:left; justify-content:flex-start;
-   background:linear-gradient(150deg,#232c44,#161c2b); color:var(--text); border:none; border-radius:17px;
-   font-family:'Plus Jakarta Sans'; font-weight:700; font-size:1rem; letter-spacing:.2px; box-shadow:var(--clay-sm);
-   padding:14px 18px; margin-bottom:11px; width:100%; transition:transform .16s ease, box-shadow .16s ease; }
-section[data-testid="stSidebar"] .stButton>button:hover{ transform:translateX(5px); box-shadow:var(--clay); color:#ffe0a0; }
-section[data-testid="stSidebar"] .stButton>button[kind="primary"]{ background:linear-gradient(150deg,var(--gold),var(--violet));
-   color:#0e1018; box-shadow:var(--clay); }
-section[data-testid="stSidebar"] .stButton>button[kind="primary"]:hover{ color:#0e1018; transform:translateX(5px); }
-section[data-testid="stSidebar"] .stButton>button:active{ transform:scale(.97); }
-/* horizontal range radio -> clay pills */
-div[role="radiogroup"]{ gap:9px; flex-wrap:wrap; }
-div[role="radiogroup"] label{ background:linear-gradient(150deg,#212940,#161b29); box-shadow:var(--clay-sm);
-   border-radius:13px; padding:7px 16px; font-weight:700; font-family:'Plus Jakarta Sans'; font-size:.82rem;
-   cursor:pointer; transition:transform .15s ease; }
-div[role="radiogroup"] label:hover{ transform:translateY(-2px); }
+/* ---------- sidebar hidden — nav lives in a top bar (works on every device) ---------- */
+section[data-testid="stSidebar"], [data-testid="stSidebarCollapsedControl"],
+[data-testid="collapsedControl"], [data-testid="stSidebarCollapseButton"] { display:none !important; }
+[data-testid="stAppViewContainer"] > .main, .main .block-container { margin-left:auto !important; }
+/* top header row (brand + refresh) */
+.topbar { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:6px; }
+.stButton>button{ background:linear-gradient(150deg,#232c44,#161c2b); color:var(--gold); border:none;
+   border-radius:14px; font-family:'Plus Jakarta Sans'; font-weight:700; font-size:.82rem; box-shadow:var(--clay-sm);
+   padding:10px 16px; min-height:42px; transition:transform .16s ease, color .16s ease; }
+.stButton>button:hover{ transform:translateY(-2px); color:#ffe0a0; }
+.stButton>button:active{ transform:scale(.96); }
+/* top nav + range radio -> touch-friendly clay pills */
+div[role="radiogroup"]{ display:flex; gap:8px; flex-wrap:wrap; }
+div[role="radiogroup"] label{ background:linear-gradient(150deg,#232c44,#161c2b); box-shadow:var(--clay-sm);
+   border-radius:13px; padding:9px 15px; min-height:40px; display:flex; align-items:center;
+   font-weight:700; font-family:'Plus Jakarta Sans'; font-size:.86rem; letter-spacing:.2px;
+   cursor:pointer; transition:transform .15s ease, box-shadow .15s ease; }
+div[role="radiogroup"] label:hover{ transform:translateY(-2px); box-shadow:var(--clay); color:#ffe0a0; }
 div[role="radiogroup"] label:has(input:checked){ background:linear-gradient(150deg,var(--gold),var(--violet)); color:#0e1018; box-shadow:var(--clay); }
-div[role="radiogroup"] label > div:first-child{ display:none; }
+div[role="radiogroup"] label > div:first-child{ display:none; }   /* hide the radio dot */
+.navwrap{ background:rgba(255,255,255,.02); border-radius:18px; padding:10px 12px; box-shadow:var(--clay-sm); margin:8px 0 20px; }
 .foot{ color:#67738f; font-size:.78rem; margin-top:24px; line-height:1.5; }
 @media (prefers-reduced-motion: reduce){ *{ transition:none !important; animation:none !important; } }
-@media (max-width:640px){ .hero{font-size:1.35rem;} .kpi-v{font-size:1.3rem;} .big-price{font-size:1.6rem;} .block-container{padding:.6rem;} }
+@media (max-width:1024px){ .block-container{ max-width:100%; } }
+@media (max-width:768px){ .hero{font-size:1.45rem;} .kpi-v{font-size:1.38rem;} .big-price{font-size:1.7rem;}
+   .block-container{padding:.8rem;} .acard-grid{ grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); }
+   .kpi-grid{ grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); } }
+@media (max-width:480px){ .hero{font-size:1.25rem;} .kpi-v{font-size:1.2rem;} .kpi{padding:13px 14px;}
+   .big-price{font-size:1.45rem;} .block-container{padding:.55rem;} table.ft{min-width:380px;}
+   .acard-grid{ grid-template-columns:1fr 1fr; gap:10px; } div[role="radiogroup"] label{ font-size:.8rem; padding:8px 12px; } }
 </style>
 """, unsafe_allow_html=True)
 
@@ -260,25 +263,24 @@ def badge(color, glyph):
 states = {k: load_json(f"state/{k}.json") for k, *_ in ACCOUNTS}
 now_pkt = datetime.now(PKT).strftime("%Y-%m-%d %H:%M")
 
-# ---------------- sidebar nav (clay cards) ----------------
-if "page" not in st.session_state:
-    st.session_state.page = "Overview"
-st.sidebar.markdown('<div class="side-title">◈ RMSE&nbsp;BOT</div>', unsafe_allow_html=True)
-st.sidebar.markdown(f'<div class="side-clock">🕒 {now_pkt} PKT · live forward-test</div>', unsafe_allow_html=True)
-st.sidebar.markdown('<div class="nav-cap">Navigate</div>', unsafe_allow_html=True)
-NAV = [("Overview", "◧  Overview")] + [(lbl, f"{gl}  {lbl}") for _, lbl, _, gl, _ in ACCOUNTS]
-for pg, disp in NAV:
-    if st.sidebar.button(disp, key=f"nav_{pg}", use_container_width=True,
-                         type=("primary" if st.session_state.page == pg else "secondary")):
-        st.session_state.page = pg
+# ---------------- top bar + nav (device-agnostic; no sidebar) ----------------
+c1, c2 = st.columns([4, 1])
+c1.markdown('<div class="hero">◈ RMSE&nbsp;BOT</div>'
+            f'<div class="sub">🕒 {now_pkt} PKT · {len(ACCOUNTS)} paper accounts · live forward-test</div>',
+            unsafe_allow_html=True)
+with c2:
+    if st.button('⟳ Refresh', key='refresh_btn', use_container_width=True):
+        st.cache_data.clear()
         st.rerun()
-page = st.session_state.page
-st.sidebar.markdown('<div style="height:14px"></div>', unsafe_allow_html=True)
-if st.sidebar.button("⟳  Refresh data", key="refresh_btn", use_container_width=True):
-    st.cache_data.clear()
-    st.rerun()
-st.sidebar.markdown('<div class="foot">Paper trading · virtual $5000 / account.<br>Times PKT (UTC+5). '
-                    'Prices: Binance public · state: GitHub.</div>', unsafe_allow_html=True)
+
+NAV_DISP = {'Overview': '◧ Overview'}
+for _k, _lbl, _c, _gl, _sym in ACCOUNTS:
+    NAV_DISP[_lbl] = f'{_gl} {_k.upper()}'
+_opts = ['Overview'] + [lbl for _, lbl, *_ in ACCOUNTS]
+st.markdown('<div class="navwrap">', unsafe_allow_html=True)
+page = st.radio('nav', _opts, format_func=lambda o: NAV_DISP[o],
+                horizontal=True, label_visibility='collapsed')
+st.markdown('</div>', unsafe_allow_html=True)
 
 if not any(states.values()):
     st.warning("State load nahi hua — thori dair baad Refresh karein.")
@@ -300,19 +302,17 @@ if page == "Overview":
         ("Total Trades", f"{tt}", f"{to} open right now", CYAN),
         ("Accounts", f"{len(ACCOUNTS)}", "diversified all-weather", VIOLET)]), unsafe_allow_html=True)
 
-    st.markdown('<div class="sect">Accounts — open a coin from the sidebar for its live page</div>', unsafe_allow_html=True)
-    for i in range(0, len(ACCOUNTS), 3):
-        grp = ACCOUNTS[i:i + 3]
-        cols = st.columns(len(grp))
-        for col, (k, lbl, color, gl, sym) in zip(cols, grp):
-            a = stats(states[k])
-            bcol = GREEN if a["balance"] >= START else RED
-            col.markdown(
-                f'<div class="acard"><div class="ac-top">{badge(color, gl)}'
-                f'<div><div class="ac-nm">{lbl}</div><div class="ac-sym">{sym}</div></div></div>'
-                f'<div class="ac-bal num" style="color:{bcol}">${a["balance"]:,.0f}</div>'
-                f'<div class="ac-stats">P&L {money(a["pnl"])} · {a["trades"]} tr · win {a["win"]*100:.0f}% · {a["open"]} open</div></div>',
-                unsafe_allow_html=True)
+    st.markdown('<div class="sect">Accounts — tap a coin in the top bar for its live page</div>', unsafe_allow_html=True)
+    cards = ""
+    for k, lbl, color, gl, sym in ACCOUNTS:
+        a = stats(states[k])
+        bcol = GREEN if a["balance"] >= START else RED
+        cards += (
+            f'<div class="acard"><div class="ac-top">{badge(color, gl)}'
+            f'<div><div class="ac-nm">{lbl}</div><div class="ac-sym">{sym}</div></div></div>'
+            f'<div class="ac-bal num" style="color:{bcol}">${a["balance"]:,.0f}</div>'
+            f'<div class="ac-stats">P&L {money(a["pnl"])} · {a["trades"]} tr · win {a["win"]*100:.0f}% · {a["open"]} open</div></div>')
+    st.markdown(f'<div class="acard-grid">{cards}</div>', unsafe_allow_html=True)
 
 # ================= PER-COIN =================
 else:
