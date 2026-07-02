@@ -12,11 +12,13 @@ def compute_stats(closed: list, starting_balance: float) -> dict:
     wins = [p for p in pnls if p > 0]
     losses = [-p for p in pnls if p < 0]
     gross_win, gross_loss = sum(wins), sum(losses)
-    equity = [t.get("balance_after") for t in closed if t.get("balance_after") is not None]
-    peak, mdd = starting_balance, 0.0
-    for b in equity:
-        peak = max(peak, b)
-        mdd = max(mdd, peak - b)
+    # equity walk = start + cumulative pnl (aggregate-safe: per-trade balance_after is
+    # per-ACCOUNT and must not be compared against a multi-account combined start)
+    bal, peak, mdd = starting_balance, starting_balance, 0.0
+    for p in pnls:
+        bal += p
+        peak = max(peak, bal)
+        mdd = max(mdd, peak - bal)
     return {
         "num_trades": len(closed),
         "wins": len(wins),
@@ -25,7 +27,7 @@ def compute_stats(closed: list, starting_balance: float) -> dict:
         "total_pnl": round(sum(pnls), 2),
         "profit_factor": round(gross_win / gross_loss, 2) if gross_loss else float("inf"),
         "max_drawdown": round(mdd, 2),
-        "balance": round(equity[-1], 2) if equity else round(starting_balance, 2),
+        "balance": round(bal, 2),
     }
 
 

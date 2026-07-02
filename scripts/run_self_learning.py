@@ -1,6 +1,6 @@
 """Weekly self-improvement brain (wired to the 3-account bot).
 
-1) Discover a robust NEW candidate edge per instrument (gold/BTC/ETH) -> state/candidates.json
+1) Discover a robust NEW candidate edge per instrument (gold + all config crypto symbols) -> state/candidates.json
    (each then forward-tests in a challenger account via run_bots).
 2) Promotion check: if a challenger has beaten its champion over enough FORWARD trades,
    promote its candidate into state/live_rules.json (the bot reads these). Overfit

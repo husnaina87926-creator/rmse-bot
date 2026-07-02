@@ -1,6 +1,6 @@
 name: self-learning
 
-# Weekly: discover new candidate edges (gold/BTC/ETH), forward-test them as challengers,
+# Weekly: discover new candidate edges (gold + all crypto accounts), forward-test them as challengers,
 # and PROMOTE (into state/live_rules.json) any that beat their champion on forward data.
 
 on:

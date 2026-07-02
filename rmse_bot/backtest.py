@@ -145,14 +145,17 @@ def walk_forward(df: pd.DataFrame, cfg: dict, instr: dict, rules: list,
         best = None
         for sl, rr, mh in param_grid:
             m = backtest_edge(train, cfg, instr, rules, sl_atr=sl, rr=rr, max_hold=mh).metrics
-            pf = m["profit_factor"]
-            if m["num_trades"] >= min_train_trades and (best is None or pf > best[0]):
-                best = (pf, sl, rr, mh)
+            # cap PF for selection: an inf PF (zero losing trades) is a degenerate lucky
+            # config and must not auto-win the grid; tie-break on total return instead
+            pf = min(m["profit_factor"], 10.0)
+            score = (pf, m["total_return"])
+            if m["num_trades"] >= min_train_trades and (best is None or score > best[0]):
+                best = (score, sl, rr, mh)
         if best is not None:
             _, sl, rr, mh = best
             tm = backtest_edge(test, cfg, instr, rules, sl_atr=sl, rr=rr, max_hold=mh).metrics
             results.append({
-                "train_pf": round(best[0], 2), "sl": sl, "rr": rr, "hold": mh,
+                "train_pf": round(best[0][0], 2), "sl": sl, "rr": rr, "hold": mh,
                 "test_pf": round(tm["profit_factor"], 2), "test_trades": tm["num_trades"],
                 "test_win": round(tm["win_rate"], 2), "test_return": round(tm["total_return"], 2),
                 "start_time": str(test["time"].iloc[0])[:10] if not test.empty else "",

@@ -18,7 +18,6 @@ from rmse_bot.paper_trader import load_state
 from rmse_bot.reporting import compute_stats, daily_slice, render_daily_md, render_summary_row
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-STATE_PATH = os.path.join(ROOT, "state", "paper_state.json")
 REPORTS_DIR = os.path.join(ROOT, "reports")
 SUMMARY = os.path.join(REPORTS_DIR, "SUMMARY.csv")
 HEADER = "date,trades_today,pnl_today,balance,total_trades,win_rate\n"
@@ -40,14 +39,15 @@ def main():
     per = cfg["account"]["size_usd"]
     date_str = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%d")
 
-    # aggregate all 3 accounts (gold + btc + eth)
+    # aggregate ALL accounts: gold + every crypto symbol from config (14 as of 2026-07)
+    names = ["gold"] + [sym[:-4].lower() for sym in cfg["crypto_rules"]["symbols"]]
     closed, open_count = [], 0
-    for name in ["gold", "btc", "eth"]:
+    for name in names:
         s = load_state(os.path.join(ROOT, "state", f"{name}.json"), per)
         closed += s.get("closed", [])
         open_count += len(s.get("open", []))
     closed.sort(key=lambda t: str(t.get("close_time", "")))
-    start_bal = per * 3
+    start_bal = per * len(names)
 
     day = compute_stats(daily_slice(closed, date_str), start_bal)
     cum = compute_stats(closed, start_bal)

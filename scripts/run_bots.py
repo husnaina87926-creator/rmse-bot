@@ -1,7 +1,7 @@
-"""Unified multi-bot runner: 3 champion accounts + their challengers, each $5000.
+"""Unified multi-bot runner: gold + all config crypto symbols (14 accounts as of 2026-07), each $5000, champions + challengers.
 
   gold (XAUUSD) — TwelveData 15m, momentum LONG (up-regime), USD news filter
-  btc/eth — Binance 4h, all-weather (short down-regime / long up-regime)
+  crypto (all crypto_rules.symbols) — Binance 4h, all-weather (short down-regime / long up-regime)
 
 Each instrument also runs a CHALLENGER (live rules + a self-learning candidate) so new
 edges are forward-tested before promotion. Live rules come from state/live_rules.json
