@@ -23,7 +23,8 @@ from rmse_bot.config import load_config
 from rmse_bot.binance_feed import fetch_binance_klines
 from rmse_bot.data_feed import fetch_dukascopy
 from rmse_bot.self_improve import promotion_demotion_pass, discovery_pass
-from rmse_bot.journal import health_snapshot, run_postmortems
+from rmse_bot.journal import (health_snapshot, run_postmortems,
+                              run_counterfactuals, counterfactual_summary)
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATE = os.path.join(ROOT, "state")
@@ -80,6 +81,19 @@ def main():
                           flush=True)
             except Exception as e:
                 print(f"[brain] WARN postmortem: {e}", flush=True)
+            try:
+                n = run_counterfactuals(STATE, fetch_for)
+                if n:
+                    cs = counterfactual_summary(STATE)
+                    best = max(cs.get("variants", {}).items(),
+                               key=lambda kv: kv[1].get("edge_vs_base_R") or -9,
+                               default=(None, None))
+                    print(f"[brain {now:%m-%d %H:%M}] counterfactuals: {n} trades replayed"
+                          + (f" | best alt-exit so far: {best[0]} "
+                             f"({best[1]['edge_vs_base_R']:+.2f}R vs base, n={best[1]['n']})"
+                             if best[0] else ""), flush=True)
+            except Exception as e:
+                print(f"[brain] WARN counterfactual: {e}", flush=True)
 
         boundary = now.replace(minute=0, second=0, microsecond=0,
                                hour=(now.hour // 4) * 4)

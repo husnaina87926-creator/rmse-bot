@@ -141,6 +141,111 @@ def run_postmortems(state_dir: str, fetch_fn, lookahead: int = 24, max_per_run: 
     return written
 
 
+# ---------------- counterfactual engine (learn from roads NOT taken) ----------------
+
+DEFAULT_VARIANTS = {
+    "wider_sl_3.0":  {"sl_atr": 3.0, "rr": 1.0, "max_hold": 24, "be_atr": 0.0, "trail_atr": 0.0},
+    "tighter_sl_1.5": {"sl_atr": 1.5, "rr": 1.0, "max_hold": 24, "be_atr": 0.0, "trail_atr": 0.0},
+    "rr_2.0":        {"sl_atr": 2.0, "rr": 2.0, "max_hold": 24, "be_atr": 0.0, "trail_atr": 0.0},
+    "hold_48":       {"sl_atr": 2.0, "rr": 1.0, "max_hold": 48, "be_atr": 0.0, "trail_atr": 0.0},
+    "breakeven_1.0": {"sl_atr": 2.0, "rr": 1.0, "max_hold": 24, "be_atr": 1.0, "trail_atr": 0.0},
+    "trail_1.5":     {"sl_atr": 2.0, "rr": 1.0, "max_hold": 24, "be_atr": 0.0, "trail_atr": 1.5},
+}
+
+
+def run_counterfactuals(state_dir: str, fetch_fn, variants: dict = None,
+                        max_per_run: int = 20) -> int:
+    """For each closed trade, replay the SAME entry on the SAME bars under alternative
+    exit configs and record what each would have produced (in R units). A human can only
+    learn from the road taken; the bot learns from six roads per trade — risk-free.
+    Observer-only: results are journaled ('counterfactual' events), nothing auto-changes."""
+    from rmse_bot.backtest import simulate_trade_dynamic
+    variants = variants or DEFAULT_VARIANTS
+    events = read_events(state_dir)
+    done = {(e.get("account"), e.get("symbol"), str(e.get("close_time")))
+            for e in events if e.get("type") == "counterfactual"}
+    todo = [e for e in events if e.get("type") == "close"
+            and e.get("atr") and e.get("entry") is not None
+            and (e.get("account"), e.get("symbol"), str(e.get("close_time"))) not in done]
+    max_hold_needed = max(v["max_hold"] for v in variants.values())
+    written = 0
+    dfs = {}
+    for e in todo[:max_per_run]:
+        sym = e.get("symbol")
+        try:
+            if sym not in dfs:
+                dfs[sym] = fetch_fn(sym)
+            df = dfs[sym]
+            if df is None or df.empty:
+                continue
+            t = pd.to_datetime(df["time"])
+            ot = pd.to_datetime(str(e.get("open_time")))
+            if t.dt.tz is not None and ot.tzinfo is None:
+                ot = ot.tz_localize(t.dt.tz)
+            fut = df[t > ot].head(max_hold_needed)
+            if len(fut) < 2:
+                continue
+            d, entry, atr_v = e["direction"], float(e["entry"]), float(e["atr"])
+            base_sl = e.get("sl")
+            base_dist = abs(entry - base_sl) if base_sl is not None else 2.0 * atr_v
+            base_move = (float(e.get("exit", entry)) - entry) * (1 if d == "buy" else -1)
+            results = {}
+            for nm, v in variants.items():
+                sd = v["sl_atr"] * atr_v
+                if d == "buy":
+                    sl, tp = entry - sd, entry + v["rr"] * sd
+                else:
+                    sl, tp = entry + sd, entry - v["rr"] * sd
+                label, exit_p = simulate_trade_dynamic(
+                    d, entry, sl, tp, atr_v, fut.head(v["max_hold"]),
+                    be_trigger_atr=v["be_atr"], trail_atr=v["trail_atr"])
+                if label == "open":               # window not finished yet -> exit at last close
+                    exit_p = float(fut["close"].iloc[min(v["max_hold"], len(fut)) - 1])
+                    label = "time"
+                mv = (exit_p - entry) * (1 if d == "buy" else -1)
+                results[nm] = {"outcome": label, "R": round(mv / sd, 3)}
+            append_event(state_dir, {
+                "type": "counterfactual", "account": e.get("account"), "symbol": sym,
+                "close_time": str(e.get("close_time")), "base_outcome": e.get("outcome"),
+                "base_R": round(base_move / base_dist, 3) if base_dist else None,
+                "variants": results,
+            })
+            written += 1
+        except Exception:
+            continue
+    return written
+
+
+def counterfactual_summary(state_dir: str, min_n: int = 10) -> dict:
+    """Aggregate lessons: per exit-variant, average R vs the base exit's average R over
+    the same trades. Written to state/lessons.json — the bot's own 'what I keep leaving
+    on the table' notebook. (Any promising variant must STILL pass the normal
+    forward-test gate before ever touching live rules — no shortcut.)"""
+    events = [e for e in read_events(state_dir) if e.get("type") == "counterfactual"]
+    out = {"n_trades": len(events), "variants": {}}
+    if events:
+        base = [e.get("base_R") for e in events if e.get("base_R") is not None]
+        out["base_avg_R"] = round(sum(base) / len(base), 3) if base else None
+        names = set()
+        for e in events:
+            names.update((e.get("variants") or {}).keys())
+        for nm in sorted(names):
+            rs = [e["variants"][nm]["R"] for e in events
+                  if nm in (e.get("variants") or {})]
+            if len(rs) >= 1:
+                out["variants"][nm] = {
+                    "n": len(rs),
+                    "avg_R": round(sum(rs) / len(rs), 3),
+                    "edge_vs_base_R": (round(sum(rs) / len(rs) - out["base_avg_R"], 3)
+                                       if out.get("base_avg_R") is not None else None),
+                    "significant": len(rs) >= min_n,
+                }
+    out["_ts"] = dt.datetime.now(dt.timezone.utc).isoformat()
+    with open(os.path.join(state_dir, "lessons.json"), "w") as f:
+        json.dump(out, f, indent=2)
+    return out
+
+
 # ---------------- champion health monitor ----------------
 
 def health_snapshot(state_dir: str, names: list, start_bal: float,

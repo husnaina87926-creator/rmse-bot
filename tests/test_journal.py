@@ -6,7 +6,7 @@ import pandas as pd
 
 from rmse_bot.journal import (
     append_event, read_events, diff_and_journal, integrity_check,
-    health_snapshot, run_postmortems,
+    health_snapshot, run_postmortems, run_counterfactuals, counterfactual_summary,
 )
 
 
@@ -109,3 +109,28 @@ def test_postmortem_tp_hit_after_exit(tmp_path):
     assert pm["left_on_table_atr"] == 5.0          # (100-90)/2 ATR left on the table
     # second run: no duplicates
     assert run_postmortems(sd, lambda sym: df) == 0
+
+
+def test_counterfactuals_and_summary(tmp_path):
+    sd = str(tmp_path)
+    # a sell that TIME-exited flat at 100; afterwards price kept falling to 92
+    append_event(sd, {"type": "close", "account": "btc", "symbol": "BTCUSDT",
+                      "direction": "sell", "entry": 100.0, "exit": 100.0,
+                      "sl": 104.0, "tp": 96.0, "atr": 2.0, "outcome": "time", "pnl": 0.0,
+                      "open_time": "2026-07-01 00:00:00",
+                      "close_time": "2026-07-05 00:00:00"})
+    fut = pd.date_range("2026-07-01 04:00:00", periods=48, freq="4h")
+    px = [100 - 0.4 * i for i in range(48)]                     # steady decline
+    df = pd.DataFrame({"time": fut, "open": px, "high": [p + 0.1 for p in px],
+                       "low": [p - 0.1 for p in px], "close": px})
+    n = run_counterfactuals(sd, lambda sym: df)
+    assert n == 1
+    ev = [e for e in read_events(sd) if e["type"] == "counterfactual"][0]
+    assert ev["base_R"] == 0.0                                  # actual trade made nothing
+    assert ev["variants"]["rr_2.0"]["outcome"] == "tp"          # decline reached 2R target
+    assert ev["variants"]["rr_2.0"]["R"] == 2.0
+    assert ev["variants"]["hold_48"]["R"] == 1.0                # 1R tp hit on longer hold
+    s = counterfactual_summary(sd)
+    assert s["n_trades"] == 1
+    assert s["variants"]["rr_2.0"]["avg_R"] > s["base_avg_R"]   # lesson: exited too early
+    assert run_counterfactuals(sd, lambda sym: df) == 0         # no duplicates
