@@ -1,9 +1,11 @@
-"""RMSE_BOT dashboard — BENTO GRID design (Streamlit, light, device-responsive).
+"""RMSE_BOT dashboard — OBSIDIAN TERMINAL design (Streamlit, premium dark, device-responsive).
 
-Modular Apple/Vercel-style bento tiles of varied sizes, soft shadows, rounded-24,
-indigo accent. Top pill nav (no sidebar) works on phone/tablet/desktop. Per-coin pages
-with live Binance candlestick charts (public data, no key), equity curves, trade tables.
-All times PKT (UTC+5). State read from the GitHub repo (raw).
+Deep-space dark trading terminal: bento stat tiles, per-account SVG sparklines, animated
+gradient hero, CSS scroll-reveal (animation-timeline: view(), graceful fallback), pulsing
+live dot, status colors (green/red/amber), tabular numerals everywhere. Pages: Overview,
+Brain (self-learning activity: graduation gate, tournament, scoreboard, shadow exits,
+regime watch, sentiment, mistake diary), one page per coin (live price, candles, equity,
+trades). All times PKT (UTC+5). State from GitHub raw (cloud) or local files (VPS copy).
 Deploy: share.streamlit.io -> repo husnaina87926-creator/rmse-bot, branch main, dashboard/app.py
 """
 import json
@@ -23,122 +25,183 @@ RAW = "https://raw.githubusercontent.com/husnaina87926-creator/rmse-bot/main"
 BINANCE = "https://data-api.binance.vision/api/v3"
 START = 5000.0
 PKT = timezone(timedelta(hours=5))
-BRAND, GREEN, RED, INK, MUT = "#635bff", "#12b76a", "#e5484d", "#16181d", "#8b909c"
+
+INK, MUT, LINE = "#e7ecf5", "#8b93a7", "rgba(148,163,184,.10)"
+GREEN, RED, AMBER, BRAND, CYAN = "#34d399", "#fb7185", "#fbbf24", "#818cf8", "#22d3ee"
+BG, CARD = "#0a0d14", "#10151f"
 
 ACCOUNTS = [
     ("gold", "Gold", "#f5b544", "Au", "PAXGUSDT"),
     ("btc", "Bitcoin", "#f7931a", "₿", "BTCUSDT"),
-    ("eth", "Ethereum", "#7b86a8", "Ξ", "ETHUSDT"),
-    ("sol", "Solana", "#12b981", "◎", "SOLUSDT"),
-    ("ada", "Cardano", "#4d8df7", "₳", "ADAUSDT"),
-    ("doge", "Dogecoin", "#c2a12e", "Ð", "DOGEUSDT"),
-    ("op", "Optimism", "#ff5168", "OP", "OPUSDT"),
-    ("sei", "Sei", "#c4504a", "SE", "SEIUSDT"),
-    ("vet", "VeChain", "#15a5e0", "VE", "VETUSDT"),
-    ("gala", "Gala", "#ff7a5c", "GA", "GALAUSDT"),
-    ("xtz", "Tezos", "#4d8df7", "ꜩ", "XTZUSDT"),
-    ("sand", "The Sandbox", "#22a5d4", "SA", "SANDUSDT"),
-    ("mana", "Decentraland", "#e5484d", "MA", "MANAUSDT"),
-    ("hbar", "Hedera", "#5b6472", "ℏ", "HBARUSDT"),
+    ("eth", "Ethereum", "#9aa7d8", "Ξ", "ETHUSDT"),
+    ("sol", "Solana", "#2fd6a7", "◎", "SOLUSDT"),
+    ("ada", "Cardano", "#5b9dff", "₳", "ADAUSDT"),
+    ("doge", "Dogecoin", "#d8b94a", "Ð", "DOGEUSDT"),
+    ("op", "Optimism", "#ff5f74", "OP", "OPUSDT"),
+    ("sei", "Sei", "#e06a63", "SE", "SEIUSDT"),
+    ("vet", "VeChain", "#38b6ff", "VE", "VETUSDT"),
+    ("gala", "Gala", "#ff8a68", "GA", "GALAUSDT"),
+    ("xtz", "Tezos", "#6ea8ff", "ꜩ", "XTZUSDT"),
+    ("sand", "The Sandbox", "#3fb9e6", "SA", "SANDUSDT"),
+    ("mana", "Decentraland", "#ff7d92", "MA", "MANAUSDT"),
+    ("hbar", "Hedera", "#8f9bb3", "ℏ", "HBARUSDT"),
 ]
 ACC = {k: (lbl, col, gl, sym) for k, lbl, col, gl, sym in ACCOUNTS}
 
 st.set_page_config(page_title="RMSE_BOT", page_icon="◈", layout="wide",
                    initial_sidebar_state="collapsed")
 
-st.markdown("""
+st.markdown(f"""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-*{box-sizing:border-box}
-:root{ --bg:#f4f4f7; --card:#ffffff; --ink:#16181d; --mut:#8b909c; --line:#ececf1; --soft:#f7f7fa;
-  --brand:#635bff; --green:#12b76a; --red:#e5484d; --r:22px;
-  --sh:0 2px 10px rgba(20,22,30,.06); --sh-h:0 10px 28px rgba(20,22,30,.12); }
-#MainMenu, header, footer {visibility:hidden;}
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+*{{box-sizing:border-box}}
+:root{{ --bg:{BG}; --card:{CARD}; --card2:#141b29; --ink:{INK}; --mut:{MUT};
+  --line:{LINE}; --brand:{BRAND}; --cyan:{CYAN}; --green:{GREEN}; --red:{RED}; --amber:{AMBER};
+  --r:20px; --sh:0 1px 0 rgba(255,255,255,.03) inset, 0 12px 34px rgba(0,0,0,.45); }}
+#MainMenu, header, footer {{visibility:hidden;}}
 section[data-testid="stSidebar"], [data-testid="stSidebarCollapsedControl"],
-[data-testid="collapsedControl"], [data-testid="stSidebarCollapseButton"]{ display:none !important; }
-.stApp, [data-testid="stAppViewContainer"]{ background:var(--bg); color:var(--ink);
-  font-family:'Inter',sans-serif; }
-.block-container{ padding-top:1.1rem; max-width:1200px; }
-h1,h2,h3{ font-family:'Inter',sans-serif !important; }
-.num{ font-variant-numeric:tabular-nums; }
-.pos{ color:var(--green); font-weight:700; } .neg{ color:var(--red); font-weight:700; }
+[data-testid="collapsedControl"], [data-testid="stSidebarCollapseButton"]{{ display:none !important; }}
+.stApp, [data-testid="stAppViewContainer"]{{
+  background:
+    radial-gradient(1100px 500px at 85% -10%, rgba(99,102,241,.16), transparent 60%),
+    radial-gradient(900px 420px at -10% 8%, rgba(34,211,238,.10), transparent 55%),
+    var(--bg);
+  color:var(--ink); font-family:'Inter',sans-serif; }}
+.block-container{{ padding-top:1rem; max-width:1240px; }}
+h1,h2,h3{{ font-family:'Space Grotesk',sans-serif !important; }}
+.num, table.ft td{{ font-family:'JetBrains Mono',monospace; font-variant-numeric:tabular-nums; }}
+.pos{{ color:var(--green); font-weight:700; }} .neg{{ color:var(--red); font-weight:700; }}
 
-.brand{ font-size:1.35rem; font-weight:800; letter-spacing:-.5px; color:var(--ink); }
-.brand b{ color:var(--brand); }
-.sub{ color:var(--mut); font-size:.86rem; font-weight:500; margin-top:1px; }
-.sect{ font-size:.72rem; letter-spacing:1.3px; text-transform:uppercase; color:var(--mut);
-  font-weight:700; margin:26px 0 12px; }
+/* ---------- brand bar ---------- */
+.brand{{ font-family:'Space Grotesk',sans-serif; font-size:1.42rem; font-weight:700;
+  letter-spacing:-.4px; color:var(--ink); display:flex; align-items:center; gap:10px; }}
+.brand b{{ background:linear-gradient(90deg,var(--brand),var(--cyan));
+  -webkit-background-clip:text; background-clip:text; color:transparent; }}
+.livedot{{ width:9px; height:9px; border-radius:50%; background:var(--green);
+  box-shadow:0 0 0 0 rgba(52,211,153,.55); animation:pulse 2.2s infinite; }}
+@keyframes pulse{{ 70%{{ box-shadow:0 0 0 9px rgba(52,211,153,0); }} }}
+.sub{{ color:var(--mut); font-size:.84rem; font-weight:500; margin-top:2px; }}
+.sect{{ font-family:'Space Grotesk',sans-serif; font-size:.74rem; letter-spacing:2px;
+  text-transform:uppercase; color:var(--mut); font-weight:600; margin:30px 0 12px;
+  display:flex; align-items:center; gap:10px; }}
+.sect:after{{ content:""; flex:1; height:1px; background:linear-gradient(90deg,var(--line),transparent); }}
 
-/* pill nav */
-.navwrap{ background:#fff; border-radius:16px; padding:8px; box-shadow:var(--sh); margin:10px 0 22px; }
-div[role="radiogroup"]{ display:flex; gap:6px; flex-wrap:wrap; }
-div[role="radiogroup"] label{ background:var(--soft); border-radius:11px; padding:8px 14px; min-height:40px;
-  display:flex; align-items:center; font-weight:600; font-size:.84rem; color:#4a5163; cursor:pointer;
-  border:1px solid transparent; transition:all .15s; }
-div[role="radiogroup"] label:hover{ background:#eef0ff; color:var(--brand); }
-div[role="radiogroup"] label:has(input:checked){ background:var(--brand); color:#fff; box-shadow:0 4px 12px rgba(99,91,255,.35); }
-div[role="radiogroup"] label > div:first-child{ display:none; }
+/* ---------- pill nav ---------- */
+.navwrap{{ background:rgba(16,21,31,.75); backdrop-filter:blur(14px); border:1px solid var(--line);
+  border-radius:16px; padding:8px; box-shadow:var(--sh); margin:12px 0 20px; }}
+div[role="radiogroup"]{{ display:flex; gap:6px; flex-wrap:wrap; }}
+div[role="radiogroup"] label{{ background:rgba(255,255,255,.03); border-radius:11px; padding:8px 14px;
+  min-height:42px; display:flex; align-items:center; font-weight:600; font-size:.84rem;
+  color:#aab2c5; cursor:pointer; border:1px solid transparent; transition:all .18s ease-out; }}
+div[role="radiogroup"] label:hover{{ background:rgba(129,140,248,.12); color:var(--ink);
+  transform:translateY(-1px); }}
+div[role="radiogroup"] label:has(input:checked){{
+  background:linear-gradient(135deg,rgba(99,102,241,.9),rgba(34,211,238,.75)); color:#fff;
+  box-shadow:0 6px 18px rgba(99,102,241,.35); }}
+div[role="radiogroup"] label > div:first-child{{ display:none; }}
+div[role="radiogroup"] label p{{ color:inherit !important; }}
 
-/* bento grid */
-.bento{ display:grid; grid-template-columns:repeat(4,1fr); grid-auto-rows:150px; gap:16px; }
-.t{ border-radius:var(--r); background:var(--card); box-shadow:var(--sh); padding:20px;
-  transition:transform .2s, box-shadow .2s; display:flex; flex-direction:column; overflow:hidden; }
-.t:hover{ transform:translateY(-3px); box-shadow:var(--sh-h); }
-.lab{ font-size:.7rem; color:var(--mut); text-transform:uppercase; letter-spacing:1px; font-weight:700; }
-.val{ font-size:1.9rem; font-weight:800; letter-spacing:-1px; margin-top:6px; color:var(--ink); }
-.small{ font-size:.78rem; color:var(--mut); margin-top:3px; font-weight:500; }
-.span2{ grid-column:span 2; } .row2{ grid-row:span 2; }
-.hero{ grid-column:span 2; grid-row:span 2; background:linear-gradient(150deg,#6c63ff,#8b7bff); color:#fff; }
-.hero .lab{ color:rgba(255,255,255,.85); } .hero .big{ font-size:3rem; font-weight:800; letter-spacing:-2px; margin-top:8px; }
-.hero .hs{ margin-top:auto; font-size:.86rem; color:rgba(255,255,255,.92); font-weight:500; }
-.full{ grid-column:span 4; }
+/* ---------- bento grid + tiles ---------- */
+.bento{{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }}
+.t{{ border-radius:var(--r); background:linear-gradient(180deg,var(--card2),var(--card));
+  border:1px solid var(--line); box-shadow:var(--sh); padding:20px;
+  display:flex; flex-direction:column; overflow:hidden; position:relative;
+  transition:transform .22s ease-out, border-color .22s; }}
+.t:hover{{ transform:translateY(-3px); border-color:rgba(129,140,248,.35); }}
+.lab{{ font-size:.68rem; color:var(--mut); text-transform:uppercase; letter-spacing:1.4px; font-weight:600; }}
+.val{{ font-family:'JetBrains Mono',monospace; font-size:1.75rem; font-weight:700;
+  letter-spacing:-1px; margin-top:8px; color:var(--ink); font-variant-numeric:tabular-nums; }}
+.small{{ font-size:.78rem; color:var(--mut); margin-top:4px; font-weight:500; }}
+.span2{{ grid-column:span 2; }} .full{{ grid-column:span 4; }}
+.hero{{ grid-column:span 2; grid-row:span 2; color:#fff; border:1px solid rgba(129,140,248,.35);
+  background:linear-gradient(120deg,#161c34,#101527 45%,#0d1f2a);
+  background-size:200% 200%; animation:heroflow 9s ease infinite; }}
+@keyframes heroflow{{ 0%,100%{{background-position:0% 50%}} 50%{{background-position:100% 50%}} }}
+.hero .big{{ font-family:'JetBrains Mono',monospace; font-size:2.9rem; font-weight:700;
+  letter-spacing:-2px; margin-top:10px; background:linear-gradient(90deg,#fff,#c7d2fe);
+  -webkit-background-clip:text; background-clip:text; color:transparent; }}
+.hero .hs{{ margin-top:auto; font-size:.85rem; color:#b8c1d9; font-weight:500; }}
 
-/* account chips inside a bento card */
-.clist{ display:grid; grid-template-columns:repeat(auto-fill,minmax(148px,1fr)); gap:12px; margin-top:14px; }
-.cc{ background:var(--soft); border:1px solid var(--line); border-radius:16px; padding:13px; transition:transform .15s; }
-.cc:hover{ transform:translateY(-2px); border-color:#dcdcf5; }
-.cc .r{ display:flex; align-items:center; gap:8px; }
-.cc .ic{ width:30px; height:30px; border-radius:9px; display:grid; place-items:center; font-weight:800; font-size:.78rem; color:#fff; }
-.cc .nm{ font-weight:700; font-size:.86rem; color:var(--ink); }
-.cc .bal{ font-size:1.15rem; font-weight:800; margin-top:9px; letter-spacing:-.5px; }
-.cc .m{ font-size:.72rem; color:var(--mut); margin-top:2px; font-weight:500; }
+/* ---------- account cards with sparklines ---------- */
+.clist{{ display:grid; grid-template-columns:repeat(auto-fill,minmax(168px,1fr)); gap:12px; margin-top:14px; }}
+.cc{{ background:rgba(255,255,255,.025); border:1px solid var(--line); border-radius:16px;
+  padding:14px 14px 10px; transition:transform .18s ease-out, border-color .18s; position:relative; }}
+.cc:hover{{ transform:translateY(-3px); border-color:rgba(129,140,248,.4); }}
+.cc .r{{ display:flex; align-items:center; gap:8px; }}
+.cc .ic{{ width:28px; height:28px; border-radius:9px; display:grid; place-items:center;
+  font-weight:800; font-size:.74rem; color:#0a0d14; }}
+.cc .nm{{ font-weight:700; font-size:.85rem; color:var(--ink); letter-spacing:.3px; }}
+.cc .bal{{ font-family:'JetBrains Mono',monospace; font-size:1.12rem; font-weight:700;
+  margin-top:9px; letter-spacing:-.5px; }}
+.cc .m{{ font-size:.7rem; color:var(--mut); margin-top:2px; font-weight:500; }}
+.cc svg{{ display:block; margin-top:8px; width:100%; height:34px; }}
 
-/* coin header + price */
-.chead{ display:flex; align-items:center; gap:14px; }
-.cic{ width:52px; height:52px; border-radius:15px; display:grid; place-items:center; font-weight:800; font-size:1.35rem; color:#fff; box-shadow:var(--sh); }
-.cname{ font-size:1.5rem; font-weight:800; letter-spacing:-.5px; }
-.csym{ font-size:.8rem; color:var(--mut); font-weight:500; }
-.price{ font-size:2.1rem; font-weight:800; letter-spacing:-1px; }
-.chg{ font-size:.95rem; font-weight:700; padding:5px 12px; border-radius:11px; }
+/* ---------- coin header ---------- */
+.chead{{ display:flex; align-items:center; gap:14px; }}
+.cic{{ width:52px; height:52px; border-radius:15px; display:grid; place-items:center; font-weight:800;
+  font-size:1.3rem; color:#0a0d14; box-shadow:0 8px 24px rgba(0,0,0,.4); }}
+.cname{{ font-family:'Space Grotesk',sans-serif; font-size:1.5rem; font-weight:700; letter-spacing:-.4px; }}
+.csym{{ font-size:.78rem; color:var(--mut); font-weight:500; }}
+.price{{ font-family:'JetBrains Mono',monospace; font-size:2rem; font-weight:700; letter-spacing:-1px; }}
+.chg{{ font-family:'JetBrains Mono',monospace; font-size:.9rem; font-weight:700; padding:5px 12px;
+  border-radius:11px; background:rgba(255,255,255,.05); }}
 
-/* tables */
-.tcard{ background:#fff; border-radius:var(--r); box-shadow:var(--sh); padding:6px; overflow-x:auto; }
-table.ft{ width:100%; border-collapse:collapse; font-size:.88rem; min-width:420px; }
-table.ft th{ text-align:left; padding:11px 14px; color:var(--mut); font-weight:600; text-transform:uppercase;
-  font-size:.66rem; letter-spacing:.7px; border-bottom:1px solid var(--line); }
-table.ft td{ padding:11px 14px; border-bottom:1px solid #f3f3f7; font-variant-numeric:tabular-nums; }
-table.ft tr:last-child td{ border-bottom:none; }
-.pill{ padding:3px 10px; border-radius:999px; font-size:.72rem; font-weight:700; }
-.pill.buy,.pill.tp{ background:rgba(18,183,106,.12); color:var(--green); }
-.pill.sell{ background:rgba(245,181,68,.16); color:#b7791f; }
-.pill.sl{ background:rgba(229,72,77,.12); color:var(--red); }
-.pill.time{ background:rgba(99,91,255,.12); color:var(--brand); }
-.dot{ display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:8px; vertical-align:middle; }
+/* ---------- tables ---------- */
+.tcard{{ background:linear-gradient(180deg,var(--card2),var(--card)); border:1px solid var(--line);
+  border-radius:var(--r); box-shadow:var(--sh); padding:6px; overflow-x:auto; }}
+table.ft{{ width:100%; border-collapse:collapse; font-size:.85rem; min-width:430px; }}
+table.ft th{{ text-align:left; padding:11px 14px; color:var(--mut); font-weight:600;
+  text-transform:uppercase; font-size:.64rem; letter-spacing:1px; border-bottom:1px solid var(--line); }}
+table.ft td{{ padding:11px 14px; border-bottom:1px solid rgba(148,163,184,.05); color:var(--ink); }}
+table.ft tr:last-child td{{ border-bottom:none; }}
+table.ft tbody tr{{ transition:background .15s; }}
+table.ft tbody tr:hover{{ background:rgba(129,140,248,.06); }}
+.pill{{ padding:3px 10px; border-radius:999px; font-size:.7rem; font-weight:700; letter-spacing:.4px; }}
+.pill.buy,.pill.tp{{ background:rgba(52,211,153,.14); color:var(--green); }}
+.pill.sell{{ background:rgba(251,191,36,.14); color:var(--amber); }}
+.pill.sl{{ background:rgba(251,113,133,.14); color:var(--red); }}
+.pill.time,.pill.win,.pill.loss{{ background:rgba(129,140,248,.14); color:var(--brand); }}
 
-.stButton>button{ background:var(--ink); color:#fff; border:none; border-radius:999px;
-  font-weight:600; font-size:.82rem; padding:9px 16px; min-height:42px; transition:transform .15s; }
-.stButton>button:hover{ transform:translateY(-2px); background:#000; }
-.foot{ color:#a4a9b8; font-size:.76rem; margin-top:26px; line-height:1.5; }
+/* ---------- gate progress ---------- */
+.gbar{{ height:10px; border-radius:999px; background:rgba(255,255,255,.06); overflow:hidden; margin-top:12px; }}
+.gfill{{ height:100%; border-radius:999px; background:linear-gradient(90deg,var(--brand),var(--cyan));
+  box-shadow:0 0 14px rgba(34,211,238,.5); transition:width 1s ease-out; }}
 
-@media(max-width:820px){ .bento{ grid-template-columns:repeat(2,1fr); } .hero,.span2,.full{ grid-column:span 2; }
-  .price{font-size:1.7rem;} .cname{font-size:1.25rem;}
-  /* nav: one swipeable row on phones/tablets instead of 4-5 wrapped rows */
-  .navwrap div[role="radiogroup"]{ flex-wrap:nowrap; overflow-x:auto; -webkit-overflow-scrolling:touch;
-    scrollbar-width:none; padding-bottom:2px; }
-  .navwrap div[role="radiogroup"]::-webkit-scrollbar{ display:none; }
-  .navwrap div[role="radiogroup"] label{ flex:0 0 auto; white-space:nowrap; } }
-@media(max-width:480px){ .bento{ gap:12px; grid-auto-rows:132px; } .hero .big{font-size:2.3rem;} .val{font-size:1.55rem;}
-  .block-container{padding:.6rem;} table.ft{min-width:360px;} }
+/* ---------- buttons ---------- */
+.stButton>button{{ background:linear-gradient(135deg,var(--brand),#5b64f0); color:#fff; border:none;
+  border-radius:999px; font-weight:600; font-size:.82rem; padding:9px 16px; min-height:42px;
+  transition:transform .16s ease-out, box-shadow .16s; }}
+.stButton>button:hover{{ transform:translateY(-2px); box-shadow:0 8px 22px rgba(99,102,241,.4); }}
+.foot{{ color:#5d6577; font-size:.75rem; margin-top:30px; line-height:1.6; }}
+
+/* ---------- entrance + scroll-reveal animations (CSS only) ---------- */
+@keyframes rise{{ from{{ opacity:0; transform:translateY(18px); }} to{{ opacity:1; transform:none; }} }}
+.bento .t{{ animation:rise .5s ease-out both; }}
+.bento .t:nth-child(1){{animation-delay:.03s}} .bento .t:nth-child(2){{animation-delay:.09s}}
+.bento .t:nth-child(3){{animation-delay:.15s}} .bento .t:nth-child(4){{animation-delay:.21s}}
+.bento .t:nth-child(5){{animation-delay:.27s}} .bento .t:nth-child(6){{animation-delay:.33s}}
+.cc{{ animation:rise .45s ease-out both; }}
+.clist .cc:nth-child(odd){{ animation-delay:.05s }} .clist .cc:nth-child(3n){{ animation-delay:.12s }}
+@supports (animation-timeline: view()) {{
+  .tcard, .sect, .reveal{{ animation:rise .6s ease-out both;
+    animation-timeline:view(); animation-range:entry 0% entry 45%; }}
+}}
+@media (prefers-reduced-motion: reduce) {{
+  *, *:before, *:after{{ animation-duration:.001s !important; animation-delay:0s !important;
+    transition-duration:.001s !important; }}
+}}
+
+/* ---------- responsive ---------- */
+@media(max-width:820px){{
+  .bento{{ grid-template-columns:repeat(2,1fr); }} .hero,.span2,.full{{ grid-column:span 2; }}
+  .price{{font-size:1.6rem;}} .cname{{font-size:1.2rem;}} .hero .big{{font-size:2.3rem;}}
+  .navwrap div[role="radiogroup"]{{ flex-wrap:nowrap; overflow-x:auto;
+    -webkit-overflow-scrolling:touch; scrollbar-width:none; padding-bottom:2px; }}
+  .navwrap div[role="radiogroup"]::-webkit-scrollbar{{ display:none; }}
+  .navwrap div[role="radiogroup"] label{{ flex:0 0 auto; white-space:nowrap; }} }}
+@media(max-width:480px){{
+  .bento{{ gap:11px; }} .val{{font-size:1.4rem;}} .hero .big{{font-size:2rem;}}
+  .block-container{{padding:.6rem;}} table.ft{{min-width:380px;}} }}
 </style>
 """, unsafe_allow_html=True)
 
@@ -194,16 +257,17 @@ def stats(s):
             "pnl": sum(t["pnl"] for t in closed)}
 
 
-def money(x):
-    return f'<span class="num {"pos" if x >= 0 else "neg"}">{"+" if x>=0 else "−"}${abs(x):,.0f}</span>'
+def money(x, dec=0):
+    return (f'<span class="num {"pos" if x >= 0 else "neg"}">'
+            f'{"+" if x >= 0 else "−"}${abs(x):,.{dec}f}</span>')
 
 
 def pkt(iso):
     try:
-        dt = datetime.fromisoformat(str(iso).replace("Z", "+00:00"))
-        if dt.tzinfo is None:
-            dt = dt.replace(tzinfo=timezone.utc)
-        return dt.astimezone(PKT).strftime("%Y-%m-%d %H:%M")
+        d = datetime.fromisoformat(str(iso).replace("Z", "+00:00"))
+        if d.tzinfo is None:
+            d = d.replace(tzinfo=timezone.utc)
+        return d.astimezone(PKT).strftime("%d %b %H:%M")
     except Exception:
         return str(iso)[:16]
 
@@ -211,120 +275,198 @@ def pkt(iso):
 def table(headers, rows):
     th = "".join(f"<th>{h}</th>" for h in headers)
     body = "".join("<tr>" + "".join(f"<td>{c}</td>" for c in r) + "</tr>" for r in rows)
-    return f'<div class="tcard"><table class="ft"><thead><tr>{th}</tr></thead><tbody>{body}</tbody></table></div>'
+    return (f'<div class="tcard"><table class="ft"><thead><tr>{th}</tr></thead>'
+            f'<tbody>{body}</tbody></table></div>')
 
 
-def candles(df, up=GREEN, dn=RED):
+def spark(closed, color=GREEN, w=150, h=34, n=40):
+    """Inline SVG equity sparkline from an account's closed trades."""
+    vals = [START] + [t.get("balance_after", START) for t in closed]
+    vals = vals[-n:]
+    if len(vals) < 2:
+        vals = [START, START]
+    lo, hi = min(vals), max(vals)
+    rng = (hi - lo) or 1.0
+    pts = [(i * w / (len(vals) - 1), h - 3 - (v - lo) / rng * (h - 6))
+           for i, v in enumerate(vals)]
+    line = " ".join(f"{x:.1f},{y:.1f}" for x, y in pts)
+    area = f"0,{h} " + line + f" {w},{h}"
+    return (f'<svg viewBox="0 0 {w} {h}" preserveAspectRatio="none" aria-hidden="true">'
+            f'<polygon points="{area}" fill="{color}" opacity="0.10"/>'
+            f'<polyline points="{line}" fill="none" stroke="{color}" stroke-width="2" '
+            f'stroke-linejoin="round" stroke-linecap="round"/></svg>')
+
+
+_AXIS = dict(labelColor=MUT, gridColor="rgba(148,163,184,.08)", domain=False,
+             tickColor="rgba(148,163,184,.15)")
+
+
+def candles(df):
     base = alt.Chart(df).encode(
-        x=alt.X("time:T", title=None, axis=alt.Axis(labelColor=MUT, grid=False, domainColor="#e6e6ee", tickColor="#e6e6ee")))
+        x=alt.X("time:T", title=None,
+                axis=alt.Axis(labelColor=MUT, grid=False, domainColor="rgba(148,163,184,.15)",
+                              tickColor="rgba(148,163,184,.15)")))
     rule = base.mark_rule(strokeWidth=1).encode(
-        y=alt.Y("l:Q", title=None, scale=alt.Scale(zero=False),
-                axis=alt.Axis(labelColor=MUT, gridColor="#eef0f4", domain=False, tickColor="#e6e6ee")),
-        y2="h:Q", color=alt.condition("datum.o <= datum.c", alt.value(up), alt.value(dn)))
+        y=alt.Y("l:Q", title=None, scale=alt.Scale(zero=False), axis=alt.Axis(**_AXIS)),
+        y2="h:Q", color=alt.condition("datum.o <= datum.c", alt.value(GREEN), alt.value(RED)))
     body = base.mark_bar(size=6, cornerRadius=2).encode(
-        y="o:Q", y2="c:Q", color=alt.condition("datum.o <= datum.c", alt.value(up), alt.value(dn)))
-    return (rule + body).properties(height=320).configure_view(strokeWidth=0).configure(background="#ffffff")
+        y="o:Q", y2="c:Q",
+        color=alt.condition("datum.o <= datum.c", alt.value(GREEN), alt.value(RED)))
+    return ((rule + body).properties(height=320)
+            .configure_view(strokeWidth=0).configure(background="transparent"))
 
 
 def equity(closed, color=BRAND):
-    eq = pd.DataFrame({"#": range(len(closed) + 1), "Balance": [START] + [t["balance_after"] for t in closed]})
-    return alt.Chart(eq).mark_area(
-        line={"color": color, "strokeWidth": 3},
+    eq = pd.DataFrame({"#": range(len(closed) + 1),
+                       "Balance": [START] + [t["balance_after"] for t in closed]})
+    return (alt.Chart(eq).mark_area(
+        line={"color": color, "strokeWidth": 2.5},
         color=alt.Gradient(gradient="linear",
-            stops=[alt.GradientStop(color=color, offset=0), alt.GradientStop(color="#ffffff", offset=1)],
-            x1=1, x2=1, y1=1, y2=0)
-    ).encode(
-        x=alt.X("#:Q", title=None, axis=alt.Axis(labels=False, ticks=False, domain=False, grid=False)),
-        y=alt.Y("Balance:Q", title=None, scale=alt.Scale(zero=False),
-                axis=alt.Axis(grid=True, gridColor="#eef0f4", domain=False, labelColor=MUT)),
-    ).properties(height=210).configure_view(strokeWidth=0).configure(background="#ffffff")
+            stops=[alt.GradientStop(color=color, offset=0),
+                   alt.GradientStop(color="transparent", offset=1)],
+            x1=1, x2=1, y1=1, y2=0))
+        .encode(
+            x=alt.X("#:Q", title=None, axis=alt.Axis(labels=False, ticks=False,
+                                                     domain=False, grid=False)),
+            y=alt.Y("Balance:Q", title=None, scale=alt.Scale(zero=False),
+                    axis=alt.Axis(grid=True, **_AXIS)))
+        .properties(height=210).configure_view(strokeWidth=0)
+        .configure(background="transparent"))
 
 
-# ---------------- load ----------------
+# ---------------- load all state ----------------
 states = {k: load_json(f"state/{k}.json") for k, *_ in ACCOUNTS}
-now_pkt = datetime.now(PKT).strftime("%Y-%m-%d %H:%M")
+watch = load_json("state/regime_watch.json") or {}
+gate = load_json("state/graduation.json")
+senti = load_json("state/news_sentiment.json")
+hb = load_json("state/brain_heartbeat.json")
+cands = load_json("state/candidates.json") or {}
+now_pkt = datetime.now(PKT).strftime("%d %b %Y · %H:%M")
 
 # ---------------- top bar + nav ----------------
 c1, c2 = st.columns([4, 1])
-c1.markdown(f'<div class="brand">◈ RMSE <b>BOT</b></div>'
-            f'<div class="sub">🕒 {now_pkt} PKT · {len(ACCOUNTS)} paper accounts · live forward-test</div>',
-            unsafe_allow_html=True)
+c1.markdown(f'<div class="brand"><span class="livedot"></span> RMSE <b>BOT</b></div>'
+            f'<div class="sub">{now_pkt} PKT · {len(ACCOUNTS)} paper accounts · '
+            f'always-on forward test</div>', unsafe_allow_html=True)
 with c2:
     if st.button("⟳ Refresh", key="refresh_btn", **_WIDE):
         st.cache_data.clear()
         st.rerun()
 
-NAV_DISP = {"Overview": "◧ Overview", "Brain": "🧠 BRAIN"}
+NAV_DISP = {"Overview": "◧ Overview", "Brain": "◉ BRAIN"}
 for _k, _lbl, _c, _gl, _sym in ACCOUNTS:
     NAV_DISP[_lbl] = f"{_gl} {_k.upper()}"
 _opts = ["Overview", "Brain"] + [lbl for _, lbl, *_ in ACCOUNTS]
 st.markdown('<div class="navwrap">', unsafe_allow_html=True)
-page = st.radio("nav", _opts, format_func=lambda o: NAV_DISP[o], horizontal=True, label_visibility="collapsed")
+page = st.radio("nav", _opts, format_func=lambda o: NAV_DISP[o],
+                horizontal=True, label_visibility="collapsed")
 st.markdown('</div>', unsafe_allow_html=True)
 
 if not any(states.values()):
     st.warning("State load nahi hua — thori dair baad Refresh karein.")
     st.stop()
 
-# ================= OVERVIEW (BENTO) =================
+# ================= OVERVIEW =================
 if page == "Overview":
-    tb = sum(stats(states[k])["balance"] for k, *_ in ACCOUNTS)
-    tp = sum(stats(states[k])["pnl"] for k, *_ in ACCOUNTS)
-    tt = sum(stats(states[k])["trades"] for k, *_ in ACCOUNTS)
-    to = sum(stats(states[k])["open"] for k, *_ in ACCOUNTS)
+    A = {k: stats(states[k]) for k, *_ in ACCOUNTS}
+    tb = sum(a["balance"] for a in A.values())
+    tp = sum(a["pnl"] for a in A.values())
+    tt = sum(a["trades"] for a in A.values())
+    to = sum(a["open"] for a in A.values())
     st_tot = START * len(ACCOUNTS)
-    # best account
-    best_k, best = max(((k, stats(states[k])) for k, *_ in ACCOUNTS), key=lambda x: x[1]["pnl"])
-    best_lbl = ACC[best_k][0]
+    all_closed = [t for k, *_ in ACCOUNTS for t in (states[k] or {}).get("closed", [])]
+    wins_all = [t for t in all_closed if t["pnl"] > 0]
+    win_all = len(wins_all) / len(all_closed) if all_closed else 0.0
+    gross_w = sum(t["pnl"] for t in wins_all)
+    gross_l = -sum(t["pnl"] for t in all_closed if t["pnl"] < 0)
+    pf_all = (gross_w / gross_l) if gross_l else 0.0
+    best_k, best = max(A.items(), key=lambda x: x[1]["pnl"])
+    worst_k, worst = min(A.items(), key=lambda x: x[1]["pnl"])
     pnl_pct = (tp / st_tot) * 100
+    arrow = "▲ +" if tb >= st_tot else "▼ −"
 
-    chips = ""
-    for k, lbl, color, gl, sym in ACCOUNTS:
-        a = stats(states[k]); bcol = GREEN if a["balance"] >= START else (RED if a["balance"] < START else INK)
-        chips += (f'<div class="cc"><div class="r"><div class="ic" style="background:{color}">{gl}</div>'
-                  f'<div class="nm">{k.upper()}</div></div>'
-                  f'<div class="bal" style="color:{bcol if a["pnl"] else INK}">${a["balance"]:,.0f}</div>'
-                  f'<div class="m">{money(a["pnl"])} · win {a["win"]*100:.0f}% · {a["trades"]}tr</div></div>')
+    up_n = sum(1 for w in watch.values() if isinstance(w, dict) and w.get("regime") == "up")
+    dn_n = sum(1 for w in watch.values() if isinstance(w, dict) and w.get("regime") == "down")
+    gp, gt = (gate.get("passed", 0), gate.get("total", 7)) if gate else (0, 7)
+    s_mkt = senti.get("market") if senti else None
+    n_cands = sum(len(v) if isinstance(v, list) else 1 for v in cands.values())
 
     st.markdown(f"""
     <div class="bento">
       <div class="t hero">
-        <div class="lab">Total equity</div>
-        <div class="big num">${tb:,.0f}</div>
-        <div class="hs">{"▲ +" if tb >= st_tot else "▼ −"}${abs(tb-st_tot):,.0f} ({pnl_pct:+.1f}%) · {len(ACCOUNTS)} accounts · live forward-test</div>
+        <div class="lab">Total equity — {len(ACCOUNTS)} accounts</div>
+        <div class="big">${tb:,.0f}</div>
+        <div class="hs">{arrow}${abs(tb - st_tot):,.0f} ({pnl_pct:+.2f}%) since start ·
+          win {win_all * 100:.0f}% · PF {pf_all:.2f} · {to} open now</div>
       </div>
       <div class="t"><div class="lab">Realized P&amp;L</div>
-        <div class="val" style="color:{GREEN if tp>=0 else RED}">{'+' if tp>=0 else '−'}${abs(tp):,.0f}</div>
-        <div class="small">across {len(ACCOUNTS)} accounts</div></div>
-      <div class="t"><div class="lab">Total trades</div>
-        <div class="val num">{tt}</div><div class="small">{to} open now</div></div>
-      <div class="t span2"><div class="lab">Best account · {best_lbl}</div>
-        <div class="val" style="color:{GREEN if best['pnl']>=0 else RED}">{'+' if best['pnl']>=0 else '−'}${abs(best['pnl']):,.0f}</div>
-        <div class="small">balance ${best['balance']:,.0f} · win {best['win']*100:.0f}%</div></div>
-      <div class="t full" style="grid-row:span 2;">
-        <div class="lab">All accounts — tap a coin in the top bar for its live page</div>
-        <div class="clist">{chips}</div>
-      </div>
-    </div>
-    """, unsafe_allow_html=True)
+        <div class="val" style="color:{GREEN if tp >= 0 else RED}">{'+' if tp >= 0 else '−'}${abs(tp):,.0f}</div>
+        <div class="small">{tt} closed trades</div></div>
+      <div class="t"><div class="lab">Market regime</div>
+        <div class="val"><span style="color:{GREEN}">{up_n}▲</span> <span style="color:{RED}">{dn_n}▼</span></div>
+        <div class="small">daily trend, {len(watch) or len(ACCOUNTS)} markets</div></div>
+      <div class="t"><div class="lab">Best · {ACC[best_k][0]}</div>
+        <div class="val" style="color:{GREEN if best['pnl'] >= 0 else RED}">{'+' if best['pnl'] >= 0 else '−'}${abs(best['pnl']):,.0f}</div>
+        <div class="small">win {best['win'] * 100:.0f}% · {best['trades']} trades</div></div>
+      <div class="t"><div class="lab">Weakest · {ACC[worst_k][0]}</div>
+        <div class="val" style="color:{GREEN if worst['pnl'] >= 0 else RED}">{'+' if worst['pnl'] >= 0 else '−'}${abs(worst['pnl']):,.0f}</div>
+        <div class="small">win {worst['win'] * 100:.0f}% · {worst['trades']} trades</div></div>
+      <div class="t"><div class="lab">Graduation gate</div>
+        <div class="val">{gp}<span style="color:{MUT}">/{gt}</span></div>
+        <div class="gbar"><div class="gfill" style="width:{100 * gp / max(1, gt):.0f}%"></div></div></div>
+      <div class="t"><div class="lab">News sentiment (LLM)</div>
+        <div class="val" style="color:{GREEN if (s_mkt or 0) > 0 else (RED if (s_mkt or 0) < 0 else INK)}">{f"{s_mkt:+d}" if s_mkt is not None else "—"}</div>
+        <div class="small">{(senti.get('top_risk') or '')[:52] if senti else 'observer off/idle'}</div></div>
+      <div class="t span2"><div class="lab">Self-learning tournament</div>
+        <div class="val">{n_cands} <span style="font-size:1rem;color:{MUT}">challengers in trial</span></div>
+        <div class="small">discovery at every 4h close · promotion needs 30+ forward trades + t-stat</div></div>
+    </div>""", unsafe_allow_html=True)
 
-# ================= BRAIN (self-learning activity) =================
+    st.markdown('<div class="sect">All 14 accounts — live equity</div>', unsafe_allow_html=True)
+    chips = ""
+    for k, lbl, color, gl, sym in ACCOUNTS:
+        a = A[k]
+        closed = (states[k] or {}).get("closed", [])
+        pc = GREEN if a["pnl"] > 0 else (RED if a["pnl"] < 0 else INK)
+        sc = GREEN if a["pnl"] >= 0 else RED
+        reg = watch.get(sym.replace("PAXG", "XAU").replace("USDT", "USDT"), {})
+        reg = (watch.get("XAUUSD") if k == "gold" else watch.get(sym)) or {}
+        rr = reg.get("regime", "—") if isinstance(reg, dict) else "—"
+        rc = GREEN if rr == "up" else (RED if rr == "down" else MUT)
+        chips += (f'<div class="cc"><div class="r"><div class="ic" style="background:{color}">{gl}</div>'
+                  f'<div class="nm">{k.upper()}</div>'
+                  f'<div style="margin-left:auto;font-size:.62rem;font-weight:700;color:{rc};'
+                  f'letter-spacing:1px">{rr.upper() if rr != "—" else ""}</div></div>'
+                  f'<div class="bal" style="color:{pc}">${a["balance"]:,.0f}</div>'
+                  f'<div class="m">{money(a["pnl"])} · win {a["win"] * 100:.0f}% · '
+                  f'{a["trades"]}tr · {a["open"]} open</div>'
+                  f'{spark(closed, sc)}</div>')
+    st.markdown(f'<div class="clist">{chips}</div>', unsafe_allow_html=True)
+
+    recent = sorted(all_closed, key=lambda t: str(t.get("close_time", "")), reverse=True)[:12]
+    if recent:
+        st.markdown('<div class="sect">Latest closed trades — whole portfolio</div>',
+                    unsafe_allow_html=True)
+        st.markdown(table(
+            ["Market", "Dir", "Result", "P&L", "Closed (PKT)"],
+            [[t.get("symbol", "?"),
+              f'<span class="pill {t.get("direction", "buy")}">{t.get("direction", "?").upper()}</span>',
+              f'<span class="pill {t.get("outcome", "time")}">{t.get("outcome", "?").upper()}</span>',
+              money(t["pnl"], 2), pkt(t.get("close_time"))] for t in recent]),
+            unsafe_allow_html=True)
+
+# ================= BRAIN =================
 elif page == "Brain":
-    hb = load_json("state/brain_heartbeat.json")
-    gate = load_json("state/graduation.json")
-    cands = load_json("state/candidates.json") or {}
     sb = load_json("state/scoreboard.json")
     lessons = load_json("state/lessons.json")
-    watch = load_json("state/regime_watch.json") or {}
     health = load_json("state/health.json") or {}
     mistakes = load_json("state/mistakes.json")
-    senti = load_json("state/news_sentiment.json")
+    ledger = load_json("state/regime_ledger.json")
 
-    alive, hb_txt = False, "no heartbeat file on this copy"
+    alive, hb_txt = False, "no heartbeat on this copy"
     if hb and hb.get("ts"):
         try:
-            age = (datetime.now(timezone.utc)
-                   - datetime.fromisoformat(hb["ts"])).total_seconds()
+            age = (datetime.now(timezone.utc) - datetime.fromisoformat(hb["ts"])).total_seconds()
             alive = age < 3600
             hb_txt = f"last beat {int(age // 60)} min ago"
         except Exception:
@@ -332,31 +474,32 @@ elif page == "Brain":
     n_cands = sum(len(v) if isinstance(v, list) else 1 for v in cands.values())
     flags = [nm for nm, h in health.items() if isinstance(h, dict) and h.get("unhealthy")]
     gp, gt = (gate.get("passed", 0), gate.get("total", 7)) if gate else (0, 7)
+    s_mkt = senti.get("market") if senti else None
 
     st.markdown(f"""
-    <div class="bento" style="grid-auto-rows:auto;">
+    <div class="bento">
       <div class="t hero"><div class="lab">Real-API graduation gate</div>
-        <div class="big num">{gp}/{gt}</div>
+        <div class="big">{gp}/{gt}</div>
+        <div class="gbar"><div class="gfill" style="width:{100 * gp / max(1, gt):.0f}%"></div></div>
         <div class="hs">{'🎓 GRADUATED — testnet step unlocked' if gate and gate.get('graduated')
-                         else 'criteria passed — bot must earn real-money access'}</div></div>
+                         else 'bot must EARN real-money access — no shortcuts'}</div></div>
       <div class="t"><div class="lab">Brain watchdog</div>
         <div class="val" style="color:{GREEN if alive else RED}">{'ALIVE' if alive else 'IDLE'}</div>
         <div class="small">{hb_txt}</div></div>
       <div class="t"><div class="lab">Tournament</div>
-        <div class="val num">{n_cands}</div>
+        <div class="val">{n_cands}</div>
         <div class="small">challengers in forward trial</div></div>
-      <div class="t span2"><div class="lab">Health flags</div>
+      <div class="t"><div class="lab">Health flags</div>
         <div class="val" style="color:{RED if flags else GREEN}">{len(flags) or 'NONE'}</div>
-        <div class="small">{', '.join(flags[:6]) if flags else 'no account in decay'}</div></div>
-      <div class="t span2"><div class="lab">LLM news sentiment (observer)</div>
-        <div class="val" style="color:{GREEN if senti and (senti.get('market') or 0) > 0 else (RED if senti and (senti.get('market') or 0) < 0 else INK)}">
-          {f"{senti['market']:+d} / ±2" if senti and senti.get('market') is not None else 'OFF'}</div>
-        <div class="small">{(senti.get('top_risk') or f"{senti.get('n_headlines', 0)} headlines read")
-                            if senti else 'OPENAI_API_KEY set nahi — feature silent off'}</div></div>
+        <div class="small">{', '.join(flags[:4]) if flags else 'no account in decay'}</div></div>
+      <div class="t"><div class="lab">News sentiment (LLM)</div>
+        <div class="val" style="color:{GREEN if (s_mkt or 0) > 0 else (RED if (s_mkt or 0) < 0 else INK)}">{f"{s_mkt:+d} / ±2" if s_mkt is not None else 'OFF'}</div>
+        <div class="small">{(senti.get('top_risk') or f"{senti.get('n_headlines', 0)} headlines read")[:60]
+                            if senti else 'OPENAI_API_KEY set nahi'}</div></div>
     </div>""", unsafe_allow_html=True)
 
     if gate:
-        st.markdown('<div class="sect">Graduation criteria (earn the real Binance API)</div>',
+        st.markdown('<div class="sect">Graduation criteria — earn the real Binance API</div>',
                     unsafe_allow_html=True)
         st.markdown(table(["Criterion", "Now", "Target", "Status"],
             [[c["why"], f'{c["value"]}', c["target"],
@@ -364,14 +507,14 @@ elif page == "Brain":
              for c in gate.get("criteria", [])]), unsafe_allow_html=True)
 
     if cands:
-        st.markdown('<div class="sect">Challenger tournament (forward trials)</div>',
+        st.markdown('<div class="sect">Challenger tournament — forward trials</div>',
                     unsafe_allow_html=True)
         rows = []
         for sym_k, entry in sorted(cands.items()):
             for c in (entry if isinstance(entry, list) else [entry]):
                 r = c.get("rule", {})
                 rows.append([sym_k, f"slot {c.get('slot', 0)}",
-                             f'<span class="pill {r.get("direction","buy")}">{r.get("direction","?").upper()}</span> '
+                             f'<span class="pill {r.get("direction", "buy")}">{r.get("direction", "?").upper()}</span> '
                              + " & ".join(r.get("when", [])),
                              r.get("regime", "—"), c.get("pf", "—"),
                              str(c.get("born", ""))[:10]])
@@ -380,7 +523,8 @@ elif page == "Brain":
 
     if sb and sb.get("totals", {}).get("born"):
         t = sb["totals"]
-        st.markdown('<div class="sect">Idea-family scoreboard</div>', unsafe_allow_html=True)
+        st.markdown('<div class="sect">Idea-family scoreboard — which ideas survive</div>',
+                    unsafe_allow_html=True)
         st.markdown(f'<div class="sub">{t["born"]} candidates born · {t["promoted"]} promoted · '
                     f'{t["trial_complete"]} failed trial · {t["stale"]} stale · '
                     f'{t["demoted"]} demoted after promotion</div>', unsafe_allow_html=True)
@@ -388,14 +532,15 @@ elif page == "Brain":
                 if v.get("survival_rate") is not None]
         if fams:
             st.markdown(table(["Idea family", "Born", "Survival", "Avg forward net"],
-                [[k, v["born"], f'{v["survival_rate"]*100:.0f}%', v.get("avg_forward_net", "—")]
+                [[k, v["born"], f'{v["survival_rate"] * 100:.0f}%', v.get("avg_forward_net", "—")]
                  for k, v in sorted(fams, key=lambda kv: -(kv[1]["survival_rate"] or 0))[:10]]),
                 unsafe_allow_html=True)
 
     if lessons and lessons.get("variants"):
-        st.markdown('<div class="sect">Shadow exits — roads not taken '
+        st.markdown('<div class="sect">Shadow exits — the six roads not taken '
                     f'({lessons.get("n_trades", 0)} trades replayed)</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="sub">Base exit cumulative: {lessons.get("base_cum_R", 0)}R</div>',
+        st.markdown(f'<div class="sub">Base exit cumulative: {lessons.get("base_cum_R", 0)}R — '
+                    f'variants below are what the SAME trades would have earned</div>',
                     unsafe_allow_html=True)
         st.markdown(table(["Exit variant", "Cum R", "Avg R", "Edge vs base", "Sample"],
             [[nm, v.get("cum_R", "—"), v.get("avg_R", "—"),
@@ -406,16 +551,31 @@ elif page == "Brain":
             unsafe_allow_html=True)
 
     if watch:
-        st.markdown('<div class="sect">Regime watch (daily trend per market)</div>',
+        st.markdown('<div class="sect">Regime watch — daily trend per market</div>',
                     unsafe_allow_html=True)
         chips = ""
         for sym_k, w in sorted(watch.items()):
             reg = w.get("regime", "?") if isinstance(w, dict) else "?"
             col = GREEN if reg == "up" else (RED if reg == "down" else MUT)
-            vol = " · ⚡vol" if isinstance(w, dict) and w.get("vol_flag") else ""
+            vol = ' · <span style="color:#fbbf24">VOL⚠</span>' if isinstance(w, dict) and w.get("vol_flag") else ""
             chips += (f'<div class="cc"><div class="nm">{sym_k}</div>'
                       f'<div class="bal" style="color:{col};font-size:.95rem">{reg.upper()}{vol}</div></div>')
         st.markdown(f'<div class="clist">{chips}</div>', unsafe_allow_html=True)
+
+    if ledger:
+        warns = []
+        for nm, acct in ledger.items():
+            if nm.startswith("_") or not isinstance(acct, dict):
+                continue
+            for rk, regs in acct.items():
+                for rg, b in regs.items():
+                    if isinstance(b, dict) and b.get("n", 0) >= 10 and b.get("net", 0) < 0:
+                        warns.append([nm, rk, rg, b["n"], money(b["net"]), f'{b.get("win", 0) * 100:.0f}%'])
+        if warns:
+            st.markdown('<div class="sect">Regime warnings — rule loses in this weather</div>',
+                        unsafe_allow_html=True)
+            st.markdown(table(["Account", "Rule", "Regime", "Trades", "Net", "Win"], warns),
+                        unsafe_allow_html=True)
 
     if mistakes and mistakes.get("months"):
         real_months = [m for m in mistakes["months"] if m[:2] == "20"]
@@ -423,71 +583,80 @@ elif page == "Brain":
         mo = mistakes["months"][mo_key]
         st.markdown(f'<div class="sect">Mistake diary — {mo_key} '
                     f'({mo.get("trades", 0)} trades)</div>', unsafe_allow_html=True)
-        st.markdown(table(["Mistake", "Count"],
-            [["Exited too early (TP hit after exit)", mo.get("exited_too_early", 0)],
-             ["Stop too tight (wider SL would have won)", mo.get("stop_too_tight", 0)],
-             ["Held too long (time-exit at loss)", mo.get("held_too_long", 0)],
-             ["Regime mismatch (bug guard)", mo.get("regime_mismatch", 0)],
-             ["Data-feed skips", mo.get("feed_skips", 0)]]), unsafe_allow_html=True)
+        rows = [["Exited too early (TP hit after exit)", mo.get("exited_too_early", 0)],
+                ["Stop too tight (wider SL would have won)", mo.get("stop_too_tight", 0)],
+                ["Held too long (time-exit at loss)", mo.get("held_too_long", 0)],
+                ["Regime mismatch (bug guard)", mo.get("regime_mismatch", 0)],
+                ["Data-feed skips", mo.get("feed_skips", 0)]]
+        if mo.get("news_window_trades"):
+            rows.append([f"Trades ±2h of high-impact news (net ${mo.get('news_window_net', 0)})",
+                         mo["news_window_trades"]])
+        if mo.get("neg_sentiment_trades"):
+            rows.append([f"Trades during negative sentiment (net ${mo.get('neg_sentiment_net', 0)})",
+                         mo["neg_sentiment_trades"]])
+        st.markdown(table(["Mistake", "Count"], rows), unsafe_allow_html=True)
 
     if not any([hb, gate, cands, sb, lessons, watch, mistakes]):
         st.info("Brain state files is copy par abhi nahi bane — VPS dashboard live brain "
                 "dikhata hai; GitHub copy weekly learning ke baad bharti hai.")
 
-# ================= PER-COIN (BENTO) =================
+# ================= PER-COIN =================
 else:
     k = next(kk for kk, lbl, *_ in ACCOUNTS if lbl == page)
     lbl, color, gl, sym = ACC[k]
     s = states[k] or {}
     a = stats(s)
     last, chg = fetch_ticker(sym)
+    reg = (watch.get("XAUUSD") if k == "gold" else watch.get(sym)) or {}
+    rr = reg.get("regime", "—") if isinstance(reg, dict) else "—"
+    rc = GREEN if rr == "up" else (RED if rr == "down" else MUT)
 
     st.markdown(f'<div class="chead"><div class="cic" style="background:{color}">{gl}</div>'
                 f'<div><div class="cname">{lbl}</div>'
-                f'<div class="csym">{("gold ≈ PAXG proxy" if k=="gold" else sym+" · Binance live")} · {now_pkt} PKT</div></div></div>',
+                f'<div class="csym">{("gold ≈ PAXG proxy" if k == "gold" else sym + " · Binance live")}'
+                f' · regime <b style="color:{rc}">{rr.upper()}</b></div></div></div>',
                 unsafe_allow_html=True)
 
-    # bento tiles: price + KPIs
-    bcol = GREEN if a["balance"] >= START else (RED if a["balance"] < START else INK)
+    pc = GREEN if a["pnl"] > 0 else (RED if a["pnl"] < 0 else INK)
     price_tile = ""
     if last is not None:
         cc = GREEN if (chg or 0) >= 0 else RED
-        arrow = "▲" if (chg or 0) >= 0 else "▼"
+        arw = "▲" if (chg or 0) >= 0 else "▼"
         price_tile = (f'<div class="t span2"><div class="lab">Live price · {sym}</div>'
-                      f'<div style="display:flex;align-items:baseline;gap:12px;margin-top:8px">'
+                      f'<div style="display:flex;align-items:baseline;gap:12px;margin-top:8px;flex-wrap:wrap">'
                       f'<span class="price" style="color:{color}">${last:,.4f}</span>'
-                      f'<span class="chg" style="background:rgba(99,91,255,.08);color:{cc}">{arrow} {abs(chg):.2f}% 24h</span></div></div>')
+                      f'<span class="chg" style="color:{cc}">{arw} {abs(chg):.2f}% 24h</span></div></div>')
     st.markdown(f"""
     <div class="bento" style="grid-auto-rows:auto;">
       {price_tile}
-      <div class="t"><div class="lab">Balance</div><div class="val" style="color:{bcol}">${a['balance']:,.0f}</div>
-        <div class="small">{money(a['pnl'])} P&amp;L</div></div>
-      <div class="t"><div class="lab">Win rate</div><div class="val num">{a['win']*100:.0f}%</div>
+      <div class="t"><div class="lab">Balance</div><div class="val" style="color:{pc}">${a['balance']:,.2f}</div>
+        <div class="small">{money(a['pnl'], 2)} realized</div></div>
+      <div class="t"><div class="lab">Win rate</div><div class="val">{a['win'] * 100:.0f}%</div>
         <div class="small">{a['trades']} closed · {a['open']} open</div></div>
-    </div>
-    """, unsafe_allow_html=True)
+    </div>""", unsafe_allow_html=True)
 
     closed = s.get("closed", [])
     if closed:
         st.markdown('<div class="sect">Account equity</div>', unsafe_allow_html=True)
-        st.altair_chart(equity(closed), **_WIDE)
+        st.altair_chart(equity(closed, color if color != "#8f9bb3" else BRAND), **_WIDE)
 
     op = s.get("open", [])
     if op:
         st.markdown('<div class="sect">Open positions</div>', unsafe_allow_html=True)
         st.markdown(table(["Symbol", "Dir", "Entry", "Stop", "Target", "Opened (PKT)"],
             [[p["symbol"], f'<span class="pill {p["direction"]}">{p["direction"].upper()}</span>',
-              f'{p["entry"]:,.4f}', f'{p.get("sl",0):,.4f}', f'{p.get("tp",0):,.4f}', pkt(p["open_time"])] for p in op]),
-            unsafe_allow_html=True)
+              f'{p["entry"]:,.4f}', f'{p.get("sl", 0):,.4f}', f'{p.get("tp", 0):,.4f}',
+              pkt(p["open_time"])] for p in op]), unsafe_allow_html=True)
     if closed:
         st.markdown('<div class="sect">Recent closed trades</div>', unsafe_allow_html=True)
         st.markdown(table(["Symbol", "Dir", "Result", "P&L", "Closed (PKT)"],
             [[t["symbol"], f'<span class="pill {t["direction"]}">{t["direction"].upper()}</span>',
-              f'<span class="pill {t["outcome"]}">{t["outcome"].upper()}</span>', money(t["pnl"]), pkt(t["close_time"])]
+              f'<span class="pill {t["outcome"]}">{t["outcome"].upper()}</span>',
+              money(t["pnl"], 2), pkt(t["close_time"])]
              for t in reversed(closed[-15:])]), unsafe_allow_html=True)
     if not closed and not op:
-        st.markdown('<div class="sub" style="margin-top:14px">Abhi koi trade nahi — bot sahi mauqe ka intezar mein (regime / signal).</div>',
-                    unsafe_allow_html=True)
+        st.markdown('<div class="sub" style="margin-top:14px">Abhi koi trade nahi — bot sahi '
+                    'mauqe ka intezar mein (regime / signal).</div>', unsafe_allow_html=True)
 
     st.markdown('<div class="sect">Live price chart</div>', unsafe_allow_html=True)
     rng = st.radio("range", ["24H", "7D", "30D"], horizontal=True, label_visibility="collapsed")
@@ -499,6 +668,7 @@ else:
     else:
         st.info("Live chart abhi load nahi hua — Refresh karein.")
 
-st.markdown('<div class="foot">⚠️ Paper trading (virtual $5,000 / account). Past ≠ future. Not financial advice. '
-            'Prices: Binance public API (no key). Account state: GitHub (~15 min). Times: PKT (UTC+5).</div>',
+st.markdown('<div class="foot">⚠️ Paper trading (virtual $5,000 / account). Past ≠ future. '
+            'Not financial advice. Prices: Binance public API. Times: PKT (UTC+5). '
+            'Brain: always-on self-learning (observer-gated promotions only).</div>',
             unsafe_allow_html=True)
