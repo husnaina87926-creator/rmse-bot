@@ -6,9 +6,14 @@ risk:
   reward_ratio: 2.0
   atr_period: 14
   sl_atr_mult: 1.5
-  max_daily_loss_pct: 6.0     # stop opening new trades if today's loss exceeds this
-  max_open_trades: 5
-  max_trades_per_day: 5       # cap new trades opened per calendar day
+  # PAPER-MODE MEASUREMENT: caps neutralized (2026-07-02, user directive) so NO
+  # signal-driven trade is ever skipped — the forward test must measure the FULL
+  # strategy, exactly like the backtest (which has no such caps). For REAL money,
+  # protective caps return via the anti-emotion protocol (owner-approved, observer-
+  # trialed first) — see docs/anti-emotion-protocol.md.
+  max_daily_loss_pct: 100.0   # was 6.0 — one -10% SL loss froze the account all day
+  max_open_trades: 999        # was 5
+  max_trades_per_day: 999     # was 5
 exits:
   breakeven_atr: 1.0          # move stop to entry once +1 ATR in profit (validated)
   trail_atr: 0.0              # trailing disabled (hurt the momentum edge in tests)
