@@ -318,6 +318,7 @@ elif page == "Brain":
     watch = load_json("state/regime_watch.json") or {}
     health = load_json("state/health.json") or {}
     mistakes = load_json("state/mistakes.json")
+    senti = load_json("state/news_sentiment.json")
 
     alive, hb_txt = False, "no heartbeat file on this copy"
     if hb and hb.get("ts"):
@@ -347,6 +348,11 @@ elif page == "Brain":
       <div class="t span2"><div class="lab">Health flags</div>
         <div class="val" style="color:{RED if flags else GREEN}">{len(flags) or 'NONE'}</div>
         <div class="small">{', '.join(flags[:6]) if flags else 'no account in decay'}</div></div>
+      <div class="t span2"><div class="lab">LLM news sentiment (observer)</div>
+        <div class="val" style="color:{GREEN if senti and (senti.get('market') or 0) > 0 else (RED if senti and (senti.get('market') or 0) < 0 else INK)}">
+          {f"{senti['market']:+d} / ±2" if senti and senti.get('market') is not None else 'OFF'}</div>
+        <div class="small">{(senti.get('top_risk') or f"{senti.get('n_headlines', 0)} headlines read")
+                            if senti else 'OPENAI_API_KEY set nahi — feature silent off'}</div></div>
     </div>""", unsafe_allow_html=True)
 
     if gate:

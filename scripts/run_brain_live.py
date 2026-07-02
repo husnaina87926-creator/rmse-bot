@@ -123,6 +123,14 @@ def main():
                     print(f"[brain {now:%m-%d %H:%M}] LEDGER: {wline}", flush=True)
             except Exception as e:
                 print(f"[brain] WARN ledger: {e}", flush=True)
+            try:      # LLM news sentinel (observer; silently off without OPENAI_API_KEY)
+                from rmse_bot.llm_news import run_news_sentinel
+                senti = run_news_sentinel(STATE)
+                if senti and abs(senti.get("market") or 0) >= 2:
+                    print(f"[brain {now:%m-%d %H:%M}] NEWS SENTIMENT {senti['market']:+d}: "
+                          f"{senti.get('top_risk')}", flush=True)
+            except Exception as e:
+                print(f"[brain] WARN news sentinel: {e}", flush=True)
 
         if last_day is None or now.date() != last_day:      # daily diary + gate check
             last_day = now.date()

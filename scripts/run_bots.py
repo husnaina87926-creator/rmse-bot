@@ -64,7 +64,9 @@ def main():
         events = []
         print(f"  WARN calendar: {e}")
     title, hours = nearest_event(now, events)
-    extra = {"news_event": title, "news_h": hours}
+    from rmse_bot.llm_news import latest_sentiment
+    extra = {"news_event": title, "news_h": hours,
+             "llm_sentiment": latest_sentiment(STATE)}
 
     print(f"[{now:%Y-%m-%d %H:%M} UTC] bots step")
     for acc in accts:

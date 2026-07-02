@@ -464,7 +464,8 @@ def mistake_taxonomy(state_dir: str) -> dict:
     def bucket(month):
         return out.setdefault(month, {c: 0 for c in cats}
                               | {"feed_skips": 0, "trades": 0,
-                                 "news_window_trades": 0, "news_window_net": 0.0})
+                                 "news_window_trades": 0, "news_window_net": 0.0,
+                                 "neg_sentiment_trades": 0, "neg_sentiment_net": 0.0})
 
     for e in events:
         if e.get("type") == "data_skip":
@@ -477,6 +478,9 @@ def mistake_taxonomy(state_dir: str) -> dict:
         if e.get("news_h") is not None and abs(e["news_h"]) <= 2:
             b["news_window_trades"] += 1
             b["news_window_net"] = round(b["news_window_net"] + (e.get("pnl") or 0.0), 2)
+        if (e.get("llm_sentiment") or 0) <= -1:
+            b["neg_sentiment_trades"] += 1
+            b["neg_sentiment_net"] = round(b["neg_sentiment_net"] + (e.get("pnl") or 0.0), 2)
         pm, cf = pms.get(key(e)), cfs.get(key(e))
         if pm and (pm.get("tp_hit_after_exit")
                    or (pm.get("left_on_table_atr") or 0) >= 2):
@@ -518,6 +522,9 @@ def write_lessons_report(state_dir: str, reports_dir: str, month: str = None) ->
     if mo.get("news_window_trades"):
         md.append(f"- Trades within ±2h of high-impact news: "
                   f"**{mo['news_window_trades']}** (net ${mo['news_window_net']})\n")
+    if mo.get("neg_sentiment_trades"):
+        md.append(f"- Trades closed during negative LLM news sentiment: "
+                  f"**{mo['neg_sentiment_trades']}** (net ${mo['neg_sentiment_net']})\n")
 
     def _load(name):
         p = os.path.join(state_dir, name)

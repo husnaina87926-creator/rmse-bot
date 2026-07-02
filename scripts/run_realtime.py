@@ -70,7 +70,9 @@ def refresh_context(now):
         except Exception:
             pass
     title, hours = nearest_event(now, _CTX["events"])
-    return {"news_event": title, "news_h": hours}
+    from rmse_bot.llm_news import latest_sentiment
+    return {"news_event": title, "news_h": hours,
+            "llm_sentiment": latest_sentiment(STATE)}
 
 
 def run_symbol(sym, kind, params):
