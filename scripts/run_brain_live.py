@@ -26,7 +26,8 @@ from rmse_bot.self_improve import (promotion_demotion_pass, discovery_pass,
                                    brain_scoreboard, chal_account, TOURNAMENT_SLOTS)
 from rmse_bot.journal import (health_snapshot, run_postmortems,
                               run_counterfactuals, counterfactual_summary,
-                              regime_ledger, ledger_warnings, regime_watch_pass)
+                              regime_ledger, ledger_warnings, regime_watch_pass,
+                              write_lessons_report, graduation_gate)
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATE = os.path.join(ROOT, "state")
@@ -50,12 +51,22 @@ def main():
     symbols = ["XAUUSD"] + list(cfg["crypto_rules"]["symbols"])
     last_4h = None
     last_pm = None
-    acct_names = [NAME[s] for s in symbols] + \
+    last_day = None
+    loop_n = 0
+    champ_names = [NAME[s] for s in symbols]
+    acct_names = champ_names + \
         [chal_account(NAME[s], slot) for s in symbols for slot in range(TOURNAMENT_SLOTS)]
     print("[brain] ALWAYS-ON live brain started (5-min heartbeat, discovery at every 4h close)",
           flush=True)
     while True:
         now = dt.datetime.now(dt.timezone.utc)
+        loop_n += 1
+        try:      # WATCHDOG heartbeat: dashboard/gate know the brain is alive
+            import json as _json
+            with open(os.path.join(STATE, "brain_heartbeat.json"), "w") as f:
+                _json.dump({"ts": now.isoformat(), "loop": loop_n}, f)
+        except Exception:
+            pass
         try:
             promoted, demoted = promotion_demotion_pass(cfg, STATE, NAME, start_bal)
             for sym, rule in promoted:
@@ -112,6 +123,22 @@ def main():
                     print(f"[brain {now:%m-%d %H:%M}] LEDGER: {wline}", flush=True)
             except Exception as e:
                 print(f"[brain] WARN ledger: {e}", flush=True)
+
+        if last_day is None or now.date() != last_day:      # daily diary + gate check
+            last_day = now.date()
+            try:
+                path = write_lessons_report(STATE, os.path.join(ROOT, "reports"))
+                gate = graduation_gate(STATE, champ_names, start_bal)
+                print(f"[brain {now:%m-%d %H:%M}] lessons report -> {os.path.basename(path)}"
+                      f" | GRADUATION GATE {gate['passed']}/{gate['total']}"
+                      + (" — GRADUATED (ready for testnet step)" if gate["graduated"]
+                         else ""), flush=True)
+                for c in gate["criteria"]:
+                    if not c["pass"]:
+                        print(f"  [gate] MISSING {c['name']}: {c['value']} "
+                              f"(need {c['target']})", flush=True)
+            except Exception as e:
+                print(f"[brain] WARN lessons/gate: {e}", flush=True)
 
         boundary = now.replace(minute=0, second=0, microsecond=0,
                                hour=(now.hour // 4) * 4)

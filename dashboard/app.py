@@ -7,12 +7,17 @@ All times PKT (UTC+5). State read from the GitHub repo (raw).
 Deploy: share.streamlit.io -> repo husnaina87926-creator/rmse-bot, branch main, dashboard/app.py
 """
 import json
+import inspect
 import urllib.request
 from datetime import datetime, timedelta, timezone
 
 import pandas as pd
 import altair as alt
 import streamlit as st
+
+# full-width kwarg that works on both old and new Streamlit versions
+_WIDE = ({"width": "stretch"} if "width" in inspect.signature(st.button).parameters
+         else {"use_container_width": True})
 
 RAW = "https://raw.githubusercontent.com/husnaina87926-creator/rmse-bot/main"
 BINANCE = "https://data-api.binance.vision/api/v3"
@@ -126,7 +131,12 @@ table.ft tr:last-child td{ border-bottom:none; }
 .foot{ color:#a4a9b8; font-size:.76rem; margin-top:26px; line-height:1.5; }
 
 @media(max-width:820px){ .bento{ grid-template-columns:repeat(2,1fr); } .hero,.span2,.full{ grid-column:span 2; }
-  .price{font-size:1.7rem;} .cname{font-size:1.25rem;} }
+  .price{font-size:1.7rem;} .cname{font-size:1.25rem;}
+  /* nav: one swipeable row on phones/tablets instead of 4-5 wrapped rows */
+  .navwrap div[role="radiogroup"]{ flex-wrap:nowrap; overflow-x:auto; -webkit-overflow-scrolling:touch;
+    scrollbar-width:none; padding-bottom:2px; }
+  .navwrap div[role="radiogroup"]::-webkit-scrollbar{ display:none; }
+  .navwrap div[role="radiogroup"] label{ flex:0 0 auto; white-space:nowrap; } }
 @media(max-width:480px){ .bento{ gap:12px; grid-auto-rows:132px; } .hero .big{font-size:2.3rem;} .val{font-size:1.55rem;}
   .block-container{padding:.6rem;} table.ft{min-width:360px;} }
 </style>
@@ -240,14 +250,14 @@ c1.markdown(f'<div class="brand">◈ RMSE <b>BOT</b></div>'
             f'<div class="sub">🕒 {now_pkt} PKT · {len(ACCOUNTS)} paper accounts · live forward-test</div>',
             unsafe_allow_html=True)
 with c2:
-    if st.button("⟳ Refresh", key="refresh_btn", use_container_width=True):
+    if st.button("⟳ Refresh", key="refresh_btn", **_WIDE):
         st.cache_data.clear()
         st.rerun()
 
-NAV_DISP = {"Overview": "◧ Overview"}
+NAV_DISP = {"Overview": "◧ Overview", "Brain": "🧠 BRAIN"}
 for _k, _lbl, _c, _gl, _sym in ACCOUNTS:
     NAV_DISP[_lbl] = f"{_gl} {_k.upper()}"
-_opts = ["Overview"] + [lbl for _, lbl, *_ in ACCOUNTS]
+_opts = ["Overview", "Brain"] + [lbl for _, lbl, *_ in ACCOUNTS]
 st.markdown('<div class="navwrap">', unsafe_allow_html=True)
 page = st.radio("nav", _opts, format_func=lambda o: NAV_DISP[o], horizontal=True, label_visibility="collapsed")
 st.markdown('</div>', unsafe_allow_html=True)
@@ -281,7 +291,7 @@ if page == "Overview":
       <div class="t hero">
         <div class="lab">Total equity</div>
         <div class="big num">${tb:,.0f}</div>
-        <div class="hs">▲ +${tb-st_tot:,.0f} ({pnl_pct:+.1f}%) · {len(ACCOUNTS)} accounts · live forward-test</div>
+        <div class="hs">{"▲ +" if tb >= st_tot else "▼ −"}${abs(tb-st_tot):,.0f} ({pnl_pct:+.1f}%) · {len(ACCOUNTS)} accounts · live forward-test</div>
       </div>
       <div class="t"><div class="lab">Realized P&amp;L</div>
         <div class="val" style="color:{GREEN if tp>=0 else RED}">{'+' if tp>=0 else '−'}${abs(tp):,.0f}</div>
@@ -297,6 +307,126 @@ if page == "Overview":
       </div>
     </div>
     """, unsafe_allow_html=True)
+
+# ================= BRAIN (self-learning activity) =================
+elif page == "Brain":
+    hb = load_json("state/brain_heartbeat.json")
+    gate = load_json("state/graduation.json")
+    cands = load_json("state/candidates.json") or {}
+    sb = load_json("state/scoreboard.json")
+    lessons = load_json("state/lessons.json")
+    watch = load_json("state/regime_watch.json") or {}
+    health = load_json("state/health.json") or {}
+    mistakes = load_json("state/mistakes.json")
+
+    alive, hb_txt = False, "no heartbeat file on this copy"
+    if hb and hb.get("ts"):
+        try:
+            age = (datetime.now(timezone.utc)
+                   - datetime.fromisoformat(hb["ts"])).total_seconds()
+            alive = age < 3600
+            hb_txt = f"last beat {int(age // 60)} min ago"
+        except Exception:
+            pass
+    n_cands = sum(len(v) if isinstance(v, list) else 1 for v in cands.values())
+    flags = [nm for nm, h in health.items() if isinstance(h, dict) and h.get("unhealthy")]
+    gp, gt = (gate.get("passed", 0), gate.get("total", 7)) if gate else (0, 7)
+
+    st.markdown(f"""
+    <div class="bento" style="grid-auto-rows:auto;">
+      <div class="t hero"><div class="lab">Real-API graduation gate</div>
+        <div class="big num">{gp}/{gt}</div>
+        <div class="hs">{'🎓 GRADUATED — testnet step unlocked' if gate and gate.get('graduated')
+                         else 'criteria passed — bot must earn real-money access'}</div></div>
+      <div class="t"><div class="lab">Brain watchdog</div>
+        <div class="val" style="color:{GREEN if alive else RED}">{'ALIVE' if alive else 'IDLE'}</div>
+        <div class="small">{hb_txt}</div></div>
+      <div class="t"><div class="lab">Tournament</div>
+        <div class="val num">{n_cands}</div>
+        <div class="small">challengers in forward trial</div></div>
+      <div class="t span2"><div class="lab">Health flags</div>
+        <div class="val" style="color:{RED if flags else GREEN}">{len(flags) or 'NONE'}</div>
+        <div class="small">{', '.join(flags[:6]) if flags else 'no account in decay'}</div></div>
+    </div>""", unsafe_allow_html=True)
+
+    if gate:
+        st.markdown('<div class="sect">Graduation criteria (earn the real Binance API)</div>',
+                    unsafe_allow_html=True)
+        st.markdown(table(["Criterion", "Now", "Target", "Status"],
+            [[c["why"], f'{c["value"]}', c["target"],
+              f'<span class="pill {"tp" if c["pass"] else "sl"}">{"PASS" if c["pass"] else "PENDING"}</span>']
+             for c in gate.get("criteria", [])]), unsafe_allow_html=True)
+
+    if cands:
+        st.markdown('<div class="sect">Challenger tournament (forward trials)</div>',
+                    unsafe_allow_html=True)
+        rows = []
+        for sym_k, entry in sorted(cands.items()):
+            for c in (entry if isinstance(entry, list) else [entry]):
+                r = c.get("rule", {})
+                rows.append([sym_k, f"slot {c.get('slot', 0)}",
+                             f'<span class="pill {r.get("direction","buy")}">{r.get("direction","?").upper()}</span> '
+                             + " & ".join(r.get("when", [])),
+                             r.get("regime", "—"), c.get("pf", "—"),
+                             str(c.get("born", ""))[:10]])
+        st.markdown(table(["Symbol", "Slot", "Candidate rule", "Regime", "PF (backtest)", "Born"],
+                          rows), unsafe_allow_html=True)
+
+    if sb and sb.get("totals", {}).get("born"):
+        t = sb["totals"]
+        st.markdown('<div class="sect">Idea-family scoreboard</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="sub">{t["born"]} candidates born · {t["promoted"]} promoted · '
+                    f'{t["trial_complete"]} failed trial · {t["stale"]} stale · '
+                    f'{t["demoted"]} demoted after promotion</div>', unsafe_allow_html=True)
+        fams = [(k, v) for k, v in sb.get("families", {}).items()
+                if v.get("survival_rate") is not None]
+        if fams:
+            st.markdown(table(["Idea family", "Born", "Survival", "Avg forward net"],
+                [[k, v["born"], f'{v["survival_rate"]*100:.0f}%', v.get("avg_forward_net", "—")]
+                 for k, v in sorted(fams, key=lambda kv: -(kv[1]["survival_rate"] or 0))[:10]]),
+                unsafe_allow_html=True)
+
+    if lessons and lessons.get("variants"):
+        st.markdown('<div class="sect">Shadow exits — roads not taken '
+                    f'({lessons.get("n_trades", 0)} trades replayed)</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="sub">Base exit cumulative: {lessons.get("base_cum_R", 0)}R</div>',
+                    unsafe_allow_html=True)
+        st.markdown(table(["Exit variant", "Cum R", "Avg R", "Edge vs base", "Sample"],
+            [[nm, v.get("cum_R", "—"), v.get("avg_R", "—"),
+              f'{(v.get("edge_vs_base_R") or 0):+}R',
+              f'{v["n"]} {"✓" if v.get("significant") else "(small)"}']
+             for nm, v in sorted(lessons["variants"].items(),
+                                 key=lambda kv: -(kv[1].get("cum_R") or 0))]),
+            unsafe_allow_html=True)
+
+    if watch:
+        st.markdown('<div class="sect">Regime watch (daily trend per market)</div>',
+                    unsafe_allow_html=True)
+        chips = ""
+        for sym_k, w in sorted(watch.items()):
+            reg = w.get("regime", "?") if isinstance(w, dict) else "?"
+            col = GREEN if reg == "up" else (RED if reg == "down" else MUT)
+            vol = " · ⚡vol" if isinstance(w, dict) and w.get("vol_flag") else ""
+            chips += (f'<div class="cc"><div class="nm">{sym_k}</div>'
+                      f'<div class="bal" style="color:{col};font-size:.95rem">{reg.upper()}{vol}</div></div>')
+        st.markdown(f'<div class="clist">{chips}</div>', unsafe_allow_html=True)
+
+    if mistakes and mistakes.get("months"):
+        real_months = [m for m in mistakes["months"] if m[:2] == "20"]
+        mo_key = max(real_months) if real_months else max(mistakes["months"].keys())
+        mo = mistakes["months"][mo_key]
+        st.markdown(f'<div class="sect">Mistake diary — {mo_key} '
+                    f'({mo.get("trades", 0)} trades)</div>', unsafe_allow_html=True)
+        st.markdown(table(["Mistake", "Count"],
+            [["Exited too early (TP hit after exit)", mo.get("exited_too_early", 0)],
+             ["Stop too tight (wider SL would have won)", mo.get("stop_too_tight", 0)],
+             ["Held too long (time-exit at loss)", mo.get("held_too_long", 0)],
+             ["Regime mismatch (bug guard)", mo.get("regime_mismatch", 0)],
+             ["Data-feed skips", mo.get("feed_skips", 0)]]), unsafe_allow_html=True)
+
+    if not any([hb, gate, cands, sb, lessons, watch, mistakes]):
+        st.info("Brain state files is copy par abhi nahi bane — VPS dashboard live brain "
+                "dikhata hai; GitHub copy weekly learning ke baad bharti hai.")
 
 # ================= PER-COIN (BENTO) =================
 else:
@@ -334,7 +464,7 @@ else:
     closed = s.get("closed", [])
     if closed:
         st.markdown('<div class="sect">Account equity</div>', unsafe_allow_html=True)
-        st.altair_chart(equity(closed), use_container_width=True)
+        st.altair_chart(equity(closed), **_WIDE)
 
     op = s.get("open", [])
     if op:
@@ -358,7 +488,7 @@ else:
     interval, limit = {"24H": ("15m", 96), "7D": ("1h", 168), "30D": ("4h", 180)}[rng]
     kl = fetch_klines(sym, interval, limit)
     if kl is not None and len(kl):
-        st.altair_chart(candles(kl), use_container_width=True)
+        st.altair_chart(candles(kl), **_WIDE)
         st.caption(f"{sym} · {rng} · {interval} candles · Binance public data · PKT")
     else:
         st.info("Live chart abhi load nahi hua — Refresh karein.")

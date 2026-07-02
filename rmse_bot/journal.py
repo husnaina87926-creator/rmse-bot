@@ -229,6 +229,7 @@ def counterfactual_summary(state_dir: str, min_n: int = 10) -> dict:
         names = set()
         for e in events:
             names.update((e.get("variants") or {}).keys())
+        out["base_cum_R"] = round(sum(base), 2) if base else None
         for nm in sorted(names):
             rs = [e["variants"][nm]["R"] for e in events
                   if nm in (e.get("variants") or {})]
@@ -236,6 +237,7 @@ def counterfactual_summary(state_dir: str, min_n: int = 10) -> dict:
                 out["variants"][nm] = {
                     "n": len(rs),
                     "avg_R": round(sum(rs) / len(rs), 3),
+                    "cum_R": round(sum(rs), 2),      # SHADOW-EXIT equity in R units
                     "edge_vs_base_R": (round(sum(rs) / len(rs) - out["base_avg_R"], 3)
                                        if out.get("base_avg_R") is not None else None),
                     "significant": len(rs) >= min_n,
@@ -438,3 +440,225 @@ def integrity_check(df, interval_s: int, now=None, allow_session_gaps: bool = Fa
     if (now - last).total_seconds() > stale_limit + interval_s:
         return False, "stale_last_candle"
     return True, "ok"
+
+
+# ---------------- mistake taxonomy + lessons report (the trader's diary) ----------------
+
+def mistake_taxonomy(state_dir: str) -> dict:
+    """Classify every closed trade's journaled evidence into objective mistake
+    categories, bucketed by month (observer — a human trader's error diary):
+      exited_too_early : original TP was hit AFTER we left, or >=2 ATR left on table
+      stop_too_tight   : stopped out, but the wider-SL counterfactual ended positive
+      held_too_long    : time-exit at a loss (position overstayed its signal)
+      regime_mismatch  : trade opened outside the rule's tagged regime (should never
+                         happen — counts likely bugs, not market mistakes)
+      feed_skips       : data-integrity skips (feed hygiene, not trade errors)
+    Writes state/mistakes.json."""
+    events = read_events(state_dir)
+    key = lambda e: (e.get("account"), e.get("symbol"), str(e.get("close_time")))
+    pms = {key(e): e for e in events if e.get("type") == "postmortem"}
+    cfs = {key(e): e for e in events if e.get("type") == "counterfactual"}
+    cats = ("exited_too_early", "stop_too_tight", "held_too_long", "regime_mismatch")
+    out = {}
+
+    def bucket(month):
+        return out.setdefault(month, {c: 0 for c in cats}
+                              | {"feed_skips": 0, "trades": 0})
+
+    for e in events:
+        if e.get("type") == "data_skip":
+            bucket(str(e.get("ts", ""))[:7] or "unknown")["feed_skips"] += 1
+            continue
+        if e.get("type") != "close":
+            continue
+        b = bucket(str(e.get("close_time", ""))[:7] or "unknown")
+        b["trades"] += 1
+        pm, cf = pms.get(key(e)), cfs.get(key(e))
+        if pm and (pm.get("tp_hit_after_exit")
+                   or (pm.get("left_on_table_atr") or 0) >= 2):
+            b["exited_too_early"] += 1
+        if (e.get("outcome") == "sl" and cf
+                and (cf.get("variants", {}).get("wider_sl_3.0", {}).get("R") or 0) > 0):
+            b["stop_too_tight"] += 1
+        if e.get("outcome") == "time" and (e.get("pnl") or 0) < 0:
+            b["held_too_long"] += 1
+        rule = e.get("rule") or {}
+        if rule.get("regime") and e.get("regime_at_open") \
+                and e["regime_at_open"] != rule["regime"]:
+            b["regime_mismatch"] += 1
+    res = {"months": out, "_ts": dt.datetime.now(dt.timezone.utc).isoformat()}
+    with open(os.path.join(state_dir, "mistakes.json"), "w") as f:
+        json.dump(res, f, indent=2)
+    return res
+
+
+def write_lessons_report(state_dir: str, reports_dir: str, month: str = None) -> str:
+    """Auto LESSONS REPORT (the bot's monthly diary page, refreshed daily): mistakes
+    by category, shadow-exit (counterfactual) standings, idea-family scoreboard,
+    per-regime warnings and health flags — everything the bot 'noted' recently.
+    Writes reports/lessons_<YYYY-MM>.md and returns the path."""
+    month = month or f"{dt.datetime.now(dt.timezone.utc):%Y-%m}"
+    mt = mistake_taxonomy(state_dir)
+    mo = mt["months"].get(month, {})
+    md = [f"# Lessons Report — {month}\n",
+          "_Auto-written by the live brain from the trade journal. Observer-only._\n"]
+
+    md.append(f"\n## Mistakes this month ({mo.get('trades', 0)} closed trades)\n")
+    labels = {"exited_too_early": "Exited too early (TP hit after exit / >=2 ATR left)",
+              "stop_too_tight": "Stop too tight (wider-SL replay ended positive)",
+              "held_too_long": "Held too long (time-exit at a loss)",
+              "regime_mismatch": "Regime mismatch (rule fired outside its regime!)",
+              "feed_skips": "Data-feed skips (integrity guard)"}
+    for k, lbl in labels.items():
+        md.append(f"- {lbl}: **{mo.get(k, 0)}**\n")
+
+    def _load(name):
+        p = os.path.join(state_dir, name)
+        if os.path.exists(p):
+            try:
+                with open(p) as f:
+                    return json.load(f)
+            except Exception:
+                return {}
+        return {}
+
+    lessons = _load("lessons.json")
+    if lessons.get("variants"):
+        md.append(f"\n## Shadow exits (counterfactual replays, "
+                  f"{lessons.get('n_trades', 0)} trades)\n")
+        md.append(f"Base exit cumulative: **{lessons.get('base_cum_R', 0)}R**\n")
+        for nm, v in sorted(lessons["variants"].items(),
+                            key=lambda kv: -(kv[1].get("cum_R") or 0)):
+            sig = "significant" if v.get("significant") else f"n={v['n']}, not significant yet"
+            md.append(f"- {nm}: cum {v.get('cum_R')}R, avg {v.get('avg_R')}R "
+                      f"({v.get('edge_vs_base_R'):+}R vs base; {sig})\n")
+
+    sb = _load("scoreboard.json")
+    if sb.get("totals", {}).get("born"):
+        t = sb["totals"]
+        md.append(f"\n## Idea-family scoreboard\n{t['born']} candidates born — "
+                  f"{t['promoted']} promoted, {t['trial_complete']} failed trial, "
+                  f"{t['stale']} stale, {t['demoted']} demoted after promotion\n")
+        fams = [(k, v) for k, v in sb.get("families", {}).items()
+                if v.get("survival_rate") is not None]
+        for k, v in sorted(fams, key=lambda kv: -(kv[1]["survival_rate"] or 0))[:8]:
+            md.append(f"- {k}: survival {v['survival_rate']:.0%} "
+                      f"(born {v['born']}, avg forward net {v['avg_forward_net']})\n")
+
+    led = _load("regime_ledger.json")
+    warns = ledger_warnings(led) if led else []
+    if warns:
+        md.append("\n## Regime warnings (rule loses in this weather)\n")
+        md.extend(f"- {w}\n" for w in warns)
+
+    health = _load("health.json")
+    flags = [nm for nm, h in health.items()
+             if isinstance(h, dict) and h.get("unhealthy")]
+    if flags:
+        md.append(f"\n## Health flags\nUnhealthy accounts (last-20 net negative): "
+                  f"{', '.join(flags)}\n")
+
+    os.makedirs(reports_dir, exist_ok=True)
+    path = os.path.join(reports_dir, f"lessons_{month}.md")
+    with open(path, "w") as f:
+        f.write("".join(md))
+    return path
+
+
+# ---------------- REAL-API graduation gate (earn the right to trade real money) ----------------
+
+GATE_CRITERIA = (
+    ("forward_days", ">= 90", "3+ months of live forward history"),
+    ("closed_trades", ">= 100", "enough trades to judge"),
+    ("profit_factor", ">= 1.2", "live PF across champion accounts"),
+    ("max_drawdown_pct", "<= 25", "combined equity drawdown"),
+    ("unhealthy_champions", "== 0", "no champion currently decaying"),
+    ("feed_skips_30d", "<= 5", "clean data feed"),
+    ("brain_alive", "== True", "learning loop running"),
+)
+
+
+def graduation_gate(state_dir: str, names: list, start_bal: float, now=None) -> dict:
+    """Objective checklist the bot must pass BEFORE any real Binance API is considered
+    (then still testnet -> tiny size, per the plan). Computed from champion state +
+    journal + health + heartbeat; writes state/graduation.json. Observer-only."""
+    now = now or dt.datetime.now(dt.timezone.utc)
+    trades = []
+    for nm in names:
+        p = os.path.join(state_dir, f"{nm}.json")
+        if not os.path.exists(p):
+            continue
+        try:
+            with open(p) as f:
+                s = json.load(f)
+        except Exception:
+            continue
+        for t in s.get("closed", []):
+            ct = t.get("close_time")
+            if ct:
+                trades.append((str(ct), float(t.get("pnl", 0.0))))
+    trades.sort()
+    pnls = [p for _, p in trades]
+    wins = sum(p for p in pnls if p > 0)
+    losses = -sum(p for p in pnls if p < 0)
+    start_total = start_bal * max(1, len(names))
+    equity, peak, max_dd = start_total, start_total, 0.0
+    for p in pnls:
+        equity += p
+        peak = max(peak, equity)
+        max_dd = max(max_dd, peak - equity)
+    first = pd.to_datetime(trades[0][0]) if trades else None
+    if first is not None and first.tzinfo is None:
+        first = first.tz_localize("UTC")
+
+    def _load(name):
+        p = os.path.join(state_dir, name)
+        try:
+            with open(p) as f:
+                return json.load(f)
+        except Exception:
+            return {}
+
+    health = _load("health.json")
+    unhealthy = sum(1 for nm in names
+                    if isinstance(health.get(nm), dict) and health[nm].get("unhealthy"))
+    cutoff = (now - dt.timedelta(days=30)).isoformat()
+    skips = sum(1 for e in read_events(state_dir)
+                if e.get("type") == "data_skip" and str(e.get("ts", "")) >= cutoff)
+    hb = _load("brain_heartbeat.json")
+    alive = False
+    if hb.get("ts"):
+        try:
+            age = (now - dt.datetime.fromisoformat(hb["ts"])).total_seconds()
+            alive = age < 3600
+        except ValueError:
+            pass
+
+    values = {
+        "forward_days": (now - first).days if first is not None else 0,
+        "closed_trades": len(pnls),
+        "profit_factor": round(wins / losses, 2) if losses > 0 else (9.99 if wins else 0.0),
+        "max_drawdown_pct": round(100 * max_dd / start_total, 1),
+        "unhealthy_champions": unhealthy,
+        "feed_skips_30d": skips,
+        "brain_alive": alive,
+    }
+    passed = {
+        "forward_days": values["forward_days"] >= 90,
+        "closed_trades": values["closed_trades"] >= 100,
+        "profit_factor": values["profit_factor"] >= 1.2,
+        "max_drawdown_pct": values["max_drawdown_pct"] <= 25,
+        "unhealthy_champions": unhealthy == 0,
+        "feed_skips_30d": skips <= 5,
+        "brain_alive": alive,
+    }
+    out = {"criteria": [
+        {"name": n, "target": tgt, "why": why,
+         "value": values[n], "pass": bool(passed[n])}
+        for n, tgt, why in GATE_CRITERIA],
+        "passed": sum(passed.values()), "total": len(passed),
+        "graduated": all(passed.values()),
+        "_ts": now.isoformat()}
+    with open(os.path.join(state_dir, "graduation.json"), "w") as f:
+        json.dump(out, f, indent=2)
+    return out

@@ -203,3 +203,65 @@ def test_vol_break_fires_once(tmp_path):
     regime_watch_pass(sd, lambda s: spiky, ["BTCUSDT"], {"BTCUSDT": "btc"},
                       ema_period=10, rise_n=3)
     assert len([e for e in read_events(sd) if e["type"] == "vol_break"]) == 1
+
+
+def test_mistake_taxonomy_and_lessons_report(tmp_path):
+    from rmse_bot.journal import mistake_taxonomy, write_lessons_report
+    sd = str(tmp_path)
+    base = {"account": "btc", "symbol": "BTCUSDT", "direction": "sell",
+            "close_time": "2026-07-01 08:00:00"}
+    # trade 1: sl-stopped, wider SL would have won -> stop_too_tight
+    append_event(sd, {**base, "type": "close", "outcome": "sl", "pnl": -50.0})
+    append_event(sd, {**base, "type": "counterfactual",
+                      "variants": {"wider_sl_3.0": {"outcome": "tp", "R": 1.0}}})
+    # trade 2: time-exit at loss + TP hit after exit -> held_too_long + exited_too_early
+    b2 = dict(base, close_time="2026-07-02 08:00:00")
+    append_event(sd, {**b2, "type": "close", "outcome": "time", "pnl": -10.0})
+    append_event(sd, {**b2, "type": "postmortem", "tp_hit_after_exit": True,
+                      "left_on_table_atr": 3.0})
+    # trade 3 (different month): clean win
+    append_event(sd, {**base, "type": "close", "outcome": "tp", "pnl": 40.0,
+                      "close_time": "2026-06-15 08:00:00"})
+    append_event(sd, {"type": "data_skip", "account": "btc", "symbol": "BTCUSDT",
+                      "reason": "stale_last_candle", "ts": "2026-07-03T00:00:00+00:00"})
+    mt = mistake_taxonomy(sd)
+    jul = mt["months"]["2026-07"]
+    assert jul["trades"] == 2 and jul["stop_too_tight"] == 1
+    assert jul["held_too_long"] == 1 and jul["exited_too_early"] == 1
+    assert jul["feed_skips"] == 1
+    assert mt["months"]["2026-06"]["trades"] == 1
+    assert os.path.exists(os.path.join(sd, "mistakes.json"))
+    path = write_lessons_report(sd, os.path.join(sd, "reports"), month="2026-07")
+    text = open(path).read()
+    assert "Exited too early" in text and "**1**" in text
+    assert path.endswith("lessons_2026-07.md")
+
+
+def test_graduation_gate(tmp_path):
+    from rmse_bot.journal import graduation_gate
+    sd = str(tmp_path)
+    old = "2026-01-01 00:00:00"
+    closed = [{"pnl": 30.0, "close_time": old}] * 80 + \
+             [{"pnl": -10.0, "close_time": "2026-06-01 00:00:00"}] * 40
+    json.dump({"balance": 7000, "open": [], "closed": closed, "history": []},
+              open(os.path.join(sd, "btc.json"), "w"))
+    json.dump({"btc": {"unhealthy": False}, "_ts": "x"},
+              open(os.path.join(sd, "health.json"), "w"))
+    now = dt.datetime(2026, 7, 2, tzinfo=dt.timezone.utc)
+    json.dump({"ts": now.isoformat(), "loop": 5},
+              open(os.path.join(sd, "brain_heartbeat.json"), "w"))
+    g = graduation_gate(sd, ["btc"], 5000, now=now)
+    vals = {c["name"]: c for c in g["criteria"]}
+    assert vals["forward_days"]["pass"] is True            # Jan -> Jul
+    assert vals["closed_trades"]["value"] == 120
+    assert vals["profit_factor"]["value"] == 6.0           # 2400 win / 400 loss
+    assert vals["max_drawdown_pct"]["value"] == 8.0        # 400 dd on 5000
+    assert vals["brain_alive"]["pass"] is True
+    assert g["graduated"] is True and g["passed"] == g["total"]
+    # stale heartbeat + unhealthy champion -> not graduated
+    json.dump({"ts": (now - dt.timedelta(hours=3)).isoformat()},
+              open(os.path.join(sd, "brain_heartbeat.json"), "w"))
+    json.dump({"btc": {"unhealthy": True}, "_ts": "x"},
+              open(os.path.join(sd, "health.json"), "w"))
+    g = graduation_gate(sd, ["btc"], 5000, now=now)
+    assert g["graduated"] is False and g["passed"] == g["total"] - 2
