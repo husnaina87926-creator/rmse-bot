@@ -38,21 +38,74 @@ def rules_for(symbol: str, cfg: dict, live: dict) -> list:
     return cfg.get("crypto_rules", {}).get("rules", [])
 
 
+def _uniform_exit(cfg: dict, symbol: str) -> dict:
+    """The exit config the candidate will ACTUALLY trade with in its challenger
+    account — validation must match live execution, not a flattering grid pick."""
+    if symbol == "XAUUSD":
+        s, e = cfg.get("strategy", {}), cfg.get("exits", {})
+        return {"sl_atr": s.get("sl_atr", 2.0), "rr": s.get("rr", 1.0),
+                "max_hold": s.get("max_hold", 24), "be_atr": e.get("breakeven_atr", 0.0)}
+    ex = cfg["crypto_rules"]["exit"]
+    return {"sl_atr": ex["sl_atr"], "rr": ex["rr"], "max_hold": ex["max_hold"],
+            "be_atr": ex.get("be_atr", 0.0)}
+
+
+def _both_halves_positive(trades: list, min_each: int = 5) -> bool:
+    """Split-half robustness on a (chronological) trade list: the FIRST half of the
+    rule's own trades and the SECOND half must both be net-positive — the strongest
+    regime-luck filter we have measured. Splitting by trades (not calendar) keeps the
+    test fair for regime-gated rules whose active periods cluster in time."""
+    if len(trades) < 2 * min_each:
+        return False
+    k = len(trades) // 2
+    return (sum(t["pnl"] for t in trades[:k]) > 0
+            and sum(t["pnl"] for t in trades[k:]) > 0)
+
+
+def stratified_ok(symbol: str, df, cfg: dict, rule: dict, min_each: int = 5) -> bool:
+    """REGIME-STRATIFIED split-half validation for a candidate rule: backtest the
+    candidate ALONE, under the regime mask it will actually trade in live (regime-tagged
+    rules only fire in their regime) and with the uniform live exit, then require
+    net-positive in BOTH halves of history. Kills candidates whose profit lives in one
+    regime-lucky period before they ever occupy a tournament slot."""
+    from rmse_bot.backtest import backtest_edge
+    from rmse_bot.regime import regime_state_mask
+    instr = cfg["instruments"][symbol]
+    mask = None
+    if rule.get("regime"):
+        rf = cfg.get("regime_filter", {})
+        mask = regime_state_mask(df, rule["regime"],
+                                 rf.get("ema_period", 100), rf.get("rise_n", 20))
+    res = backtest_edge(df, cfg, instr,
+                        [{"direction": rule["direction"], "when": list(rule["when"])}],
+                        regime_mask=mask, compound=False,   # measure the EDGE, not the path
+                        **_uniform_exit(cfg, symbol))
+    return _both_halves_positive(res.trades, min_each)
+
+
 def top_candidates(symbol: str, df, cfg: dict, current_rules: list, n: int = 1,
-                   min_count: int = 80) -> list:
+                   min_count: int = 80, max_tried: int = 12) -> list:
     """Up to n best robust NEW strategies (positive, entries distinct from current rules
-    AND from each other) — the tournament's recruitment pool."""
+    AND from each other) — the tournament's recruitment pool. Each pick must ALSO pass
+    regime-stratified split-half validation (stratified_ok) under the uniform live
+    exit; at most max_tried leaderboard entries are examined."""
     cur = {frozenset(r["when"]) for r in current_rules}
-    out = []
+    out, tried = [], 0
     for s in generate_strategies(df, cfg, symbol, max_entries=8, min_count=min_count):
-        if s["return"] > 0 and frozenset(s["entry"]) not in cur:
-            rule = {"direction": s["direction"], "when": s["entry"]}
-            if symbol != "XAUUSD":           # crypto rules are regime-specific
-                rule["regime"] = "down" if s["direction"] == "sell" else "up"
-            out.append({"rule": rule, "score": s["score"], "return": s["return"], "pf": s["pf"]})
-            cur.add(frozenset(s["entry"]))
-            if len(out) >= n:
-                break
+        if s["return"] <= 0 or frozenset(s["entry"]) in cur:
+            continue
+        tried += 1
+        if tried > max_tried:
+            break
+        rule = {"direction": s["direction"], "when": s["entry"]}
+        if symbol != "XAUUSD":               # crypto rules are regime-specific
+            rule["regime"] = "down" if s["direction"] == "sell" else "up"
+        if not stratified_ok(symbol, df, cfg, rule):
+            continue
+        out.append({"rule": rule, "score": s["score"], "return": s["return"], "pf": s["pf"]})
+        cur.add(frozenset(s["entry"]))
+        if len(out) >= n:
+            break
     return out
 
 

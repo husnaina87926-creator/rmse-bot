@@ -46,6 +46,32 @@ def triple_barrier_labels(df: pd.DataFrame, horizon: int = 12,
     return pd.Series(labels, index=df.index)
 
 
+def _z_threshold(alpha: float) -> float:
+    """One-sided normal z for tail probability `alpha` (bisection on erfc; no scipy).
+    Used for the multiple-testing (Bonferroni) gate: alpha is divided by the number
+    of conditions/combos actually tested before calling this."""
+    from math import erfc, sqrt
+    alpha = min(max(alpha, 1e-16), 0.5)
+    lo, hi = 0.0, 10.0
+    for _ in range(80):
+        mid = (lo + hi) / 2
+        if 0.5 * erfc(mid / sqrt(2)) > alpha:
+            lo = mid
+        else:
+            hi = mid
+    return (lo + hi) / 2
+
+
+def _net_z(p_up: float, p_dn: float, count: int) -> float:
+    """z-score of the net edge (p_up - p_dn) against zero. Each labelled sample is
+    x in {+1, 0, -1}, so var(x) = (p_up + p_dn) - net^2."""
+    net = p_up - p_dn
+    var = (p_up + p_dn) - net * net
+    if count <= 1 or var <= 0:
+        return float("inf") if net != 0 else 0.0
+    return abs(net) / ((var / count) ** 0.5)
+
+
 def _bull_engulf(df: pd.DataFrame) -> pd.Series:
     po, pc = df["open"].shift(1), df["close"].shift(1)
     co, cc = df["open"], df["close"]
@@ -144,18 +170,28 @@ def discover_edges(features: pd.DataFrame, labels: pd.Series,
 
 
 def run_discovery(df: pd.DataFrame, split: float = 0.7, horizon: int = 12,
-                  k_atr: float = 1.5, min_count: int = 50) -> pd.DataFrame:
+                  k_atr: float = 1.5, min_count: int = 50, purge: int = None,
+                  mt_alpha: float = 0.05) -> pd.DataFrame:
     """Discover edges on the first `split` of data, then verify each condition's
-    net edge on the held-out remainder. Robust patterns hold in BOTH columns."""
+    net edge on the held-out remainder. Robust patterns hold in BOTH columns.
+    RIGOR: (1) PURGE/EMBARGO — the last `purge` (default: label horizon) bars of the
+    in-sample slice are dropped because their triple-barrier labels resolve using
+    out-of-sample bars (leakage); the label-truncated tail of the OOS slice is dropped
+    too. (2) MULTIPLE-TESTING — with many conditions tested some pass by luck, so a
+    surviving edge must also clear a Bonferroni-deflated z-score (mt_alpha / n_tested)."""
+    purge = horizon if purge is None else purge
     feats = build_features(df)
     labels = triple_barrier_labels(df, horizon=horizon, k_atr=k_atr)
 
     n = len(df)
     k = int(n * split)
-    in_f, in_l = feats.iloc[:k], labels.iloc[:k]
-    out_f, out_l = feats.iloc[k:], labels.iloc[k:]
+    in_f, in_l = feats.iloc[:max(0, k - purge)], labels.iloc[:max(0, k - purge)]
+    out_hi = max(k, n - purge)
+    out_f, out_l = feats.iloc[k:out_hi], labels.iloc[k:out_hi]
 
     is_res = discover_edges(in_f, in_l, min_count=min_count)
+    if is_res.empty:
+        return is_res
     oos_full = discover_edges(out_f, out_l, min_count=1).set_index("condition")
 
     oos_net, oos_cnt = [], []
@@ -169,23 +205,30 @@ def run_discovery(df: pd.DataFrame, split: float = 0.7, horizon: int = 12,
     is_res = is_res.copy()
     is_res["oos_net"] = oos_net
     is_res["oos_count"] = oos_cnt
-    # "holds" = a MEANINGFUL edge of the same sign in BOTH samples (not near-zero noise)
+    # multiple-testing gate: Bonferroni across the conditions actually tested
+    z_thr = _z_threshold(mt_alpha / max(1, len(is_res)))
+    z_is = [_net_z(r["p_up"], r["p_dn"], r["count"]) for _, r in is_res.iterrows()]
+    is_res["z_is"] = [round(z, 2) if z != float("inf") else z for z in z_is]
+    # "holds" = a MEANINGFUL edge of the same sign in BOTH samples (not near-zero
+    # noise) that is also statistically significant after the Bonferroni correction
     edge_min = 0.03
     is_res["holds"] = [
         (not np.isnan(o)) and (np.sign(o) == np.sign(n_))
-        and abs(n_) >= edge_min and abs(o) >= edge_min
-        for n_, o in zip(is_res["net"], is_res["oos_net"])
+        and abs(n_) >= edge_min and abs(o) >= edge_min and z >= z_thr
+        for n_, o, z in zip(is_res["net"], is_res["oos_net"], z_is)
     ]
     return is_res
 
 
 def walk_forward_edges(features: pd.DataFrame, labels: pd.Series, conditions: list,
                        n_windows: int = 5, min_count: int = 40,
-                       edge_min: float = 0.05) -> dict:
+                       edge_min: float = 0.05, purge: int = 12) -> dict:
     """Stronger-than-one-split test: does a condition-set's edge survive across MANY
     sequential time windows? Returns wf_pass (consistent same-sign edge in >=60% of
     windows), consistency, and mean net edge. This catches edges that pass a single
-    OOS split by luck (overfitting) but don't hold across regimes."""
+    OOS split by luck (overfitting) but don't hold across regimes.
+    PURGED: each window's last `purge` bars (the label horizon) are excluded so a
+    window's labels cannot resolve inside the next window — windows stay independent."""
     mask = features[list(conditions)].all(axis=1)
     n = len(features)
     size = max(1, n // n_windows)
@@ -193,6 +236,7 @@ def walk_forward_edges(features: pd.DataFrame, labels: pd.Series, conditions: li
     for w in range(n_windows):
         lo = w * size
         hi = n if w == n_windows - 1 else (w + 1) * size
+        hi = max(lo, hi - purge)
         m = mask.iloc[lo:hi]
         if int(m.sum()) < min_count:
             continue
@@ -211,18 +255,24 @@ def walk_forward_edges(features: pd.DataFrame, labels: pd.Series, conditions: li
 def run_combo_discovery(df: pd.DataFrame, split: float = 0.7, sizes=(2, 3),
                         min_count: int = 300, oos_min_count: int = 100,
                         edge_min: float = 0.05, horizon: int = 12,
-                        k_atr: float = 1.5) -> pd.DataFrame:
+                        k_atr: float = 1.5, purge: int = None,
+                        mt_alpha: float = 0.05) -> pd.DataFrame:
     """Test 2-3 condition combinations (AND). For each combo with enough samples,
     measure net edge on in-sample and on held-out (OOS) data. 'holds' = a meaningful
     edge of the same sign in BOTH samples -- the overfitting guard, doubly important
-    here because we test hundreds of combos."""
+    here because we test hundreds of combos.
+    RIGOR: in-sample tail is PURGED of the label horizon (no leakage into OOS) and
+    'holds' additionally requires a Bonferroni-corrected z-score across ALL combos
+    actually tested — with hundreds of combos, luck alone passes a fixed threshold."""
+    purge = horizon if purge is None else purge
     feats = build_features(df)
     labels = triple_barrier_labels(df, horizon=horizon, k_atr=k_atr)
 
     n = len(df)
     k = int(n * split)
-    in_f, in_l = feats.iloc[:k], labels.iloc[:k]
-    out_f, out_l = feats.iloc[k:], labels.iloc[k:]
+    in_f, in_l = feats.iloc[:max(0, k - purge)], labels.iloc[:max(0, k - purge)]
+    out_hi = max(k, n - purge)
+    out_f, out_l = feats.iloc[k:out_hi], labels.iloc[k:out_hi]
     cols = list(feats.columns)
 
     rows = []
@@ -236,7 +286,9 @@ def run_combo_discovery(df: pd.DataFrame, split: float = 0.7, sizes=(2, 3),
             m_out = out_f[cl].all(axis=1)
             c_out = int(m_out.sum())
             si = in_l[m_in]
-            net_in = float((si == 1).mean() - (si == -1).mean())
+            p_up_in = float((si == 1).mean())
+            p_dn_in = float((si == -1).mean())
+            net_in = p_up_in - p_dn_in
             if c_out >= oos_min_count:
                 so = out_l[m_out]
                 net_out = float((so == 1).mean() - (so == -1).mean())
@@ -252,8 +304,15 @@ def run_combo_discovery(df: pd.DataFrame, split: float = 0.7, sizes=(2, 3),
                 "net_is": round(net_in, 3),
                 "net_oos": round(net_out, 3) if not np.isnan(net_out) else float("nan"),
                 "bias": "UP" if net_in > 0 else "DOWN",
+                "_z": _net_z(p_up_in, p_dn_in, c_in),
                 "holds": holds,
             })
+    # multiple-testing gate: Bonferroni across every combo that reached evaluation
+    z_thr = _z_threshold(mt_alpha / max(1, len(rows)))
+    for r in rows:
+        z = r.pop("_z")
+        r["z_is"] = round(z, 2) if z != float("inf") else z
+        r["holds"] = bool(r["holds"] and z >= z_thr)
     res = pd.DataFrame(rows)
     if not res.empty:
         res = res.sort_values("net_oos", key=lambda s: s.abs(),

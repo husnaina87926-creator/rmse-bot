@@ -95,3 +95,37 @@ def test_run_combo_discovery_structure():
     for col in ["conditions", "size", "net_is", "net_oos", "bias", "holds"]:
         assert col in res.columns
     assert res["holds"].dtype == bool
+
+
+def test_z_threshold_and_net_z():
+    from rmse_bot.discovery import _z_threshold, _net_z
+    assert abs(_z_threshold(0.05) - 1.645) < 0.01           # one-sided 5%
+    assert abs(_z_threshold(0.0005) - 3.29) < 0.01          # Bonferroni 0.05/100
+    assert _z_threshold(0.0005) > _z_threshold(0.05)        # more tests -> higher bar
+    # net edge 0.2 over 100 samples: var = 1.0 - 0.04, z ~ 2.04
+    assert abs(_net_z(0.6, 0.4, 100) - 2.041) < 0.01
+    assert _net_z(0.5, 0.5, 100) == 0.0                     # no edge -> z 0
+    assert _net_z(1.0, 0.0, 50) == float("inf")             # zero variance, pure signal
+
+
+def test_walk_forward_purge_blocks_boundary_leak():
+    # each 100-bar window: bars 0-87 alternate +1/-1 (zero net), bars 88-99 all +1 —
+    # exactly the label-horizon tail whose labels resolve in the NEXT window
+    n = 500
+    labels = pd.Series([1 if (i % 100) >= 88 else (1 if i % 2 == 0 else -1)
+                        for i in range(n)])
+    feats = pd.DataFrame({"cond": [True] * n})
+    leaky = walk_forward_edges(feats, labels, ["cond"], n_windows=5,
+                               min_count=10, purge=0)
+    assert leaky["wf_pass"] is True                          # leakage looks like an edge
+    purged = walk_forward_edges(feats, labels, ["cond"], n_windows=5,
+                                min_count=10, purge=12)
+    assert purged["wf_pass"] is False                        # purge removes the mirage
+
+
+def test_run_discovery_rigor_columns():
+    from rmse_bot.discovery import run_discovery
+    df = _ramp_df(100, 0.2, 1200)
+    res = run_discovery(df, split=0.7, min_count=20)
+    assert "z_is" in res.columns
+    assert res["holds"].dtype == bool

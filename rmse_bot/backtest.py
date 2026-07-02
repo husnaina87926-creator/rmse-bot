@@ -167,11 +167,15 @@ def walk_forward(df: pd.DataFrame, cfg: dict, instr: dict, rules: list,
 def backtest_edge(df: pd.DataFrame, cfg: dict, instr: dict, rules: list,
                   sl_atr: float = 1.5, rr: float = 1.5, max_hold: int = 12,
                   lookback: int = 250, be_atr: float = 0.0,
-                  trail_atr: float = 0.0, regime_mask=None) -> BacktestResult:
+                  trail_atr: float = 0.0, regime_mask=None,
+                  compound: bool = True) -> BacktestResult:
     """Backtest a discovery-derived rule set. A rule = {'direction','when':[features]}.
     When all of a rule's boolean features are true on a bar, open a trade with an
     ATR-based SL/TP; exit at TP/SL or at market after `max_hold` bars (time exit).
-    Features are precomputed once (O(n)). Costs/sizing reuse the shared risk module."""
+    Features are precomputed once (O(n)). Costs/sizing reuse the shared risk module.
+    compound=False sizes every trade off the STARTING balance (fixed-risk additive) —
+    use for edge VALIDATION, where compounding's path-dependence would let the balance
+    trajectory, not the edge, decide the result."""
     from rmse_bot.discovery import build_features
     from rmse_bot.indicators import atr
 
@@ -207,7 +211,8 @@ def backtest_edge(df: pd.DataFrame, cfg: dict, instr: dict, rules: list,
         outcome, exit_price = simulate_trade_dynamic(
             direction, entry, sl, tp, a[i], future,
             be_trigger_atr=be_atr, trail_atr=trail_atr)
-        lots = position_size(balance, cfg["account"]["risk_per_trade_pct"],
+        sizing_bal = balance if compound else cfg["account"]["size_usd"]
+        lots = position_size(sizing_bal, cfg["account"]["risk_per_trade_pct"],
                              entry, sl, instr["contract_size"])
         cost = trade_cost(lots, instr)
         move = (exit_price - entry) if direction == "buy" else (entry - exit_price)

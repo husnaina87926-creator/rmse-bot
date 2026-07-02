@@ -172,3 +172,26 @@ def test_brain_scoreboard(tmp_path):
     fb = sb["families"]["cond:b"]                              # only the promoted rule
     assert fb["survival_rate"] == 1.0
     assert os.path.exists(os.path.join(sd, "scoreboard.json"))
+
+
+def test_both_halves_positive():
+    from rmse_bot.self_improve import _both_halves_positive
+    t = lambda p: {"pnl": p}
+    good = [t(1)] * 20
+    lucky = [t(5)] * 10 + [t(-1)] * 10
+    thin = [t(1)] * 6
+    assert _both_halves_positive(good) is True
+    assert _both_halves_positive(lucky) is False       # regime-luck: later half negative
+    assert _both_halves_positive(thin) is False        # fewer than 2*min_each trades
+
+
+def test_top_candidates_requires_stratified_pass(monkeypatch):
+    import rmse_bot.self_improve as si
+    strat = {"direction": "sell", "entry": ["a", "b"], "score": 5,
+             "return": 100, "pf": 1.5}
+    monkeypatch.setattr(si, "generate_strategies", lambda *a, **k: [dict(strat)])
+    monkeypatch.setattr(si, "stratified_ok", lambda *a, **k: False)
+    assert si.top_candidates("BTCUSDT", object(), {}, []) == []   # gate rejects
+    monkeypatch.setattr(si, "stratified_ok", lambda *a, **k: True)
+    got = si.top_candidates("BTCUSDT", object(), {}, [])
+    assert got[0]["rule"] == {"direction": "sell", "when": ["a", "b"], "regime": "down"}

@@ -27,6 +27,24 @@ def regime_mask(df: pd.DataFrame, ema_period: int = 100, rise_n: int = 20):
     return dates.map(up).fillna(False).to_numpy(dtype=bool)
 
 
+def regime_state_mask(df: pd.DataFrame, state: str,
+                      ema_period: int = 100, rise_n: int = 20):
+    """Boolean array aligned to df rows: True where the DAILY regime equals `state`
+    ('up': price>EMA & EMA rising; 'down': price<EMA & EMA falling) — mirrors
+    regime_state() bar by bar. Used to validate regime-tagged candidate rules under
+    the same regime gate they will actually trade in live."""
+    daily = resample_ohlc(df, "1D")
+    close = daily["close"]
+    e = ema(close, ema_period)
+    if state == "up":
+        s = (close > e) & (e > e.shift(rise_n))
+    else:
+        s = (close < e) & (e < e.shift(rise_n))
+    s.index = pd.to_datetime(daily["time"]).dt.date
+    dates = pd.to_datetime(df["time"]).dt.date
+    return dates.map(s).fillna(False).to_numpy(dtype=bool)
+
+
 def regime_up_now(daily_df: pd.DataFrame, ema_period: int = 100, rise_n: int = 20) -> bool:
     """Is the daily regime up on the latest daily bar? Used live (from a daily fetch)."""
     if daily_df is None or len(daily_df) < ema_period:
