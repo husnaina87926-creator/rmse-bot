@@ -22,6 +22,7 @@ from rmse_bot.regime import regime_state
 from rmse_bot.paper_trader import load_state, save_state, step, default_params
 from rmse_bot.news_filter import fetch_calendar, is_news_blocked
 from rmse_bot.self_improve import load_live_rules, rules_for
+from rmse_bot.journal import integrity_check, diff_and_journal, append_event
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATE = os.path.join(ROOT, "state")
@@ -66,6 +67,16 @@ def main():
             print(f"  WARN {acc['name']} fetch failed: {e}")
             continue
 
+        # DATA INTEGRITY GUARD: never act on broken data (dup/backwards/gappy/stale bars)
+        interval_s = 900 if acc["kind"] == "gold" else 14400
+        ok, reason = integrity_check(trade, interval_s,
+                                     allow_session_gaps=(acc["kind"] == "gold"))
+        if not ok:
+            print(f"  WARN {acc['name']} data integrity: {reason} — skipping this round")
+            append_event(STATE, {"type": "data_skip", "account": acc["name"],
+                                 "symbol": sym, "reason": reason})
+            continue
+
         reg = regime_state(daily, ep, rn)
         news_blocked = False
         if acc["kind"] == "gold" and cfg.get("news_filter", {}).get("enabled"):
@@ -79,20 +90,26 @@ def main():
         champ_rules = rules_for(sym, cfg, live)
         data, rs = {sym: trade}, {sym: reg}
 
+        bar_time = trade["time"].iloc[-1]
+
         # champion
         cs = load_state(os.path.join(STATE, f"{acc['name']}.json"), start_bal)
+        b_open, b_n = [dict(p) for p in cs["open"]], len(cs["closed"])
         step(cs, data, cfg, {sym: champ_rules}, now, params=acc["params"],
              regime_state_by_symbol=rs, news_blocked=news_blocked)
         save_state(cs, os.path.join(STATE, f"{acc['name']}.json"))
+        diff_and_journal(STATE, acc["name"], b_open, b_n, cs, bar_time, interval_s)
 
         # challenger (champion + self-learning candidate), if any
         chal_line = ""
         cand = candidates.get(sym)
         if cand:
             chs = load_state(os.path.join(STATE, f"{acc['name']}_chal.json"), start_bal)
+            b_open, b_n = [dict(p) for p in chs["open"]], len(chs["closed"])
             step(chs, data, cfg, {sym: champ_rules + [cand["rule"]]}, now, params=acc["params"],
                  regime_state_by_symbol=rs, news_blocked=news_blocked)
             save_state(chs, os.path.join(STATE, f"{acc['name']}_chal.json"))
+            diff_and_journal(STATE, f"{acc['name']}_chal", b_open, b_n, chs, bar_time, interval_s)
             chal_line = f" | chal ${chs['balance']:.0f}/{len(chs['closed'])}tr"
 
         wins = [t for t in cs["closed"] if t["pnl"] > 0]

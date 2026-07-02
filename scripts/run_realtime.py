@@ -70,6 +70,15 @@ def run_symbol(sym, kind, params):
     except Exception as e:
         print(f"  WARN {sym} fetch: {e}", flush=True)
         return
+    # DATA INTEGRITY GUARD: never act on broken data
+    from rmse_bot.journal import integrity_check, diff_and_journal, append_event
+    interval_s = 900 if kind == "gold" else 14400
+    ok, reason = integrity_check(trade, interval_s, allow_session_gaps=(kind == "gold"))
+    if not ok:
+        print(f"  WARN {sym} data integrity: {reason} — skipping", flush=True)
+        append_event(STATE, {"type": "data_skip", "account": name if kind != "gold" else "gold",
+                             "symbol": sym, "reason": reason})
+        return
     reg = regime_state(daily, EP, RN)
     news_blocked = False
     if kind == "gold" and cfg.get("news_filter", {}).get("enabled"):
@@ -81,17 +90,22 @@ def run_symbol(sym, kind, params):
             pass
     champ_rules = rules_for(sym, cfg, live)
     data, rs = {sym: trade}, {sym: reg}
+    bar_time = trade["time"].iloc[-1]
     cs = load_state(os.path.join(STATE, f"{name}.json"), START_BAL)
     before = (len(cs["open"]), len(cs["closed"]))
+    b_open, b_n = [dict(p) for p in cs["open"]], len(cs["closed"])
     step(cs, data, cfg, {sym: champ_rules}, now, params=params,
          regime_state_by_symbol=rs, news_blocked=news_blocked)
     save_state(cs, os.path.join(STATE, f"{name}.json"))
+    diff_and_journal(STATE, name, b_open, b_n, cs, bar_time, interval_s)
     cand = candidates.get(sym)
     if cand:
         chs = load_state(os.path.join(STATE, f"{name}_chal.json"), START_BAL)
+        b_open, b_n = [dict(p) for p in chs["open"]], len(chs["closed"])
         step(chs, data, cfg, {sym: champ_rules + [cand["rule"]]}, now, params=params,
              regime_state_by_symbol=rs, news_blocked=news_blocked)
         save_state(chs, os.path.join(STATE, f"{name}_chal.json"))
+        diff_and_journal(STATE, f"{name}_chal", b_open, b_n, chs, bar_time, interval_s)
     changed = (len(cs["open"]), len(cs["closed"])) != before
     flag = "  <== ACTION" if changed else ""
     print(f"[{now:%H:%M:%S}] {name:5} {sym:9} regime={reg or '-':4} bal=${cs['balance']:.2f} "

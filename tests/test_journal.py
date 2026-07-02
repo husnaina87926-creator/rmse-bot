@@ -1,0 +1,111 @@
+import datetime as dt
+import json
+import os
+
+import pandas as pd
+
+from rmse_bot.journal import (
+    append_event, read_events, diff_and_journal, integrity_check,
+    health_snapshot, run_postmortems,
+)
+
+
+def _df(times, o=100.0, h=101.0, l=99.0, c=100.5):
+    return pd.DataFrame({"time": pd.to_datetime(times),
+                         "open": o, "high": h, "low": l, "close": c})
+
+
+def _times(n, interval_s, end=None):
+    end = end or dt.datetime.now(dt.timezone.utc).replace(tzinfo=None)
+    return [end - dt.timedelta(seconds=interval_s * (n - 1 - i)) for i in range(n)]
+
+
+def test_integrity_ok_and_failures():
+    iv = 14400
+    ok, r = integrity_check(_df(_times(60, iv)), iv)
+    assert ok and r == "ok"
+
+    # too few bars
+    ok, r = integrity_check(_df(_times(10, iv)), iv)
+    assert not ok and r == "too_few_bars"
+
+    # duplicate timestamps
+    t = _times(60, iv); t[5] = t[4]
+    ok, r = integrity_check(_df(t), iv)
+    assert not ok and r == "duplicate_timestamps"
+
+    # internal gap (missing candle)
+    t = _times(60, iv)
+    del t[30]                                                      # one candle missing -> 2*iv gap
+    ok, r = integrity_check(_df(t), iv)
+    assert not ok and r == "gap_missing_candles"
+
+    # stale last candle (dead feed)
+    old = dt.datetime.now(dt.timezone.utc).replace(tzinfo=None) - dt.timedelta(days=5)
+    ok, r = integrity_check(_df(_times(60, iv, end=old)), iv)
+    assert not ok and r == "stale_last_candle"
+
+    # session market (gold): weekend gap allowed, only multi-day staleness rejected
+    t = _times(60, 900)
+    t = t[:30] + [x + dt.timedelta(days=2) for x in t[30:]]        # weekend-style gap
+    ok, r = integrity_check(_df(t), 900, allow_session_gaps=True,
+                            now=dt.datetime.fromtimestamp(
+                                t[-1].timestamp(), dt.timezone.utc))
+    assert ok
+
+
+def test_diff_and_journal_records_opens_and_closes(tmp_path):
+    sd = str(tmp_path)
+    pos = {"symbol": "BTCUSDT", "direction": "sell", "entry": 100.0, "sl": 104.0,
+           "tp": 96.0, "lots": 1.0, "atr": 2.0, "open_time": "2026-07-01 04:00:00+00:00",
+           "rule": {"direction": "sell", "when": ["rsi_bear"]}, "regime_at_open": "down"}
+    closed = {"symbol": "BTCUSDT", "direction": "sell", "entry": 100.0, "exit": 96.0,
+              "outcome": "tp", "pnl": 4.0, "open_time": "2026-07-01 04:00:00+00:00",
+              "close_time": "2026-07-01 16:00:00+00:00", "lots": 1.0}
+    # one pre-existing open closes; one new open appears
+    before_open = [pos]
+    state = {"open": [dict(pos, open_time="2026-07-02 04:00:00+00:00")],
+             "closed": [closed], "balance": 5004.0}
+    diff_and_journal(sd, "btc", before_open, 0, state,
+                     bar_time="2026-07-02 04:00:00+00:00", interval_s=14400)
+    evs = read_events(sd)
+    kinds = [e["type"] for e in evs]
+    assert kinds.count("open") == 1 and kinds.count("close") == 1
+    close_ev = next(e for e in evs if e["type"] == "close")
+    assert close_ev["sl"] == 104.0 and close_ev["tp"] == 96.0      # enriched from position
+    assert close_ev["rule"]["when"] == ["rsi_bear"]
+    open_ev = next(e for e in evs if e["type"] == "open")
+    assert open_ev["account"] == "btc" and open_ev["regime_at_open"] == "down"
+
+
+def test_health_snapshot_flags_unhealthy(tmp_path):
+    sd = str(tmp_path)
+    good = {"balance": 5500, "open": [],
+            "closed": [{"pnl": 10}] * 25, "history": []}
+    bad = {"balance": 4800, "open": [],
+           "closed": [{"pnl": 50}] * 10 + [{"pnl": -12}] * 20, "history": []}
+    json.dump(good, open(os.path.join(sd, "good.json"), "w"))
+    json.dump(bad, open(os.path.join(sd, "bad.json"), "w"))
+    h = health_snapshot(sd, ["good", "bad"], 5000)
+    assert h["good"]["unhealthy"] is False
+    assert h["bad"]["unhealthy"] is True
+    assert os.path.exists(os.path.join(sd, "health.json"))
+
+
+def test_postmortem_tp_hit_after_exit(tmp_path):
+    sd = str(tmp_path)
+    # a sell closed by TIME exit at 100; afterwards price fell to 90 (tp was 95 -> hit after exit)
+    append_event(sd, {"type": "close", "account": "btc", "symbol": "BTCUSDT",
+                      "direction": "sell", "exit": 100.0, "tp": 95.0, "atr": 2.0,
+                      "outcome": "time", "pnl": 0.0,
+                      "close_time": "2026-07-01 00:00:00"})
+    fut_times = pd.date_range("2026-07-01 04:00:00", periods=10, freq="4h")
+    df = pd.DataFrame({"time": fut_times, "open": 99.0, "high": 99.5,
+                       "low": 90.0, "close": 92.0})
+    n = run_postmortems(sd, lambda sym: df)
+    assert n == 1
+    pm = [e for e in read_events(sd) if e["type"] == "postmortem"][0]
+    assert pm["tp_hit_after_exit"] is True
+    assert pm["left_on_table_atr"] == 5.0          # (100-90)/2 ATR left on the table
+    # second run: no duplicates
+    assert run_postmortems(sd, lambda sym: df) == 0

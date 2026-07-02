@@ -23,6 +23,7 @@ from rmse_bot.config import load_config
 from rmse_bot.binance_feed import fetch_binance_klines
 from rmse_bot.data_feed import fetch_dukascopy
 from rmse_bot.self_improve import promotion_demotion_pass, discovery_pass
+from rmse_bot.journal import health_snapshot, run_postmortems
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATE = os.path.join(ROOT, "state")
@@ -45,6 +46,8 @@ def main():
     start_bal = cfg["account"]["size_usd"]
     symbols = ["XAUUSD"] + list(cfg["crypto_rules"]["symbols"])
     last_4h = None
+    last_pm = None
+    acct_names = [NAME[s] for s in symbols] + [f"{NAME[s]}_chal" for s in symbols]
     print("[brain] ALWAYS-ON live brain started (5-min heartbeat, discovery at every 4h close)",
           flush=True)
     while True:
@@ -58,6 +61,25 @@ def main():
                       flush=True)
         except Exception as e:
             print(f"[brain] WARN promo/demo pass: {e}", flush=True)
+
+        try:
+            health = health_snapshot(STATE, acct_names, start_bal)
+            for nm, h in health.items():
+                if isinstance(h, dict) and h.get("unhealthy"):
+                    print(f"[brain {now:%m-%d %H:%M}] HEALTH FLAG: {nm} last-20 net "
+                          f"{h['recent_net']} (win {h['recent_win']})", flush=True)
+        except Exception as e:
+            print(f"[brain] WARN health: {e}", flush=True)
+
+        if last_pm is None or (now - last_pm).total_seconds() >= 3600:
+            last_pm = now
+            try:
+                n = run_postmortems(STATE, fetch_for)
+                if n:
+                    print(f"[brain {now:%m-%d %H:%M}] journal: {n} post-mortems written",
+                          flush=True)
+            except Exception as e:
+                print(f"[brain] WARN postmortem: {e}", flush=True)
 
         boundary = now.replace(minute=0, second=0, microsecond=0,
                                hour=(now.hour // 4) * 4)

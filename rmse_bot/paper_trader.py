@@ -67,6 +67,8 @@ def _close(state: dict, pos: dict, exit_price: float, outcome: str,
         "lots": pos["lots"], "pnl": round(pnl, 2),
         "open_time": pos["open_time"], "close_time": close_time,
         "balance_after": round(state["balance"], 2),
+        # journal context carried through (additive)
+        "rule": pos.get("rule"), "regime_at_open": pos.get("regime_at_open"),
     })
 
 
@@ -182,6 +184,9 @@ def scan_for_entries(state: dict, data_by_symbol: dict, cfg: dict, rules_by_symb
             "symbol": sym, "direction": d, "entry": entry, "sl": sl, "tp": tp,
             "lots": lots, "open_time": str(df["time"].iloc[-1]),
             "cost": trade_cost(lots, instr), "margin": margin, "atr": ai,
+            # journal context (additive; nothing reads these for trading decisions)
+            "rule": {k: matched[k] for k in ("direction", "when", "regime") if k in matched},
+            "regime_at_open": sym_regime,
         })
 
 
