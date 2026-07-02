@@ -60,3 +60,115 @@ def test_keep_candidate_stickiness():
     assert keep_candidate(fresh, done) is False                # trial complete: replaceable
     assert keep_candidate(stale, trial) is False               # too old: replaceable
     assert keep_candidate(None, trial) is False                # nothing to keep
+
+
+def test_candidate_list_and_chal_account():
+    from rmse_bot.self_improve import candidate_list, chal_account
+    r = {"direction": "sell", "when": ["a"]}
+    old = {"BTCUSDT": {"rule": r}}                             # legacy single-dict format
+    got = candidate_list(old, "BTCUSDT")
+    assert got[0]["slot"] == 0 and got[0]["rule"] == r
+    new = {"BTCUSDT": [{"rule": r, "slot": 0}, {"rule": r, "slot": 2}]}
+    assert [c["slot"] for c in candidate_list(new, "BTCUSDT")] == [0, 2]
+    assert candidate_list({}, "BTCUSDT") == []
+    assert chal_account("btc", 0) == "btc_chal"                # historical name kept
+    assert chal_account("btc", 1) == "btc_chal2"
+    assert chal_account("btc", 2) == "btc_chal3"
+
+
+def _write_state(path, balance, pnls):
+    import json
+    with open(path, "w") as f:
+        json.dump({"balance": balance, "open": [],
+                   "closed": _closed(pnls), "history": []}, f)
+
+
+def test_promotion_from_tournament_slot(tmp_path):
+    import json
+    import os
+    from rmse_bot.self_improve import promotion_demotion_pass
+    from rmse_bot.journal import read_events
+    sd = str(tmp_path)
+    base = {"direction": "sell", "when": ["base"], "regime": "down"}
+    r1 = {"direction": "buy", "when": ["x"], "regime": "up"}
+    r2 = {"direction": "sell", "when": ["y"], "regime": "down"}
+    cfg = {"edge_rules": {}, "crypto_rules": {"rules": [base]}}
+    now = dt.datetime.now(dt.timezone.utc).isoformat()
+    json.dump({"BTCUSDT": [{"rule": r1, "slot": 0, "born": now},
+                           {"rule": r2, "slot": 1, "born": now}]},
+              open(os.path.join(sd, "candidates.json"), "w"))
+    _write_state(os.path.join(sd, "btc.json"), 5100, [2.5] * 40)       # champion +100
+    _write_state(os.path.join(sd, "btc_chal.json"), 5010, [1] * 10)    # slot0: mid-trial
+    _write_state(os.path.join(sd, "btc_chal2.json"), 5300, [7.5] * 40)  # slot1: proven
+
+    promoted, demoted = promotion_demotion_pass(cfg, sd, {"BTCUSDT": "btc"}, 5000)
+    assert promoted == [("BTCUSDT", r2)] and demoted == []
+    live = json.load(open(os.path.join(sd, "live_rules.json")))
+    assert live["BTCUSDT"] == [base, r2]                       # champion rules + promoted
+    cands = json.load(open(os.path.join(sd, "candidates.json")))
+    assert [c["slot"] for c in cands["BTCUSDT"]] == [0]        # slot1 freed
+    assert not os.path.exists(os.path.join(sd, "btc_chal2.json"))
+    promos = json.load(open(os.path.join(sd, "promotions.json")))
+    assert promos["BTCUSDT"][0]["rule"] == r2                  # list format, per-promotion
+    ev = [e for e in read_events(sd) if e["type"] == "candidate_retired"][0]
+    assert ev["reason"] == "promoted" and ev["forward_trades"] == 40
+
+
+def test_discovery_tournament_fills_and_retires(tmp_path, monkeypatch):
+    import json
+    import os
+    import rmse_bot.self_improve as si
+    from rmse_bot.journal import read_events
+    sd = str(tmp_path)
+    cfg = {"edge_rules": {}, "crypto_rules": {"rules": [{"direction": "sell", "when": ["base"]}]}}
+    now = dt.datetime.now(dt.timezone.utc).isoformat()
+    r0 = {"direction": "buy", "when": ["k0"], "regime": "up"}
+    json.dump({"BTCUSDT": {"rule": r0, "born": now}},          # legacy format, slot 0
+              open(os.path.join(sd, "candidates.json"), "w"))
+    _write_state(os.path.join(sd, "btc_chal.json"), 5005, [1] * 5)     # mid-trial -> sticky
+
+    fresh = [{"rule": {"direction": "sell", "when": ["n1"], "regime": "down"}, "score": 1, "return": 10, "pf": 1.5},
+             {"rule": {"direction": "buy", "when": ["n2"], "regime": "up"}, "score": 1, "return": 8, "pf": 1.4}]
+    monkeypatch.setattr(si, "top_candidates", lambda *a, **k: [dict(c) for c in fresh])
+    log = si.discovery_pass(cfg, sd, {"BTCUSDT": "btc"}, 5000, lambda s: object(), ["BTCUSDT"])
+    cands = json.load(open(os.path.join(sd, "candidates.json")))["BTCUSDT"]
+    assert sorted(c["slot"] for c in cands) == [0, 1, 2]       # sticky + 2 recruits
+    assert cands[0]["rule"] == r0                              # legacy candidate migrated, kept
+    born = [e for e in read_events(sd) if e["type"] == "candidate_born"]
+    assert len(born) == 2 and any("keeping candidate" in ln for ln in log)
+
+    # slot1 finishes its 30-trade trial without promoting -> retired; nothing new found
+    _write_state(os.path.join(sd, "btc_chal2.json"), 4950, [-1.67] * 30)
+    monkeypatch.setattr(si, "top_candidates", lambda *a, **k: [])
+    log = si.discovery_pass(cfg, sd, {"BTCUSDT": "btc"}, 5000, lambda s: object(), ["BTCUSDT"])
+    cands = json.load(open(os.path.join(sd, "candidates.json")))["BTCUSDT"]
+    assert sorted(c["slot"] for c in cands) == [0, 2]          # slot1 retired + freed
+    assert not os.path.exists(os.path.join(sd, "btc_chal2.json"))
+    ret = [e for e in read_events(sd) if e["type"] == "candidate_retired"][0]
+    assert ret["reason"] == "trial_complete" and ret["forward_trades"] == 30
+    assert ret["forward_net"] == -50.0
+
+
+def test_brain_scoreboard(tmp_path):
+    import os
+    from rmse_bot.self_improve import brain_scoreboard
+    from rmse_bot.journal import append_event
+    sd = str(tmp_path)
+    r1 = {"direction": "sell", "when": ["a", "b"], "regime": "down"}
+    r2 = {"direction": "sell", "when": ["a", "c"], "regime": "down"}
+    append_event(sd, {"type": "candidate_born", "symbol": "BTCUSDT", "rule": r1, "slot": 0})
+    append_event(sd, {"type": "candidate_born", "symbol": "BTCUSDT", "rule": r2, "slot": 1})
+    append_event(sd, {"type": "candidate_retired", "symbol": "BTCUSDT", "rule": r1,
+                      "reason": "promoted", "forward_trades": 35, "forward_net": 300.0})
+    append_event(sd, {"type": "candidate_retired", "symbol": "BTCUSDT", "rule": r2,
+                      "reason": "trial_complete", "forward_trades": 30, "forward_net": -50.0})
+    append_event(sd, {"type": "rule_demoted", "symbol": "BTCUSDT", "rule": r1})
+    sb = brain_scoreboard(sd)
+    assert sb["totals"] == {"born": 2, "promoted": 1, "trial_complete": 1,
+                            "stale": 0, "demoted": 1}
+    fa = sb["families"]["cond:a"]                              # shared condition, both rules
+    assert fa["born"] == 2 and fa["promoted"] == 1 and fa["demoted"] == 1
+    assert fa["survival_rate"] == 0.5 and fa["avg_forward_net"] == 125.0
+    fb = sb["families"]["cond:b"]                              # only the promoted rule
+    assert fb["survival_rate"] == 1.0
+    assert os.path.exists(os.path.join(sd, "scoreboard.json"))

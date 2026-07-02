@@ -23,7 +23,7 @@ from rmse_bot.data_feed import fetch_twelvedata, fetch_dukascopy
 from rmse_bot.regime import regime_state
 from rmse_bot.paper_trader import load_state, save_state, step, default_params
 from rmse_bot.news_filter import fetch_calendar, is_news_blocked
-from rmse_bot.self_improve import load_live_rules, rules_for
+from rmse_bot.self_improve import load_live_rules, rules_for, candidate_list, chal_account
 
 import websockets
 
@@ -98,14 +98,14 @@ def run_symbol(sym, kind, params):
          regime_state_by_symbol=rs, news_blocked=news_blocked)
     save_state(cs, os.path.join(STATE, f"{name}.json"))
     diff_and_journal(STATE, name, b_open, b_n, cs, bar_time, interval_s)
-    cand = candidates.get(sym)
-    if cand:
-        chs = load_state(os.path.join(STATE, f"{name}_chal.json"), START_BAL)
+    for cand in candidate_list(candidates, sym):
+        cn = chal_account(name, cand.get("slot", 0))
+        chs = load_state(os.path.join(STATE, f"{cn}.json"), START_BAL)
         b_open, b_n = [dict(p) for p in chs["open"]], len(chs["closed"])
         step(chs, data, cfg, {sym: champ_rules + [cand["rule"]]}, now, params=params,
              regime_state_by_symbol=rs, news_blocked=news_blocked)
-        save_state(chs, os.path.join(STATE, f"{name}_chal.json"))
-        diff_and_journal(STATE, f"{name}_chal", b_open, b_n, chs, bar_time, interval_s)
+        save_state(chs, os.path.join(STATE, f"{cn}.json"))
+        diff_and_journal(STATE, cn, b_open, b_n, chs, bar_time, interval_s)
     changed = (len(cs["open"]), len(cs["closed"])) != before
     flag = "  <== ACTION" if changed else ""
     print(f"[{now:%H:%M:%S}] {name:5} {sym:9} regime={reg or '-':4} bal=${cs['balance']:.2f} "

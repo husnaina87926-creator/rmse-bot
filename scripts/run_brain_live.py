@@ -22,7 +22,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from rmse_bot.config import load_config
 from rmse_bot.binance_feed import fetch_binance_klines
 from rmse_bot.data_feed import fetch_dukascopy
-from rmse_bot.self_improve import promotion_demotion_pass, discovery_pass
+from rmse_bot.self_improve import (promotion_demotion_pass, discovery_pass,
+                                   brain_scoreboard, chal_account, TOURNAMENT_SLOTS)
 from rmse_bot.journal import (health_snapshot, run_postmortems,
                               run_counterfactuals, counterfactual_summary)
 
@@ -48,7 +49,8 @@ def main():
     symbols = ["XAUUSD"] + list(cfg["crypto_rules"]["symbols"])
     last_4h = None
     last_pm = None
-    acct_names = [NAME[s] for s in symbols] + [f"{NAME[s]}_chal" for s in symbols]
+    acct_names = [NAME[s] for s in symbols] + \
+        [chal_account(NAME[s], slot) for s in symbols for slot in range(TOURNAMENT_SLOTS)]
     print("[brain] ALWAYS-ON live brain started (5-min heartbeat, discovery at every 4h close)",
           flush=True)
     while True:
@@ -94,6 +96,15 @@ def main():
                              if best[0] else ""), flush=True)
             except Exception as e:
                 print(f"[brain] WARN counterfactual: {e}", flush=True)
+            try:
+                sb = brain_scoreboard(STATE)
+                tt = sb["totals"]
+                if tt["born"]:
+                    print(f"[brain {now:%m-%d %H:%M}] scoreboard: {tt['born']} candidates "
+                          f"born | {tt['promoted']} promoted, {tt['trial_complete']} failed "
+                          f"trial, {tt['stale']} stale, {tt['demoted']} demoted", flush=True)
+            except Exception as e:
+                print(f"[brain] WARN scoreboard: {e}", flush=True)
 
         boundary = now.replace(minute=0, second=0, microsecond=0,
                                hour=(now.hour // 4) * 4)

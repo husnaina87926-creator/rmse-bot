@@ -21,7 +21,7 @@ from rmse_bot.binance_feed import fetch_binance_klines
 from rmse_bot.regime import regime_state
 from rmse_bot.paper_trader import load_state, save_state, step, default_params
 from rmse_bot.news_filter import fetch_calendar, is_news_blocked
-from rmse_bot.self_improve import load_live_rules, rules_for
+from rmse_bot.self_improve import load_live_rules, rules_for, candidate_list, chal_account
 from rmse_bot.journal import integrity_check, diff_and_journal, append_event
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -100,17 +100,17 @@ def main():
         save_state(cs, os.path.join(STATE, f"{acc['name']}.json"))
         diff_and_journal(STATE, acc["name"], b_open, b_n, cs, bar_time, interval_s)
 
-        # challenger (champion + self-learning candidate), if any
+        # challengers (champion + one tournament candidate each), if any
         chal_line = ""
-        cand = candidates.get(sym)
-        if cand:
-            chs = load_state(os.path.join(STATE, f"{acc['name']}_chal.json"), start_bal)
+        for cand in candidate_list(candidates, sym):
+            cn = chal_account(acc["name"], cand.get("slot", 0))
+            chs = load_state(os.path.join(STATE, f"{cn}.json"), start_bal)
             b_open, b_n = [dict(p) for p in chs["open"]], len(chs["closed"])
             step(chs, data, cfg, {sym: champ_rules + [cand["rule"]]}, now, params=acc["params"],
                  regime_state_by_symbol=rs, news_blocked=news_blocked)
-            save_state(chs, os.path.join(STATE, f"{acc['name']}_chal.json"))
-            diff_and_journal(STATE, f"{acc['name']}_chal", b_open, b_n, chs, bar_time, interval_s)
-            chal_line = f" | chal ${chs['balance']:.0f}/{len(chs['closed'])}tr"
+            save_state(chs, os.path.join(STATE, f"{cn}.json"))
+            diff_and_journal(STATE, cn, b_open, b_n, chs, bar_time, interval_s)
+            chal_line += f" | {cn.split('_', 1)[1]} ${chs['balance']:.0f}/{len(chs['closed'])}tr"
 
         wins = [t for t in cs["closed"] if t["pnl"] > 0]
         wr = len(wins) / len(cs["closed"]) if cs["closed"] else 0
