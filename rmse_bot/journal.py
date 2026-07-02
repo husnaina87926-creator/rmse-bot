@@ -246,6 +246,136 @@ def counterfactual_summary(state_dir: str, min_n: int = 10) -> dict:
     return out
 
 
+# ---------------- per-regime rule ledger (which rule earns in which weather) ----------------
+
+def regime_ledger(state_dir: str, names: list) -> dict:
+    """PER-REGIME RULE LEDGER (observer): aggregate every account's closed trades by
+    (rule fired, regime at open) -> trades / net / win rate. The bot's own record of
+    WHICH rule earns in WHICH market weather. Written to state/regime_ledger.json.
+    Trades from before rule-tagging (pre journal era) land in 'untagged'."""
+    out = {}
+    for nm in names:
+        p = os.path.join(state_dir, f"{nm}.json")
+        if not os.path.exists(p):
+            continue
+        try:
+            with open(p) as f:
+                s = json.load(f)
+        except Exception:
+            continue
+        acct = {}
+        for t in s.get("closed", []):
+            rule = t.get("rule")
+            if rule:
+                rk = f"{rule.get('direction')} {'&'.join(rule.get('when', []))}"
+                if rule.get("regime"):
+                    rk += f" [{rule['regime']}]"
+            else:
+                rk = "untagged"
+            reg = t.get("regime_at_open") or "none"
+            b = acct.setdefault(rk, {}).setdefault(reg, {"n": 0, "net": 0.0, "wins": 0})
+            b["n"] += 1
+            b["net"] = round(b["net"] + float(t.get("pnl", 0.0)), 2)
+            b["wins"] += 1 if t.get("pnl", 0.0) > 0 else 0
+        if acct:
+            for rk in acct:
+                for reg, b in acct[rk].items():
+                    b["win"] = round(b.pop("wins") / b["n"], 2)
+            out[nm] = acct
+    out["_ts"] = dt.datetime.now(dt.timezone.utc).isoformat()
+    with open(os.path.join(state_dir, "regime_ledger.json"), "w") as f:
+        json.dump(out, f, indent=2)
+    return out
+
+
+def ledger_warnings(ledger: dict, min_n: int = 10) -> list:
+    """Actionable reads from the regime ledger: rules that LOSE with a real sample in
+    some regime ('this rule is not for this weather'). Info-only."""
+    warns = []
+    for nm, acct in ledger.items():
+        if nm.startswith("_"):
+            continue
+        for rk, regs in acct.items():
+            for reg, b in regs.items():
+                if b["n"] >= min_n and b["net"] < 0:
+                    warns.append(f"{nm}: '{rk}' in regime={reg} is net "
+                                 f"${b['net']} over {b['n']} trades (win {b['win']:.0%})")
+    return warns
+
+
+# ---------------- regime-break detector (has the weather changed?) ----------------
+
+def regime_watch_pass(state_dir: str, fetch_fn, symbols: list, name_map: dict,
+                      ema_period: int = 100, rise_n: int = 20,
+                      vol_pct: float = 0.99, clear_pct: float = 0.95) -> list:
+    """REGIME-BREAK DETECTOR (observer, run at each 4h close): (1) track every symbol's
+    daily regime and journal a 'regime_flip' event the moment it changes — including how
+    many champion positions are still open from the OLD regime (caution: they were
+    opened under assumptions that no longer hold); (2) journal a 'vol_break' event when
+    current ATR%%-of-price enters the top (1-vol_pct) of its own history — a volatility
+    regime the edge was not measured in. State in regime_watch.json; changes nothing."""
+    from rmse_bot.regime import regime_state
+    from rmse_bot.data_feed import resample_ohlc
+    from rmse_bot.indicators import atr
+    watch_path = os.path.join(state_dir, "regime_watch.json")
+    watch = {}
+    if os.path.exists(watch_path):
+        try:
+            with open(watch_path) as f:
+                watch = json.load(f)
+        except Exception:
+            watch = {}
+    log = []
+    for sym in symbols:
+        try:
+            df = fetch_fn(sym)
+            if df is None or len(df) < 300:
+                continue
+            daily = resample_ohlc(df, "1D")
+            reg = regime_state(daily, ema_period, rise_n) or "none"
+            w = watch.get(sym, {})
+            old = w.get("regime")
+            if old is not None and old != reg:
+                nm = name_map.get(sym)
+                open_old = 0
+                p = os.path.join(state_dir, f"{nm}.json") if nm else None
+                if p and os.path.exists(p):
+                    try:
+                        with open(p) as f:
+                            st = json.load(f)
+                        open_old = sum(1 for o in st.get("open", [])
+                                       if o.get("regime_at_open") == old)
+                    except Exception:
+                        pass
+                append_event(state_dir, {"type": "regime_flip", "symbol": sym,
+                                         "from": old, "to": reg,
+                                         "open_positions_from_old_regime": open_old})
+                log.append(f"{sym}: REGIME FLIP {old} -> {reg}"
+                           + (f" (CAUTION: {open_old} open position(s) from the old regime)"
+                              if open_old else ""))
+            w["regime"] = reg
+            ratio = (atr(df, 14) / df["close"]).dropna()
+            if len(ratio) > 300:
+                cur = float(ratio.iloc[-1])
+                pct = float((ratio.iloc[:-1] < cur).mean())
+                if pct >= vol_pct and not w.get("vol_flag"):
+                    w["vol_flag"] = True
+                    append_event(state_dir, {"type": "vol_break", "symbol": sym,
+                                             "atr_pct_of_price": round(cur, 5),
+                                             "percentile": round(pct, 4)})
+                    log.append(f"{sym}: VOL BREAK — ATR {cur:.3%} of price is at the "
+                               f"{pct:.1%}ile of its own history (edge unmeasured here)")
+                elif pct < clear_pct and w.get("vol_flag"):
+                    w["vol_flag"] = False
+                    log.append(f"{sym}: volatility back to normal ({pct:.0%}ile)")
+            watch[sym] = w
+        except Exception as e:
+            log.append(f"{sym}: watch ERROR {e}")
+    with open(watch_path, "w") as f:
+        json.dump(watch, f, indent=2)
+    return log
+
+
 # ---------------- champion health monitor ----------------
 
 def health_snapshot(state_dir: str, names: list, start_bal: float,

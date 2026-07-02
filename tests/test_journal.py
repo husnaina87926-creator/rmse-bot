@@ -134,3 +134,72 @@ def test_counterfactuals_and_summary(tmp_path):
     assert s["n_trades"] == 1
     assert s["variants"]["rr_2.0"]["avg_R"] > s["base_avg_R"]   # lesson: exited too early
     assert run_counterfactuals(sd, lambda sym: df) == 0         # no duplicates
+
+
+def test_regime_ledger_and_warnings(tmp_path):
+    from rmse_bot.journal import regime_ledger, ledger_warnings
+    sd = str(tmp_path)
+    r_dn = {"direction": "sell", "when": ["rsi_bear"], "regime": "down"}
+    closed = ([{"pnl": 10.0, "rule": r_dn, "regime_at_open": "down"}] * 12
+              + [{"pnl": -5.0, "rule": r_dn, "regime_at_open": "none"}] * 11
+              + [{"pnl": 3.0}])                                # pre-tagging era trade
+    json.dump({"balance": 5100, "open": [], "closed": closed, "history": []},
+              open(os.path.join(sd, "btc.json"), "w"))
+    led = regime_ledger(sd, ["btc", "missing"])
+    rk = "sell rsi_bear [down]"
+    assert led["btc"][rk]["down"] == {"n": 12, "net": 120.0, "win": 1.0}
+    assert led["btc"][rk]["none"]["net"] == -55.0
+    assert led["btc"]["untagged"]["none"]["n"] == 1
+    assert os.path.exists(os.path.join(sd, "regime_ledger.json"))
+    warns = ledger_warnings(led)                               # loses in regime=none, n>=10
+    assert len(warns) == 1 and "regime=none" in warns[0] and "-55.0" in warns[0]
+
+
+def _watch_df(direction, n_days=200, spike_last=False):
+    """4h OHLC: rising or falling ramp; optional volatility spike on the last bars."""
+    rows = []
+    for d in range(n_days):
+        px = 100 + 2 * d if direction == "up" else 500 - 2 * d
+        for h in (0, 4, 8, 12, 16, 20):
+            wide = 30 if (spike_last and d >= n_days - 3) else 1
+            rows.append({"time": pd.Timestamp("2024-01-01", tz="UTC")
+                         + pd.Timedelta(days=d, hours=h),
+                         "open": px, "high": px + wide, "low": px - wide, "close": px})
+    return pd.DataFrame(rows)
+
+
+def test_regime_watch_flip_and_vol_break(tmp_path):
+    from rmse_bot.journal import regime_watch_pass
+    sd = str(tmp_path)
+    json.dump({"balance": 5000, "closed": [], "history": [],
+               "open": [{"symbol": "BTCUSDT", "regime_at_open": "up"}]},
+              open(os.path.join(sd, "btc.json"), "w"))
+    up = _watch_df("up")
+    # first pass: baseline recorded, no flip event
+    log = regime_watch_pass(sd, lambda s: up, ["BTCUSDT"], {"BTCUSDT": "btc"},
+                            ema_period=10, rise_n=3)
+    assert not [e for e in read_events(sd) if e["type"] == "regime_flip"]
+    # regime turns down -> flip journaled, open position from old regime flagged
+    dn = _watch_df("down")
+    log = regime_watch_pass(sd, lambda s: dn, ["BTCUSDT"], {"BTCUSDT": "btc"},
+                            ema_period=10, rise_n=3)
+    ev = [e for e in read_events(sd) if e["type"] == "regime_flip"][0]
+    assert ev["from"] == "up" and ev["to"] == "down"
+    assert ev["open_positions_from_old_regime"] == 1
+    assert any("REGIME FLIP" in ln and "CAUTION" in ln for ln in log)
+
+def test_vol_break_fires_once(tmp_path):
+    from rmse_bot.journal import regime_watch_pass
+    sd = str(tmp_path)
+    up = _watch_df("up")                       # rising ramp: ATR%% of price DEclines
+    log = regime_watch_pass(sd, lambda s: up, ["BTCUSDT"], {"BTCUSDT": "btc"},
+                            ema_period=10, rise_n=3)
+    assert not [e for e in read_events(sd) if e["type"] == "vol_break"]
+    # volatility spike -> vol_break journaled once, not repeated while flag holds
+    spiky = _watch_df("up", spike_last=True)
+    log = regime_watch_pass(sd, lambda s: spiky, ["BTCUSDT"], {"BTCUSDT": "btc"},
+                            ema_period=10, rise_n=3)
+    assert any("VOL BREAK" in ln for ln in log)
+    regime_watch_pass(sd, lambda s: spiky, ["BTCUSDT"], {"BTCUSDT": "btc"},
+                      ema_period=10, rise_n=3)
+    assert len([e for e in read_events(sd) if e["type"] == "vol_break"]) == 1

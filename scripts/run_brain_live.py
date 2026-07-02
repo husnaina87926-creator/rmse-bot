@@ -25,7 +25,8 @@ from rmse_bot.data_feed import fetch_dukascopy
 from rmse_bot.self_improve import (promotion_demotion_pass, discovery_pass,
                                    brain_scoreboard, chal_account, TOURNAMENT_SLOTS)
 from rmse_bot.journal import (health_snapshot, run_postmortems,
-                              run_counterfactuals, counterfactual_summary)
+                              run_counterfactuals, counterfactual_summary,
+                              regime_ledger, ledger_warnings, regime_watch_pass)
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATE = os.path.join(ROOT, "state")
@@ -105,6 +106,12 @@ def main():
                           f"trial, {tt['stale']} stale, {tt['demoted']} demoted", flush=True)
             except Exception as e:
                 print(f"[brain] WARN scoreboard: {e}", flush=True)
+            try:
+                led = regime_ledger(STATE, acct_names)
+                for wline in ledger_warnings(led):
+                    print(f"[brain {now:%m-%d %H:%M}] LEDGER: {wline}", flush=True)
+            except Exception as e:
+                print(f"[brain] WARN ledger: {e}", flush=True)
 
         boundary = now.replace(minute=0, second=0, microsecond=0,
                                hour=(now.hour // 4) * 4)
@@ -117,6 +124,14 @@ def main():
                     print(f"  [disc] {line}", flush=True)
             except Exception as e:
                 print(f"[brain] WARN discovery: {e}", flush=True)
+            try:
+                rf = cfg.get("regime_filter", {})
+                for line in regime_watch_pass(STATE, fetch_for, symbols, NAME,
+                                              rf.get("ema_period", 100),
+                                              rf.get("rise_n", 20)):
+                    print(f"  [watch] {line}", flush=True)
+            except Exception as e:
+                print(f"[brain] WARN regime watch: {e}", flush=True)
         time.sleep(CHECK_EVERY)
 
 
