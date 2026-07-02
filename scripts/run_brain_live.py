@@ -146,6 +146,12 @@ def main():
             last_4h = boundary
             print(f"[brain {now:%m-%d %H:%M}] 4h close {boundary:%H:%M} -> discovery pass",
                   flush=True)
+            try:      # cross-market context so discovery sees the btc_up/btc_down angle
+                from rmse_bot.discovery import set_market_context
+                set_market_context(fetch_binance_klines(
+                    "BTCUSDT", "1d", now - dt.timedelta(days=1100), now))
+            except Exception as e:
+                print(f"[brain] WARN btc context: {e}", flush=True)
             try:
                 for line in discovery_pass(cfg, STATE, NAME, start_bal, fetch_for, symbols):
                     print(f"  [disc] {line}", flush=True)

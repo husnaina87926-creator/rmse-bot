@@ -30,3 +30,17 @@ def test_is_news_blocked_ignores_low_impact_and_other_currency():
     events = [{"time": now, "currency": "EUR", "impact": "High", "title": "x"},
               {"time": now, "currency": "USD", "impact": "Low", "title": "y"}]
     assert is_news_blocked(now, events) is False
+
+
+def test_nearest_event_tags_closest_high_impact():
+    import datetime as dt
+    from rmse_bot.news_filter import nearest_event
+    now = dt.datetime(2026, 7, 2, 12, 0, tzinfo=dt.timezone.utc)
+    ev = [{"time": now + dt.timedelta(hours=3), "currency": "USD", "impact": "High", "title": "CPI"},
+          {"time": now - dt.timedelta(hours=1), "currency": "USD", "impact": "High", "title": "FOMC"},
+          {"time": now, "currency": "EUR", "impact": "High", "title": "ECB"},
+          {"time": now + dt.timedelta(hours=20), "currency": "USD", "impact": "High", "title": "NFP"}]
+    title, hours = nearest_event(now, ev)
+    assert title == "FOMC" and hours == -1.0                   # closest, already passed
+    assert nearest_event(now, []) == (None, None)
+    assert nearest_event(now, ev, currencies=("JPY",)) == (None, None)

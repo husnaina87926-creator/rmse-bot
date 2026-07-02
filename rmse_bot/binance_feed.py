@@ -20,7 +20,8 @@ def _parse_klines(data: list) -> pd.DataFrame:
     """Binance kline rows -> canonical UTC-aware OHLC frame.
     Each row: [openTime, open, high, low, close, volume, closeTime, ...]."""
     rows = [{"time": pd.to_datetime(k[0], unit="ms", utc=True),
-             "open": k[1], "high": k[2], "low": k[3], "close": k[4]} for k in data]
+             "open": k[1], "high": k[2], "low": k[3], "close": k[4],
+             "volume": k[5]} for k in data]
     return normalize_ohlc(pd.DataFrame(rows))
 
 

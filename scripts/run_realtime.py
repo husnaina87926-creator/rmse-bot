@@ -22,8 +22,9 @@ from rmse_bot.binance_feed import fetch_binance_klines
 from rmse_bot.data_feed import fetch_twelvedata, fetch_dukascopy
 from rmse_bot.regime import regime_state
 from rmse_bot.paper_trader import load_state, save_state, step, default_params
-from rmse_bot.news_filter import fetch_calendar, is_news_blocked
+from rmse_bot.news_filter import fetch_calendar, is_news_blocked, nearest_event
 from rmse_bot.self_improve import load_live_rules, rules_for, candidate_list, chal_account
+from rmse_bot.discovery import set_market_context
 
 import websockets
 
@@ -49,10 +50,33 @@ def crypto_params():
 CPARAMS = crypto_params()
 GPARAMS = default_params(cfg)
 
+_CTX = {"btc_t": None, "news_t": None, "events": []}
+
+
+def refresh_context(now):
+    """Hourly BTC-daily context (cross-market features) + half-hourly news calendar
+    (journal tagging). Both fail-open: on error the bot trades exactly as before."""
+    if _CTX["btc_t"] is None or (now - _CTX["btc_t"]).total_seconds() >= 3600:
+        try:
+            set_market_context(fetch_binance_klines(
+                "BTCUSDT", "1d", now - dt.timedelta(days=1100), now))
+            _CTX["btc_t"] = now
+        except Exception:
+            pass
+    if _CTX["news_t"] is None or (now - _CTX["news_t"]).total_seconds() >= 1800:
+        try:
+            _CTX["events"] = fetch_calendar()
+            _CTX["news_t"] = now
+        except Exception:
+            pass
+    title, hours = nearest_event(now, _CTX["events"])
+    return {"news_event": title, "news_h": hours}
+
 
 def run_symbol(sym, kind, params):
     """Fetch recent data + run champion & challenger step for ONE symbol (at candle close)."""
     now = dt.datetime.now(dt.timezone.utc)
+    extra = refresh_context(now)
     live = load_live_rules(os.path.join(STATE, "live_rules.json"))
     cand_path = os.path.join(STATE, "candidates.json")
     candidates = json.load(open(cand_path)) if os.path.exists(cand_path) else {}
@@ -97,7 +121,7 @@ def run_symbol(sym, kind, params):
     step(cs, data, cfg, {sym: champ_rules}, now, params=params,
          regime_state_by_symbol=rs, news_blocked=news_blocked)
     save_state(cs, os.path.join(STATE, f"{name}.json"))
-    diff_and_journal(STATE, name, b_open, b_n, cs, bar_time, interval_s)
+    diff_and_journal(STATE, name, b_open, b_n, cs, bar_time, interval_s, extra=extra)
     for cand in candidate_list(candidates, sym):
         cn = chal_account(name, cand.get("slot", 0))
         chs = load_state(os.path.join(STATE, f"{cn}.json"), START_BAL)
@@ -105,7 +129,7 @@ def run_symbol(sym, kind, params):
         step(chs, data, cfg, {sym: champ_rules + [cand["rule"]]}, now, params=params,
              regime_state_by_symbol=rs, news_blocked=news_blocked)
         save_state(chs, os.path.join(STATE, f"{cn}.json"))
-        diff_and_journal(STATE, cn, b_open, b_n, chs, bar_time, interval_s)
+        diff_and_journal(STATE, cn, b_open, b_n, chs, bar_time, interval_s, extra=extra)
     changed = (len(cs["open"]), len(cs["closed"])) != before
     flag = "  <== ACTION" if changed else ""
     print(f"[{now:%H:%M:%S}] {name:5} {sym:9} regime={reg or '-':4} bal=${cs['balance']:.2f} "

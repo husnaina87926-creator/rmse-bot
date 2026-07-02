@@ -20,9 +20,10 @@ from rmse_bot.data_feed import fetch_twelvedata, fetch_dukascopy
 from rmse_bot.binance_feed import fetch_binance_klines
 from rmse_bot.regime import regime_state
 from rmse_bot.paper_trader import load_state, save_state, step, default_params
-from rmse_bot.news_filter import fetch_calendar, is_news_blocked
+from rmse_bot.news_filter import fetch_calendar, is_news_blocked, nearest_event
 from rmse_bot.self_improve import load_live_rules, rules_for, candidate_list, chal_account
 from rmse_bot.journal import integrity_check, diff_and_journal, append_event
+from rmse_bot.discovery import set_market_context
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATE = os.path.join(ROOT, "state")
@@ -50,6 +51,20 @@ def main():
     accts = [{"name": "gold", "symbol": "XAUUSD", "kind": "gold", "params": default_params(cfg)}]
     for sym in cfg["crypto_rules"]["symbols"]:
         accts.append({"name": sym[:-4].lower(), "symbol": sym, "kind": "crypto", "params": crypto_params(cfg)})
+
+    # cross-market context (BTC daily) + news calendar — both fail-open
+    try:
+        set_market_context(fetch_binance_klines("BTCUSDT", "1d",
+                                                now - dt.timedelta(days=400), now))
+    except Exception as e:
+        print(f"  WARN btc context: {e}")
+    try:
+        events = fetch_calendar()
+    except Exception as e:
+        events = []
+        print(f"  WARN calendar: {e}")
+    title, hours = nearest_event(now, events)
+    extra = {"news_event": title, "news_h": hours}
 
     print(f"[{now:%Y-%m-%d %H:%M} UTC] bots step")
     for acc in accts:
@@ -82,7 +97,7 @@ def main():
         if acc["kind"] == "gold" and cfg.get("news_filter", {}).get("enabled"):
             try:
                 nf = cfg["news_filter"]
-                news_blocked = is_news_blocked(now, fetch_calendar(), nf.get("currencies", ["USD"]),
+                news_blocked = is_news_blocked(now, events, nf.get("currencies", ["USD"]),
                                                nf.get("impacts", ["High"]), nf.get("window_min", 30))
             except Exception as e:
                 print(f"  WARN news: {e}")
@@ -98,7 +113,7 @@ def main():
         step(cs, data, cfg, {sym: champ_rules}, now, params=acc["params"],
              regime_state_by_symbol=rs, news_blocked=news_blocked)
         save_state(cs, os.path.join(STATE, f"{acc['name']}.json"))
-        diff_and_journal(STATE, acc["name"], b_open, b_n, cs, bar_time, interval_s)
+        diff_and_journal(STATE, acc["name"], b_open, b_n, cs, bar_time, interval_s, extra=extra)
 
         # challengers (champion + one tournament candidate each), if any
         chal_line = ""
@@ -109,7 +124,7 @@ def main():
             step(chs, data, cfg, {sym: champ_rules + [cand["rule"]]}, now, params=acc["params"],
                  regime_state_by_symbol=rs, news_blocked=news_blocked)
             save_state(chs, os.path.join(STATE, f"{cn}.json"))
-            diff_and_journal(STATE, cn, b_open, b_n, chs, bar_time, interval_s)
+            diff_and_journal(STATE, cn, b_open, b_n, chs, bar_time, interval_s, extra=extra)
             chal_line += f" | {cn.split('_', 1)[1]} ${chs['balance']:.0f}/{len(chs['closed'])}tr"
 
         wins = [t for t in cs["closed"] if t["pnl"] > 0]

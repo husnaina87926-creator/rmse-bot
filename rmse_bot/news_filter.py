@@ -50,3 +50,19 @@ def is_news_blocked(now, events: list, currencies=("USD",), impacts=("High",),
             if abs((e["time"] - now).total_seconds()) <= window_min * 60:
                 return True
     return False
+
+
+def nearest_event(now, events: list, currencies=("USD",), impacts=("High",),
+                  window_h: float = 6.0):
+    """(title, hours_away) of the CLOSEST matching event within +/- window_h of `now`,
+    else (None, None). hours_away < 0 = event already passed. Observer context for the
+    trade journal: months later the mistake/ledger miners can answer 'do trades near
+    macro events lose?' with real data instead of opinion."""
+    cur, imp = set(currencies), set(impacts)
+    best = (None, None)
+    for e in events:
+        if e["currency"] in cur and e["impact"] in imp:
+            h = (e["time"] - now).total_seconds() / 3600.0
+            if abs(h) <= window_h and (best[1] is None or abs(h) < abs(best[1])):
+                best = (e["title"], round(h, 1))
+    return best

@@ -265,3 +265,19 @@ def test_graduation_gate(tmp_path):
               open(os.path.join(sd, "health.json"), "w"))
     g = graduation_gate(sd, ["btc"], 5000, now=now)
     assert g["graduated"] is False and g["passed"] == g["total"] - 2
+
+
+def test_taxonomy_counts_news_window_trades(tmp_path):
+    from rmse_bot.journal import mistake_taxonomy
+    sd = str(tmp_path)
+    append_event(sd, {"type": "close", "account": "btc", "symbol": "BTCUSDT",
+                      "direction": "sell", "outcome": "sl", "pnl": -60.0,
+                      "close_time": "2026-07-01 12:00:00",
+                      "news_event": "CPI", "news_h": 1.5})
+    append_event(sd, {"type": "close", "account": "btc", "symbol": "BTCUSDT",
+                      "direction": "sell", "outcome": "tp", "pnl": 40.0,
+                      "close_time": "2026-07-01 20:00:00",
+                      "news_event": None, "news_h": None})
+    mo = mistake_taxonomy(sd)["months"]["2026-07"]
+    assert mo["trades"] == 2
+    assert mo["news_window_trades"] == 1 and mo["news_window_net"] == -60.0

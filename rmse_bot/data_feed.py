@@ -6,8 +6,9 @@ REQUIRED = ["time", "open", "high", "low", "close"]
 def normalize_ohlc(df: pd.DataFrame) -> pd.DataFrame:
     df = df.rename(columns={c: str(c).lower() for c in df.columns})
     df["time"] = pd.to_datetime(df["time"])
-    df = df[REQUIRED].sort_values("time").reset_index(drop=True)
-    for c in ["open", "high", "low", "close"]:
+    cols = REQUIRED + (["volume"] if "volume" in df.columns else [])
+    df = df[cols].sort_values("time").reset_index(drop=True)
+    for c in cols[1:]:
         df[c] = df[c].astype(float)
     return df
 

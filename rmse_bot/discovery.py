@@ -100,6 +100,32 @@ def _sweep_up(df: pd.DataFrame, lookback: int = 3, ref: int = 20) -> pd.Series:
     return ((recent_high > prior_high) & (df["close"] < prior_high)).fillna(False)
 
 
+# optional cross-market context (BTC daily) — alts follow BTC, so BTC's regime is a
+# legitimate extra "angle" for every symbol's discovery. When never set, the btc_up /
+# btc_down features are simply False everywhere and rules using them can never fire.
+_MARKET_CTX = {"btc_daily": None}
+
+
+def set_market_context(btc_daily_df) -> None:
+    """Provide BTC daily candles as shared context for feature building (optional)."""
+    _MARKET_CTX["btc_daily"] = btc_daily_df
+
+
+def _btc_regime_flags(dates: pd.Series):
+    d = _MARKET_CTX.get("btc_daily")
+    if d is None or len(d) < 120:
+        return None
+    close = d["close"]
+    e = ema(close, 100)
+    up = (close > e) & (e > e.shift(20))
+    dn = (close < e) & (e < e.shift(20))
+    idx = pd.to_datetime(d["time"]).dt.date
+    up.index = idx
+    dn.index = idx
+    return (dates.map(up).fillna(False).astype(bool).values,
+            dates.map(dn).fillna(False).astype(bool).values)
+
+
 def build_features(df: pd.DataFrame) -> pd.DataFrame:
     """Boolean conditions describing the state at each bar (the 'why' candidates)."""
     out = pd.DataFrame(index=df.index)
@@ -135,6 +161,26 @@ def build_features(df: pd.DataFrame) -> pd.DataFrame:
     out["sweep_up"] = _sweep_up(df)
     out["bull_engulf"] = _bull_engulf(df)
     out["bear_engulf"] = _bear_engulf(df)
+
+    # volume angle (crypto feeds carry volume; feeds without it -> features stay False)
+    if "volume" in df.columns:
+        v = df["volume"].astype(float)
+        vmed = v.rolling(50, min_periods=10).median()
+        out["vol_spike"] = v > 2.0 * vmed
+        out["vol_quiet"] = v < 0.5 * vmed
+        out["vol_rising"] = v.rolling(5).mean() > v.rolling(20).mean()
+    else:
+        out["vol_spike"] = out["vol_quiet"] = out["vol_rising"] = False
+
+    # calendar angle (crypto trades weekends on thinner books)
+    out["weekend"] = pd.to_datetime(df["time"]).dt.dayofweek >= 5
+
+    # cross-market angle: BTC's daily regime as context for every symbol
+    flags = _btc_regime_flags(pd.to_datetime(df["time"]).dt.date)
+    if flags is not None:
+        out["btc_up"], out["btc_down"] = flags
+    else:
+        out["btc_up"] = out["btc_down"] = False
     return out.fillna(False)
 
 

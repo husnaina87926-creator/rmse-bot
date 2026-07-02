@@ -8,7 +8,7 @@ def test_parse_klines_to_ohlc():
         [1718000900000, "61150.0", "61300.0", "61100.0", "61250.0", "8.1", 1718001799999],
     ]
     df = _parse_klines(data)
-    assert list(df.columns) == ["time", "open", "high", "low", "close"]
+    assert list(df.columns) == ["time", "open", "high", "low", "close", "volume"]
     assert df["close"].iloc[0] == 61150.0
     assert df["high"].iloc[1] == 61300.0
     assert str(df["time"].dt.tz) == "UTC"

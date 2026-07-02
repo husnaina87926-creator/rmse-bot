@@ -129,3 +129,33 @@ def test_run_discovery_rigor_columns():
     res = run_discovery(df, split=0.7, min_count=20)
     assert "z_is" in res.columns
     assert res["holds"].dtype == bool
+
+
+def test_new_feature_angles_volume_weekend_btc(tmp_path):
+    from rmse_bot.discovery import set_market_context
+    n = 300
+    df = _ramp_df(100, 0.2, n)
+    df["time"] = pd.date_range("2024-01-01", periods=n, freq="4h", tz="UTC")
+    df["volume"] = [100.0] * (n - 1) + [1000.0]                # spike on last bar
+    try:
+        # no context yet -> btc features exist but are all False
+        feats = build_features(df)
+        for col in ("vol_spike", "vol_quiet", "vol_rising", "weekend", "btc_up", "btc_down"):
+            assert col in feats.columns
+        assert feats.dtypes.apply(lambda d: d == bool).all()   # still all boolean
+        assert bool(feats["vol_spike"].iloc[-1]) is True
+        assert not feats["btc_up"].any() and not feats["btc_down"].any()
+        assert feats["weekend"].any() and not feats["weekend"].all()
+        # rising BTC daily context -> btc_up becomes true late in the window
+        days = pd.date_range("2023-06-01", periods=300, freq="D", tz="UTC")
+        btc = pd.DataFrame({"time": days, "open": range(300), "high": range(1, 301),
+                            "low": range(300), "close": [100 + 2 * i for i in range(300)]})
+        set_market_context(btc)
+        feats = build_features(df)
+        assert feats["btc_up"].iloc[-1] and not feats["btc_down"].any()
+        # no volume column -> features exist, all False, still boolean
+        feats2 = build_features(df.drop(columns=["volume"]))
+        assert not feats2["vol_spike"].any()
+        assert feats2.dtypes.apply(lambda d: d == bool).all()
+    finally:
+        set_market_context(None)                               # never leak into other tests
