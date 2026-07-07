@@ -16,7 +16,7 @@ import datetime as dt
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from rmse_bot.config import load_config
-from rmse_bot.data_feed import fetch_twelvedata, fetch_dukascopy
+from rmse_bot.data_feed import fetch_twelvedata, fetch_dukascopy, drop_forming
 from rmse_bot.binance_feed import fetch_binance_klines
 from rmse_bot.regime import regime_state
 from rmse_bot.paper_trader import load_state, save_state, step, default_params
@@ -44,9 +44,15 @@ def main():
     start_bal = cfg["account"]["size_usd"]
     rf = cfg.get("regime_filter", {})
     ep, rn = rf.get("ema_period", 100), rf.get("rise_n", 20)
-    live = load_live_rules(os.path.join(STATE, "live_rules.json"))
+    try:
+        live = load_live_rules(os.path.join(STATE, "live_rules.json"))
+    except Exception:
+        live = {}
     cand_path = os.path.join(STATE, "candidates.json")
-    candidates = json.load(open(cand_path)) if os.path.exists(cand_path) else {}
+    try:
+        candidates = json.load(open(cand_path)) if os.path.exists(cand_path) else {}
+    except Exception:
+        candidates = {}
 
     accts = [{"name": "gold", "symbol": "XAUUSD", "kind": "gold", "params": default_params(cfg)}]
     for sym in cfg["crypto_rules"]["symbols"]:
@@ -55,7 +61,7 @@ def main():
     # cross-market context (BTC daily) + news calendar — both fail-open
     try:
         set_market_context(fetch_binance_klines("BTCUSDT", "1d",
-                                                now - dt.timedelta(days=400), now))
+                                                now - dt.timedelta(days=1100), now))
     except Exception as e:
         print(f"  WARN btc context: {e}")
     try:
@@ -77,9 +83,12 @@ def main():
                     fetch_dukascopy(sym, "15m", now - dt.timedelta(days=12), now)
                 daily = fetch_twelvedata(sym, "1d", key, 250) if key else \
                     fetch_dukascopy(sym, "1d", now - dt.timedelta(days=400), now)
+                trade = drop_forming(trade, 900, now)
             else:
                 trade = fetch_binance_klines(sym, "4h", now - dt.timedelta(days=60), now)
                 daily = fetch_binance_klines(sym, "1d", now - dt.timedelta(days=300), now)
+                trade = drop_forming(trade, 14400, now)   # act on CLOSED candles only,
+            daily = drop_forming(daily, 86400, now)       # exactly like the backtest
         except Exception as e:
             print(f"  WARN {acc['name']} fetch failed: {e}")
             continue
@@ -122,6 +131,10 @@ def main():
         for cand in candidate_list(candidates, sym):
             cn = chal_account(acc["name"], cand.get("slot", 0))
             chs = load_state(os.path.join(STATE, f"{cn}.json"), start_bal)
+            born = cand.get("born")
+            if "cand_born" in chs and chs["cand_born"] != born:   # resurrection guard
+                chs = {"balance": start_bal, "open": [], "closed": [], "history": []}
+            chs["cand_born"] = born
             b_open, b_n = [dict(p) for p in chs["open"]], len(chs["closed"])
             step(chs, data, cfg, {sym: champ_rules + [cand["rule"]]}, now, params=acc["params"],
                  regime_state_by_symbol=rs, news_blocked=news_blocked)

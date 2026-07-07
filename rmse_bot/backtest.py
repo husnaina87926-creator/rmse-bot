@@ -213,7 +213,8 @@ def backtest_edge(df: pd.DataFrame, cfg: dict, instr: dict, rules: list,
             be_trigger_atr=be_atr, trail_atr=trail_atr)
         sizing_bal = balance if compound else cfg["account"]["size_usd"]
         lots = position_size(sizing_bal, cfg["account"]["risk_per_trade_pct"],
-                             entry, sl, instr["contract_size"])
+                             entry, sl, instr["contract_size"],
+                             cost_per_lot=trade_cost(1.0, instr))
         cost = trade_cost(lots, instr)
         move = (exit_price - entry) if direction == "buy" else (entry - exit_price)
         pnl = move * instr["contract_size"] * lots - cost

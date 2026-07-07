@@ -44,5 +44,8 @@ jobs:
             echo "no report change"
           else
             git commit -m "report: daily digest [skip ci]"
-            git push
+            for i in 1 2 3; do
+              git pull --no-edit --rebase && git push && break || \
+                { echo "push attempt $i failed"; sleep $((i * 5)); }
+            done
           fi

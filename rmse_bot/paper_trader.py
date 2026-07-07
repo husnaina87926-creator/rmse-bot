@@ -13,6 +13,9 @@ import os
 import pandas as pd
 
 from rmse_bot.risk import position_size, trade_cost
+from rmse_bot.atomic import atomic_json_dump
+
+MAX_HISTORY = 1000        # keep state files bounded (they are committed every 15 min)
 
 
 def new_state(starting_balance: float) -> dict:
@@ -27,9 +30,9 @@ def load_state(path: str, starting_balance: float) -> dict:
 
 
 def save_state(state: dict, path: str) -> None:
-    os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
-    with open(path, "w") as f:
-        json.dump(state, f, indent=2)
+    if len(state.get("history", [])) > MAX_HISTORY:
+        state["history"] = state["history"][-MAX_HISTORY:]
+    atomic_json_dump(state, path)
 
 
 def default_params(cfg: dict) -> dict:
@@ -137,7 +140,7 @@ def scan_for_entries(state: dict, data_by_symbol: dict, cfg: dict, rules_by_symb
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     today_pnl = sum(t["pnl"] for t in state["closed"]
                     if str(t.get("close_time", ""))[:10] == today)
-    if today_pnl <= -abs(p["max_daily_loss_pct"]) / 100.0 * p["size_usd"]:
+    if today_pnl <= -abs(p["max_daily_loss_pct"]) / 100.0 * max(state["balance"], 1.0):
         return
     opened_today = (sum(1 for t in state["closed"] if str(t.get("open_time", ""))[:10] == today)
                     + sum(1 for pos in state["open"] if str(pos.get("open_time", ""))[:10] == today))
@@ -152,6 +155,22 @@ def scan_for_entries(state: dict, data_by_symbol: dict, cfg: dict, rules_by_symb
         df = data_by_symbol.get(sym)
         if df is None or len(df) < 250:
             continue
+        # BACKTEST PARITY (re-entry cooldown): the validated backtest advances
+        # i += max_hold after every entry — max one trade per max_hold window per
+        # symbol. Without this the live bot re-enters immediately after a stop-out
+        # while conditions persist, overtrading an edge that was never measured.
+        last_open = next((t.get("open_time") for t in reversed(state["closed"])
+                          if t.get("symbol") == sym and t.get("open_time")), None)
+        if last_open is not None and len(df) >= 2:
+            cur = pd.to_datetime(df["time"].iloc[-1])
+            prev_entry = pd.to_datetime(last_open)
+            if prev_entry.tzinfo is None and cur.tzinfo is not None:
+                prev_entry = prev_entry.tz_localize(cur.tzinfo)
+            if cur.tzinfo is None and prev_entry.tzinfo is not None:
+                cur = cur.tz_localize(prev_entry.tzinfo)
+            bar_iv = pd.to_datetime(df["time"].iloc[-1]) - pd.to_datetime(df["time"].iloc[-2])
+            if cur < prev_entry + p["max_hold"] * bar_iv:
+                continue
         feats = build_features(df)
         a = atr(df, p["atr_period"])
         row = feats.iloc[-1]
@@ -175,7 +194,8 @@ def scan_for_entries(state: dict, data_by_symbol: dict, cfg: dict, rules_by_symb
         else:
             sl, tp = entry + p["sl_atr"] * ai, entry - p["rr"] * p["sl_atr"] * ai
         instr = cfg["instruments"][sym]
-        lots = position_size(state["balance"], p["risk_pct"], entry, sl, instr["contract_size"])
+        lots = position_size(state["balance"], p["risk_pct"], entry, sl,
+                             instr["contract_size"], cost_per_lot=trade_cost(1.0, instr))
         margin = (lots * instr["contract_size"] * entry) / p["leverage"]
         if margin > state["balance"] - used_margin:
             continue

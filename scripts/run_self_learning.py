@@ -17,15 +17,11 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from rmse_bot.config import load_config
 from rmse_bot.data_feed import fetch_dukascopy
 from rmse_bot.binance_feed import fetch_binance_klines
-from rmse_bot.self_improve import promotion_demotion_pass, discovery_pass
+from rmse_bot.self_improve import promotion_demotion_pass, discovery_pass, symbol_names
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATE = os.path.join(ROOT, "state")
 REPORTS = os.path.join(ROOT, "reports")
-NAME = {"XAUUSD": "gold", "BTCUSDT": "btc", "ETHUSDT": "eth", "SOLUSDT": "sol",
-        "ADAUSDT": "ada", "DOGEUSDT": "doge", "OPUSDT": "op", "SEIUSDT": "sei",
-        "VETUSDT": "vet", "GALAUSDT": "gala", "XTZUSDT": "xtz", "SANDUSDT": "sand",
-        "MANAUSDT": "mana", "HBARUSDT": "hbar"}
 
 
 def fetch_for(sym):
@@ -37,6 +33,7 @@ def fetch_for(sym):
 
 def main():
     cfg = load_config(os.path.join(ROOT, "config.yaml"))
+    NAME = symbol_names(cfg)
     now = dt.datetime.now(dt.timezone.utc)
     start_bal = cfg["account"]["size_usd"]
     symbols = ["XAUUSD"] + list(cfg["crypto_rules"]["symbols"])

@@ -35,15 +35,17 @@ def fetch_headlines(feeds=RSS_FEEDS, per_feed: int = 15, timeout: int = 12) -> l
             req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (RMSE_BOT)"})
             with urllib.request.urlopen(req, timeout=timeout) as r:
                 root = ET.fromstring(r.read())
-            for item in root.iter("item"):
+            got = 0                            # per-feed budget, independent of the
+            for item in root.iter("item"):     # other feeds' item counts
                 t = item.findtext("title")
                 if t:
                     out.append(t.strip())
-                if len(out) % per_feed == 0 and len(out) >= per_feed:
+                    got += 1
+                if got >= per_feed:
                     break
         except Exception:
             continue
-    return out[: per_feed * len(feeds)]
+    return out
 
 
 def _parse_llm_json(text: str):
@@ -123,8 +125,8 @@ def run_news_sentinel(state_dir: str, now=None) -> dict:
         return {}
     senti["n_headlines"] = len(heads)
     senti["_ts"] = now.isoformat()
-    with open(path, "w") as f:
-        json.dump(senti, f, indent=2)
+    from rmse_bot.atomic import atomic_json_dump
+    atomic_json_dump(senti, path)
     append_event(state_dir, {"type": "news_sentiment", "market": senti.get("market"),
                              "btc": senti.get("btc"), "eth": senti.get("eth"),
                              "gold": senti.get("gold"), "top_risk": senti.get("top_risk"),

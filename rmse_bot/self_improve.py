@@ -14,6 +14,7 @@ import json
 import os
 
 from rmse_bot.strategy_generator import generate_strategies
+from rmse_bot.atomic import atomic_json_dump
 
 
 def load_live_rules(path: str) -> dict:
@@ -24,9 +25,14 @@ def load_live_rules(path: str) -> dict:
 
 
 def save_live_rules(rules: dict, path: str) -> None:
-    os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
-    with open(path, "w") as f:
-        json.dump(rules, f, indent=2)
+    atomic_json_dump(rules, path)
+
+
+def symbol_names(cfg: dict) -> dict:
+    """symbol -> account-name map derived from config (single source of truth —
+    adding a coin to config no longer requires editing three hardcoded dicts)."""
+    return {"XAUUSD": "gold",
+            **{s: s[:-4].lower() for s in cfg.get("crypto_rules", {}).get("symbols", [])}}
 
 
 def rules_for(symbol: str, cfg: dict, live: dict) -> list:
@@ -115,19 +121,35 @@ def top_candidate(symbol: str, df, cfg: dict, current_rules: list, min_count: in
     return got[0] if got else None
 
 
+def _attributed(closed: list, rule: dict):
+    """Trades that a specific rule fired, using the per-trade rule tags. Returns None
+    when the account has NO tagged trades at all (pre-tagging era) so callers can fall
+    back to the legacy all-trades behavior."""
+    tagged = [t for t in closed if t.get("rule")]
+    if not tagged:
+        return None
+    key = _rule_key(rule or {})
+    return [t for t in tagged if _rule_key(t["rule"]) == key]
+
+
 def should_promote(champ_state: dict, chall_state: dict, start_bal: float,
-                   min_trades: int = 30, min_tstat: float = 1.5) -> bool:
-    """Promote only after the challenger has enough FORWARD trades AND is profitable
-    AND beats the champion's profit AND the edge is statistically meaningful (t-stat of
-    per-trade pnl >= min_tstat) — a lucky streak no longer promotes. Forward proof only."""
+                   min_trades: int = 30, min_tstat: float = 1.5,
+                   cand_rule: dict = None) -> bool:
+    """Promote only after the CANDIDATE'S OWN trades (rule-attributed; the challenger
+    account also runs champion rules whose results must not count) number min_trades,
+    are net-profitable with t-stat >= min_tstat, AND the challenger account beats the
+    champion. Without attribution, a neutral candidate could piggyback on the champion
+    rules' statistics. Falls back to all-trades for pre-tagging-era accounts."""
     closed = chall_state.get("closed", [])
-    if len(closed) < min_trades:
+    mine = _attributed(closed, cand_rule) if cand_rule is not None else None
+    pool = closed if mine is None else mine
+    if len(pool) < min_trades:
         return False
     champ_pnl = champ_state.get("balance", start_bal) - start_bal
     chall_pnl = chall_state.get("balance", start_bal) - start_bal
     if not (chall_pnl > 0 and chall_pnl > champ_pnl):
         return False
-    pnls = [t.get("pnl", 0.0) for t in closed]
+    pnls = [t.get("pnl", 0.0) for t in pool]
     n = len(pnls)
     mean = sum(pnls) / n
     var = sum((p - mean) ** 2 for p in pnls) / (n - 1) if n > 1 else 0.0
@@ -138,12 +160,17 @@ def should_promote(champ_state: dict, chall_state: dict, start_bal: float,
 
 
 def should_demote(champ_state: dict, promoted_at: str,
-                  min_trades: int = 20) -> bool:
-    """UN-learn: a promoted rule is demoted when the champion's forward record SINCE the
-    promotion has enough trades and is net NEGATIVE — the live edge decayed or was luck.
-    (The bot learns AND forgets; nothing stays promoted on old glory.)"""
+                  min_trades: int = 20, rule: dict = None) -> bool:
+    """UN-learn: a promoted rule is demoted when ITS OWN forward record since promotion
+    (rule-attributed where tags exist; otherwise the account aggregate, legacy) has
+    enough trades and is net NEGATIVE. Attribution stops the newest promotion from
+    taking the blame for losses the base rules caused."""
     since = [t for t in champ_state.get("closed", [])
              if str(t.get("close_time", "")) > str(promoted_at)]
+    if rule is not None:
+        mine = _attributed(since, rule)
+        if mine is not None:
+            since = mine
     return len(since) >= min_trades and sum(t.get("pnl", 0.0) for t in since) < 0
 
 
@@ -157,8 +184,10 @@ def keep_candidate(existing: dict, chall_state: dict,
     import datetime as _dt
     if existing is None:
         return False
-    n = len(chall_state.get("closed", []))
-    if n >= min_trades:
+    closed = chall_state.get("closed", [])
+    mine = _attributed(closed, existing.get("rule") or {})
+    n = len(closed) if mine is None else len(mine)   # the CANDIDATE'S trial, not the
+    if n >= min_trades:                              # champion rules' trade count
         return False                          # had its trial; free to replace
     born = existing.get("born")
     if born:
@@ -185,9 +214,7 @@ def _jload(path, default):
 
 
 def _jsave(obj, path):
-    os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
-    with open(path, "w") as f:
-        json.dump(obj, f, indent=2)
+    atomic_json_dump(obj, path)
 
 
 def chal_account(nm: str, slot: int) -> str:
@@ -240,7 +267,7 @@ def promotion_demotion_pass(cfg, state_dir: str, name_map: dict, start_bal: floa
         champ = load_state(os.path.join(state_dir, f"{nm}.json"), start_bal)
         kept_promos = []
         for entry in promos[sym]:
-            if should_demote(champ, entry.get("promoted_at", "")):
+            if should_demote(champ, entry.get("promoted_at", ""), rule=entry.get("rule")):
                 rule = entry.get("rule")
                 if sym in live and rule in live[sym]:
                     live[sym] = [r for r in live[sym] if r != rule]
@@ -270,7 +297,8 @@ def promotion_demotion_pass(cfg, state_dir: str, name_map: dict, start_bal: floa
             if champ is None:
                 champ = load_state(os.path.join(state_dir, f"{nm}.json"), start_bal)
             chal = load_state(chal_path, start_bal)
-            if should_promote(champ, chal, start_bal, min_trades):
+            if should_promote(champ, chal, start_bal, min_trades,
+                              cand_rule=cand.get("rule")):
                 rule = cand["rule"]
                 live[sym] = rules_for(sym, cfg, live) + [rule]
                 promos.setdefault(sym, []).append({"rule": rule, "promoted_at": now_iso})

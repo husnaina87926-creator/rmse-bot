@@ -13,13 +13,14 @@ import sys
 import os
 import json
 import asyncio
+import threading
 import datetime as dt
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from rmse_bot.config import load_config
 from rmse_bot.binance_feed import fetch_binance_klines
-from rmse_bot.data_feed import fetch_twelvedata, fetch_dukascopy
+from rmse_bot.data_feed import fetch_twelvedata, fetch_dukascopy, drop_forming
 from rmse_bot.regime import regime_state
 from rmse_bot.paper_trader import load_state, save_state, step, default_params
 from rmse_bot.news_filter import fetch_calendar, is_news_blocked, nearest_event
@@ -51,11 +52,18 @@ CPARAMS = crypto_params()
 GPARAMS = default_params(cfg)
 
 _CTX = {"btc_t": None, "news_t": None, "events": []}
+_CTX_LOCK = threading.Lock()
 
 
 def refresh_context(now):
     """Hourly BTC-daily context (cross-market features) + half-hourly news calendar
-    (journal tagging). Both fail-open: on error the bot trades exactly as before."""
+    (journal tagging). Lock: all 13 symbol threads fire at the same candle close.
+    Both fail-open: on error the bot trades exactly as before."""
+    with _CTX_LOCK:
+        return _refresh_context_locked(now)
+
+
+def _refresh_context_locked(now):
     if _CTX["btc_t"] is None or (now - _CTX["btc_t"]).total_seconds() >= 3600:
         try:
             set_market_context(fetch_binance_klines(
@@ -79,9 +87,15 @@ def run_symbol(sym, kind, params):
     """Fetch recent data + run champion & challenger step for ONE symbol (at candle close)."""
     now = dt.datetime.now(dt.timezone.utc)
     extra = refresh_context(now)
-    live = load_live_rules(os.path.join(STATE, "live_rules.json"))
+    try:
+        live = load_live_rules(os.path.join(STATE, "live_rules.json"))
+    except Exception:
+        live = {}
     cand_path = os.path.join(STATE, "candidates.json")
-    candidates = json.load(open(cand_path)) if os.path.exists(cand_path) else {}
+    try:
+        candidates = json.load(open(cand_path)) if os.path.exists(cand_path) else {}
+    except Exception:
+        candidates = {}
     try:
         if kind == "gold":
             name = "gold"
@@ -89,10 +103,13 @@ def run_symbol(sym, kind, params):
                 fetch_dukascopy(sym, "15m", now - dt.timedelta(days=12), now)
             daily = fetch_twelvedata(sym, "1d", KEY, 250) if KEY else \
                 fetch_dukascopy(sym, "1d", now - dt.timedelta(days=400), now)
+            trade = drop_forming(trade, 900, now)
         else:
             name = sym[:-4].lower()
             trade = fetch_binance_klines(sym, "4h", now - dt.timedelta(days=60), now)
             daily = fetch_binance_klines(sym, "1d", now - dt.timedelta(days=300), now)
+            trade = drop_forming(trade, 14400, now)
+        daily = drop_forming(daily, 86400, now)
     except Exception as e:
         print(f"  WARN {sym} fetch: {e}", flush=True)
         return
@@ -127,6 +144,10 @@ def run_symbol(sym, kind, params):
     for cand in candidate_list(candidates, sym):
         cn = chal_account(name, cand.get("slot", 0))
         chs = load_state(os.path.join(STATE, f"{cn}.json"), START_BAL)
+        born = cand.get("born")
+        if "cand_born" in chs and chs["cand_born"] != born:
+            chs = {"balance": START_BAL, "open": [], "closed": [], "history": []}
+        chs["cand_born"] = born               # binds the file to this candidate's life
         b_open, b_n = [dict(p) for p in chs["open"]], len(chs["closed"])
         step(chs, data, cfg, {sym: champ_rules + [cand["rule"]]}, now, params=params,
              regime_state_by_symbol=rs, news_blocked=news_blocked)
@@ -136,6 +157,12 @@ def run_symbol(sym, kind, params):
     flag = "  <== ACTION" if changed else ""
     print(f"[{now:%H:%M:%S}] {name:5} {sym:9} regime={reg or '-':4} bal=${cs['balance']:.2f} "
           f"open={len(cs['open'])} closed={len(cs['closed'])}{flag}", flush=True)
+
+
+def _report_thread_error(fut):
+    e = fut.exception()
+    if e:
+        print(f"[WS] run_symbol thread ERROR: {type(e).__name__}: {e}", flush=True)
 
 
 async def initial_pass():
@@ -170,7 +197,8 @@ async def crypto_ws():
                     k = msg.get("data", {}).get("k", {})
                     if k.get("x"):        # candle CLOSED -> react now (ms after close)
                         sym = msg["data"]["s"]
-                        loop.run_in_executor(None, run_symbol, sym, "crypto", CPARAMS)
+                        fut = loop.run_in_executor(None, run_symbol, sym, "crypto", CPARAMS)
+                        fut.add_done_callback(_report_thread_error)
         except Exception as e:
             print(f"[WS] disconnected ({e}); reconnecting in 5s", flush=True)
             await asyncio.sleep(5)

@@ -14,9 +14,14 @@ changes what the strategy does on good data. Accuracy can only be protected, not
 """
 import json
 import os
+import threading
 import datetime as dt
 
 import pandas as pd
+
+from rmse_bot.atomic import atomic_json_dump
+
+_APPEND_LOCK = threading.Lock()   # 13 symbol-threads can journal at the same candle close
 
 
 # ---------------- journal primitives ----------------
@@ -29,8 +34,10 @@ def append_event(state_dir: str, event: dict) -> None:
     event = dict(event)
     event.setdefault("ts", dt.datetime.now(dt.timezone.utc).isoformat())
     os.makedirs(state_dir, exist_ok=True)
-    with open(_journal_path(state_dir), "a") as f:
-        f.write(json.dumps(event) + "\n")
+    line = json.dumps(event) + "\n"
+    with _APPEND_LOCK:
+        with open(_journal_path(state_dir), "a") as f:
+            f.write(line)
 
 
 def read_events(state_dir: str) -> list:
@@ -101,6 +108,7 @@ def run_postmortems(state_dir: str, fetch_fn, lookahead: int = 24, max_per_run: 
     todo = [e for e in events if e.get("type") == "close"
             and (e.get("account"), e.get("symbol"), str(e.get("close_time"))) not in done]
     written = 0
+    failed = 0
     dfs = {}
     for e in todo[:max_per_run]:
         sym = e.get("symbol")
@@ -137,7 +145,11 @@ def run_postmortems(state_dir: str, fetch_fn, lookahead: int = 24, max_per_run: 
             })
             written += 1
         except Exception:
+            failed += 1
             continue
+    if failed:
+        append_event(state_dir, {"type": "observer_errors", "where": "postmortem",
+                                 "n": failed})
     return written
 
 
@@ -169,6 +181,7 @@ def run_counterfactuals(state_dir: str, fetch_fn, variants: dict = None,
             and (e.get("account"), e.get("symbol"), str(e.get("close_time"))) not in done]
     max_hold_needed = max(v["max_hold"] for v in variants.values())
     written = 0
+    failed = 0
     dfs = {}
     for e in todo[:max_per_run]:
         sym = e.get("symbol")
@@ -212,7 +225,11 @@ def run_counterfactuals(state_dir: str, fetch_fn, variants: dict = None,
             })
             written += 1
         except Exception:
+            failed += 1
             continue
+    if failed:
+        append_event(state_dir, {"type": "observer_errors", "where": "counterfactual",
+                                 "n": failed})
     return written
 
 
@@ -243,8 +260,7 @@ def counterfactual_summary(state_dir: str, min_n: int = 10) -> dict:
                     "significant": len(rs) >= min_n,
                 }
     out["_ts"] = dt.datetime.now(dt.timezone.utc).isoformat()
-    with open(os.path.join(state_dir, "lessons.json"), "w") as f:
-        json.dump(out, f, indent=2)
+    atomic_json_dump(out, os.path.join(state_dir, "lessons.json"))
     return out
 
 
@@ -285,8 +301,7 @@ def regime_ledger(state_dir: str, names: list) -> dict:
                     b["win"] = round(b.pop("wins") / b["n"], 2)
             out[nm] = acct
     out["_ts"] = dt.datetime.now(dt.timezone.utc).isoformat()
-    with open(os.path.join(state_dir, "regime_ledger.json"), "w") as f:
-        json.dump(out, f, indent=2)
+    atomic_json_dump(out, os.path.join(state_dir, "regime_ledger.json"))
     return out
 
 
@@ -373,8 +388,7 @@ def regime_watch_pass(state_dir: str, fetch_fn, symbols: list, name_map: dict,
             watch[sym] = w
         except Exception as e:
             log.append(f"{sym}: watch ERROR {e}")
-    with open(watch_path, "w") as f:
-        json.dump(watch, f, indent=2)
+    atomic_json_dump(watch, watch_path)
     return log
 
 
@@ -410,15 +424,14 @@ def health_snapshot(state_dir: str, names: list, start_bal: float,
             "unhealthy": bool(len(recent) >= flag_window and sum(recent) < 0),
         }
     out["_ts"] = dt.datetime.now(dt.timezone.utc).isoformat()
-    with open(os.path.join(state_dir, "health.json"), "w") as f:
-        json.dump(out, f, indent=2)
+    atomic_json_dump(out, os.path.join(state_dir, "health.json"))
     return out
 
 
 # ---------------- data integrity guard ----------------
 
 def integrity_check(df, interval_s: int, now=None, allow_session_gaps: bool = False,
-                    stale_mult: float = 3.0) -> tuple:
+                    stale_mult: float = 1.5) -> tuple:
     """Return (ok, reason). Refuses: empty/short feeds, duplicate timestamps, backwards
     time, internal gaps (missing candles; skipped for session markets like gold where
     weekend gaps are normal), and a stale last candle (dead feed)."""
@@ -458,6 +471,8 @@ def mistake_taxonomy(state_dir: str) -> dict:
     key = lambda e: (e.get("account"), e.get("symbol"), str(e.get("close_time")))
     pms = {key(e): e for e in events if e.get("type") == "postmortem"}
     cfs = {key(e): e for e in events if e.get("type") == "counterfactual"}
+    opens = {(e.get("account"), e.get("symbol"), str(e.get("open_time"))): e
+             for e in events if e.get("type") == "open"}
     cats = ("exited_too_early", "stop_too_tight", "held_too_long", "regime_mismatch")
     out = {}
 
@@ -475,10 +490,13 @@ def mistake_taxonomy(state_dir: str) -> dict:
             continue
         b = bucket(str(e.get("close_time", ""))[:7] or "unknown")
         b["trades"] += 1
-        if e.get("news_h") is not None and abs(e["news_h"]) <= 2:
+        op = opens.get((e.get("account"), e.get("symbol"), str(e.get("open_time")))) or {}
+        news_h = op.get("news_h", e.get("news_h"))
+        senti = op.get("llm_sentiment", e.get("llm_sentiment"))
+        if news_h is not None and abs(news_h) <= 2:
             b["news_window_trades"] += 1
             b["news_window_net"] = round(b["news_window_net"] + (e.get("pnl") or 0.0), 2)
-        if (e.get("llm_sentiment") or 0) <= -1:
+        if (senti or 0) <= -1:
             b["neg_sentiment_trades"] += 1
             b["neg_sentiment_net"] = round(b["neg_sentiment_net"] + (e.get("pnl") or 0.0), 2)
         pm, cf = pms.get(key(e)), cfs.get(key(e))
@@ -495,8 +513,7 @@ def mistake_taxonomy(state_dir: str) -> dict:
                 and e["regime_at_open"] != rule["regime"]:
             b["regime_mismatch"] += 1
     res = {"months": out, "_ts": dt.datetime.now(dt.timezone.utc).isoformat()}
-    with open(os.path.join(state_dir, "mistakes.json"), "w") as f:
-        json.dump(res, f, indent=2)
+    atomic_json_dump(res, os.path.join(state_dir, "mistakes.json"))
     return res
 
 
@@ -673,6 +690,5 @@ def graduation_gate(state_dir: str, names: list, start_bal: float, now=None) -> 
         "passed": sum(passed.values()), "total": len(passed),
         "graduated": all(passed.values()),
         "_ts": now.isoformat()}
-    with open(os.path.join(state_dir, "graduation.json"), "w") as f:
-        json.dump(out, f, indent=2)
+    atomic_json_dump(out, os.path.join(state_dir, "graduation.json"))
     return out

@@ -17,6 +17,22 @@ def load_csv(path: str) -> pd.DataFrame:
     return normalize_ohlc(pd.read_csv(path))
 
 
+def drop_forming(df: pd.DataFrame, interval_s: int, now=None) -> pd.DataFrame:
+    """Remove the still-FORMING last candle(s): keep only bars whose close time
+    (open time + interval) has already passed. The backtest only ever sees completed
+    candles — live must decide on the same information, or it trades intra-bar
+    indicator spikes the edge was never validated on."""
+    import datetime as _dt
+    if df is None or df.empty:
+        return df
+    now = now or _dt.datetime.now(_dt.timezone.utc)
+    t = pd.to_datetime(df["time"])
+    if t.dt.tz is None:
+        t = t.dt.tz_localize("UTC")
+    cutoff = pd.Timestamp(now) - pd.Timedelta(seconds=interval_s)
+    return df[t <= cutoff].reset_index(drop=True)
+
+
 def fetch_yfinance(symbol: str, interval: str, period: str) -> pd.DataFrame:
     import yfinance as yf
     raw = yf.download(symbol, interval=interval, period=period,
@@ -56,7 +72,10 @@ def fetch_dukascopy(symbol: str, interval: str, start, end, offer: str = "bid") 
             else dukascopy_python.OFFER_SIDE_ASK)
     raw = dukascopy_python.fetch(instr, iv, side, start, end)
     raw = raw.reset_index().rename(columns={"timestamp": "time"})
-    return normalize_ohlc(raw)
+    df = normalize_ohlc(raw)
+    if df["time"].dt.tz is None:      # match TwelveData: always tz-aware UTC
+        df["time"] = df["time"].dt.tz_localize("UTC")
+    return df
 
 
 # Twelve Data free API (fresher live feed, no Windows). Needs a free API key.

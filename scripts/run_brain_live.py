@@ -23,7 +23,8 @@ from rmse_bot.config import load_config
 from rmse_bot.binance_feed import fetch_binance_klines
 from rmse_bot.data_feed import fetch_dukascopy
 from rmse_bot.self_improve import (promotion_demotion_pass, discovery_pass,
-                                   brain_scoreboard, chal_account, TOURNAMENT_SLOTS)
+                                   brain_scoreboard, chal_account, TOURNAMENT_SLOTS,
+                                   symbol_names)
 from rmse_bot.journal import (health_snapshot, run_postmortems,
                               run_counterfactuals, counterfactual_summary,
                               regime_ledger, ledger_warnings, regime_watch_pass,
@@ -31,22 +32,22 @@ from rmse_bot.journal import (health_snapshot, run_postmortems,
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATE = os.path.join(ROOT, "state")
-NAME = {"XAUUSD": "gold", "BTCUSDT": "btc", "ETHUSDT": "eth", "SOLUSDT": "sol",
-        "ADAUSDT": "ada", "DOGEUSDT": "doge", "OPUSDT": "op", "SEIUSDT": "sei",
-        "VETUSDT": "vet", "GALAUSDT": "gala", "XTZUSDT": "xtz", "SANDUSDT": "sand",
-        "MANAUSDT": "mana", "HBARUSDT": "hbar"}
 CHECK_EVERY = 300          # seconds between promotion/demotion heartbeats
 
 
 def fetch_for(sym):
+    from rmse_bot.data_feed import drop_forming
     now = dt.datetime.now(dt.timezone.utc)
     if sym == "XAUUSD":
-        return fetch_dukascopy(sym, "15m", now - dt.timedelta(days=500), now)
-    return fetch_binance_klines(sym, "4h", now - dt.timedelta(days=1000), now)
+        return drop_forming(fetch_dukascopy(sym, "15m", now - dt.timedelta(days=500), now),
+                            900, now)
+    return drop_forming(fetch_binance_klines(sym, "4h", now - dt.timedelta(days=1000), now),
+                        14400, now)
 
 
 def main():
     cfg = load_config(os.path.join(ROOT, "config.yaml"))
+    NAME = symbol_names(cfg)      # derived from config — new coins need no code edit
     start_bal = cfg["account"]["size_usd"]
     symbols = ["XAUUSD"] + list(cfg["crypto_rules"]["symbols"])
     last_4h = None
@@ -62,9 +63,9 @@ def main():
         now = dt.datetime.now(dt.timezone.utc)
         loop_n += 1
         try:      # WATCHDOG heartbeat: dashboard/gate know the brain is alive
-            import json as _json
-            with open(os.path.join(STATE, "brain_heartbeat.json"), "w") as f:
-                _json.dump({"ts": now.isoformat(), "loop": loop_n}, f)
+            from rmse_bot.atomic import atomic_json_dump
+            atomic_json_dump({"ts": now.isoformat(), "loop": loop_n},
+                             os.path.join(STATE, "brain_heartbeat.json"))
         except Exception:
             pass
         try:

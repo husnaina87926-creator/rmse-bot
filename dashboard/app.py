@@ -159,8 +159,9 @@ table.ft tbody tr:hover{{ background:rgba(129,140,248,.06); }}
 .pill{{ padding:3px 10px; border-radius:999px; font-size:.7rem; font-weight:700; letter-spacing:.4px; }}
 .pill.buy,.pill.tp{{ background:rgba(52,211,153,.14); color:var(--green); }}
 .pill.sell{{ background:rgba(251,191,36,.14); color:var(--amber); }}
-.pill.sl{{ background:rgba(251,113,133,.14); color:var(--red); }}
-.pill.time,.pill.win,.pill.loss{{ background:rgba(129,140,248,.14); color:var(--brand); }}
+.pill.sl,.pill.loss{{ background:rgba(251,113,133,.14); color:var(--red); }}
+.pill.win{{ background:rgba(52,211,153,.14); color:var(--green); }}
+.pill.time{{ background:rgba(129,140,248,.14); color:var(--brand); }}
 
 /* ---------- gate progress ---------- */
 .gbar{{ height:10px; border-radius:999px; background:rgba(255,255,255,.06); overflow:hidden; margin-top:12px; }}
@@ -280,8 +281,10 @@ def table(headers, rows):
 
 
 def spark(closed, color=GREEN, w=150, h=34, n=40):
-    """Inline SVG equity sparkline from an account's closed trades."""
-    vals = [START] + [t.get("balance_after", START) for t in closed]
+    """Inline SVG equity sparkline from an account's closed trades (pnl walk)."""
+    vals = [START]
+    for t in closed:
+        vals.append(vals[-1] + (t.get("pnl") or 0.0))
     vals = vals[-n:]
     if len(vals) < 2:
         vals = [START, START]
@@ -317,8 +320,10 @@ def candles(df):
 
 
 def equity(closed, color=BRAND):
-    eq = pd.DataFrame({"#": range(len(closed) + 1),
-                       "Balance": [START] + [t["balance_after"] for t in closed]})
+    bal = [START]
+    for t in closed:
+        bal.append(bal[-1] + (t.get("pnl") or 0.0))
+    eq = pd.DataFrame({"#": range(len(bal)), "Balance": bal})
     return (alt.Chart(eq).mark_area(
         line={"color": color, "strokeWidth": 2.5},
         color=alt.Gradient(gradient="linear",
@@ -429,7 +434,6 @@ if page == "Overview":
         closed = (states[k] or {}).get("closed", [])
         pc = GREEN if a["pnl"] > 0 else (RED if a["pnl"] < 0 else INK)
         sc = GREEN if a["pnl"] >= 0 else RED
-        reg = watch.get(sym.replace("PAXG", "XAU").replace("USDT", "USDT"), {})
         reg = (watch.get("XAUUSD") if k == "gold" else watch.get(sym)) or {}
         rr = reg.get("regime", "—") if isinstance(reg, dict) else "—"
         rc = GREEN if rr == "up" else (RED if rr == "down" else MUT)

@@ -32,7 +32,7 @@ behave in stress scenarios, so decisions are never made mid-drawdown.
 
 - Health monitor flags an account whose last 20 trades are net negative.
 - Auto-demotion un-learns promoted rules whose forward record decays.
-- Daily loss cap + max-open-trades already enforced in the paper trader.
+- Daily loss cap + max-open-trades exist in the paper trader but are NEUTRALIZED in paper mode (2026-07-02, owner directive: no signal may be skipped); they re-activate through this protocol for real money.
 - Regime-break detector journals regime flips and volatility breaks.
 
 ## Activation path (when owner approves)

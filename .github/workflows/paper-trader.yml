@@ -46,6 +46,9 @@ jobs:
             echo "no state change"
           else
             git commit -m "paper: update virtual account state [skip ci]"
-            git pull --no-edit --rebase || true
-            git push
+            for i in 1 2 3; do
+              git pull --no-edit --rebase && git push && exit 0
+              echo "push attempt $i failed; retrying" && sleep $((i * 5))
+            done
+            echo "::error::state push failed after 3 attempts" && exit 1
           fi
