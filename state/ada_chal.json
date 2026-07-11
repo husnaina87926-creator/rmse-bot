@@ -1,27 +1,6 @@
 {
-  "balance": 5484.995207239213,
-  "open": [
-    {
-      "symbol": "ADAUSDT",
-      "direction": "sell",
-      "entry": 0.1679,
-      "sl": 0.17397585575988392,
-      "tp": 0.16182414424011607,
-      "lots": 86027.5924331618,
-      "open_time": "2026-07-11 08:00:00+00:00",
-      "cost": 25.80827772994854,
-      "margin": 722.2016384763933,
-      "atr": 0.003037927879941962,
-      "rule": {
-        "direction": "sell",
-        "when": [
-          "ema_fast_below"
-        ],
-        "regime": "down"
-      },
-      "regime_at_open": "down"
-    }
-  ],
+  "balance": 4936.495686515292,
+  "open": [],
   "closed": [
     {
       "symbol": "ADAUSDT",
@@ -40,6 +19,26 @@
           "rsi_bear",
           "high_vol",
           "strong_trend"
+        ],
+        "regime": "down"
+      },
+      "regime_at_open": "down"
+    },
+    {
+      "symbol": "ADAUSDT",
+      "direction": "sell",
+      "entry": 0.1679,
+      "exit": 0.17398,
+      "outcome": "loss",
+      "lots": 86027.5924331618,
+      "pnl": -548.5,
+      "open_time": "2026-07-11 08:00:00+00:00",
+      "close_time": "2026-07-11 12:00:00+00:00",
+      "balance_after": 4936.5,
+      "rule": {
+        "direction": "sell",
+        "when": [
+          "ema_fast_below"
         ],
         "regime": "down"
       },
@@ -346,6 +345,11 @@
       "time": "2026-07-11 15:15:28.022593+00:00",
       "balance": 5485.0,
       "open_positions": 1
+    },
+    {
+      "time": "2026-07-11 16:24:54.187828+00:00",
+      "balance": 4936.5,
+      "open_positions": 0
     }
   ],
   "cand_born": "2026-07-06T00:03:52.326483+00:00"
