@@ -1,6 +1,27 @@
 {
   "balance": 5973.9737137044995,
-  "open": [],
+  "open": [
+    {
+      "symbol": "XTZUSDT",
+      "direction": "sell",
+      "entry": 0.2283,
+      "sl": 0.23725627346223055,
+      "tp": 0.21934372653776946,
+      "lots": 63849.9263389454,
+      "open_time": "2026-07-16 12:00:00+00:00",
+      "cost": 25.53997053557816,
+      "margin": 728.8469091590617,
+      "atr": 0.004478136731115268,
+      "rule": {
+        "direction": "sell",
+        "when": [
+          "weak_trend"
+        ],
+        "regime": "down"
+      },
+      "regime_at_open": "down"
+    }
+  ],
   "closed": [
     {
       "symbol": "XTZUSDT",
@@ -700,6 +721,11 @@
       "time": "2026-07-16 15:55:50.382675+00:00",
       "balance": 5973.97,
       "open_positions": 0
+    },
+    {
+      "time": "2026-07-16 17:18:43.314627+00:00",
+      "balance": 5973.97,
+      "open_positions": 1
     }
   ],
   "cand_born": "2026-07-06T00:05:26.092009+00:00"
