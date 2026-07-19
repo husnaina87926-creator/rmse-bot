@@ -1338,6 +1338,11 @@
       "time": "2026-07-19 17:08:42.252792+00:00",
       "balance": 4500.0,
       "open_positions": 1
+    },
+    {
+      "time": "2026-07-19 18:07:45.788614+00:00",
+      "balance": 4500.0,
+      "open_positions": 1
     }
   ],
   "cand_born": null
