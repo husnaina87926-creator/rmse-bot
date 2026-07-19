@@ -179,6 +179,24 @@
       "born": "2026-07-12T23:45:31.200664+00:00"
     }
   ],
+  "DOGEUSDT": [
+    {
+      "rule": {
+        "direction": "sell",
+        "when": [
+          "trend_down",
+          "rsi_bear",
+          "weekend"
+        ],
+        "regime": "down"
+      },
+      "score": 2537.4,
+      "return": 3383.19,
+      "pf": 1.16,
+      "slot": 0,
+      "born": "2026-07-19T23:52:12.734748+00:00"
+    }
+  ],
   "OPUSDT": [
     {
       "rule": {
@@ -289,6 +307,35 @@
       "pf": 1.74,
       "slot": 0,
       "born": "2026-07-06T00:04:56.847273+00:00"
+    },
+    {
+      "rule": {
+        "direction": "sell",
+        "when": [
+          "rsi_bear"
+        ],
+        "regime": "down"
+      },
+      "score": 29812.76,
+      "return": 39750.35,
+      "pf": 1.32,
+      "slot": 1,
+      "born": "2026-07-19T23:52:23.576465+00:00"
+    },
+    {
+      "rule": {
+        "direction": "sell",
+        "when": [
+          "weak_trend",
+          "weekend"
+        ],
+        "regime": "down"
+      },
+      "score": 8744.51,
+      "return": 11659.35,
+      "pf": 1.58,
+      "slot": 2,
+      "born": "2026-07-19T23:52:23.576671+00:00"
     }
   ],
   "XTZUSDT": [
