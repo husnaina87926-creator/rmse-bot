@@ -10,3 +10,4 @@ venv/
 *.sqlite
 *.db
 data/
+state/oracle/
