@@ -1,0 +1,35 @@
+{
+  "balance": 5000.0,
+  "open": [
+    {
+      "symbol": "VETUSDT",
+      "direction": "sell",
+      "entry": 0.004658,
+      "sl": 0.004775235685167278,
+      "tp": 0.004540764314832722,
+      "lots": 3960845.1392919277,
+      "open_time": "2026-07-19 20:00:00+00:00",
+      "cost": 35.64760625362735,
+      "margin": 922.4808329410901,
+      "atr": 5.861784258363914e-05,
+      "rule": {
+        "direction": "sell",
+        "when": [
+          "weak_trend",
+          "weekend"
+        ],
+        "regime": "down"
+      },
+      "regime_at_open": "down"
+    }
+  ],
+  "closed": [],
+  "history": [
+    {
+      "time": "2026-07-20 01:13:59.864787+00:00",
+      "balance": 5000.0,
+      "open_positions": 1
+    }
+  ],
+  "cand_born": "2026-07-19T23:52:23.576671+00:00"
+}
