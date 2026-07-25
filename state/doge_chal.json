@@ -1,29 +1,6 @@
 {
-  "balance": 5414.584011414482,
-  "open": [
-    {
-      "symbol": "DOGEUSDT",
-      "direction": "sell",
-      "entry": 0.06924,
-      "sl": 0.07132414755045426,
-      "tp": 0.06715585244954574,
-      "lots": 243445.36001258582,
-      "open_time": "2026-07-24 16:00:00+00:00",
-      "cost": 34.082350401762014,
-      "margin": 842.807836363572,
-      "atr": 0.001042073775227128,
-      "rule": {
-        "direction": "sell",
-        "when": [
-          "rsi_bear",
-          "high_vol",
-          "strong_trend"
-        ],
-        "regime": "down"
-      },
-      "regime_at_open": "down"
-    }
-  ],
+  "balance": 4873.125610273034,
+  "open": [],
   "closed": [
     {
       "symbol": "DOGEUSDT",
@@ -42,6 +19,28 @@
           "trend_down",
           "rsi_bear",
           "weekend"
+        ],
+        "regime": "down"
+      },
+      "regime_at_open": "down"
+    },
+    {
+      "symbol": "DOGEUSDT",
+      "direction": "sell",
+      "entry": 0.06924,
+      "exit": 0.07132,
+      "outcome": "loss",
+      "lots": 243445.36001258582,
+      "pnl": -541.46,
+      "open_time": "2026-07-24 16:00:00+00:00",
+      "close_time": "2026-07-25 12:00:00+00:00",
+      "balance_after": 4873.13,
+      "rule": {
+        "direction": "sell",
+        "when": [
+          "rsi_bear",
+          "high_vol",
+          "strong_trend"
         ],
         "regime": "down"
       },
@@ -403,6 +402,11 @@
       "time": "2026-07-25 14:47:08.797531+00:00",
       "balance": 5414.58,
       "open_positions": 1
+    },
+    {
+      "time": "2026-07-25 16:04:22.669045+00:00",
+      "balance": 4873.13,
+      "open_positions": 0
     }
   ],
   "cand_born": "2026-07-19T23:52:12.734748+00:00"
