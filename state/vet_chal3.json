@@ -1,28 +1,6 @@
 {
-  "balance": 4500.0,
-  "open": [
-    {
-      "symbol": "VETUSDT",
-      "direction": "sell",
-      "entry": 0.00471,
-      "sl": 0.004835463135618652,
-      "tp": 0.004584536864381348,
-      "lots": 3346642.170209653,
-      "open_time": "2026-07-26 12:00:00+00:00",
-      "cost": 30.11977953188688,
-      "margin": 788.1342310843733,
-      "atr": 6.273156780932593e-05,
-      "rule": {
-        "direction": "sell",
-        "when": [
-          "weak_trend",
-          "weekend"
-        ],
-        "regime": "down"
-      },
-      "regime_at_open": "down"
-    }
-  ],
+  "balance": 4889.760440936227,
+  "open": [],
   "closed": [
     {
       "symbol": "VETUSDT",
@@ -35,6 +13,27 @@
       "open_time": "2026-07-19 20:00:00+00:00",
       "close_time": "2026-07-20 08:00:00+00:00",
       "balance_after": 4500.0,
+      "rule": {
+        "direction": "sell",
+        "when": [
+          "weak_trend",
+          "weekend"
+        ],
+        "regime": "down"
+      },
+      "regime_at_open": "down"
+    },
+    {
+      "symbol": "VETUSDT",
+      "direction": "sell",
+      "entry": 0.00471,
+      "exit": 0.00458,
+      "outcome": "tp",
+      "lots": 3346642.170209653,
+      "pnl": 389.76,
+      "open_time": "2026-07-26 12:00:00+00:00",
+      "close_time": "2026-07-27 12:00:00+00:00",
+      "balance_after": 4889.76,
       "rule": {
         "direction": "sell",
         "when": [
@@ -541,6 +540,11 @@
       "time": "2026-07-27 13:53:29.335980+00:00",
       "balance": 4500.0,
       "open_positions": 1
+    },
+    {
+      "time": "2026-07-27 16:20:03.002284+00:00",
+      "balance": 4889.76,
+      "open_positions": 0
     }
   ],
   "cand_born": "2026-07-19T23:52:23.576671+00:00"
