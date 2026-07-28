@@ -1955,6 +1955,11 @@
       "time": "2026-07-28 17:54:13.803390+00:00",
       "balance": 4050.0,
       "open_positions": 1
+    },
+    {
+      "time": "2026-07-28 19:24:13.924010+00:00",
+      "balance": 4050.0,
+      "open_positions": 1
     }
   ],
   "cand_born": null
