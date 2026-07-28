@@ -1,28 +1,6 @@
 {
-  "balance": 4418.328805458467,
-  "open": [
-    {
-      "symbol": "OPUSDT",
-      "direction": "sell",
-      "entry": 0.093,
-      "sl": 0.09658900995638879,
-      "tp": 0.08941099004361121,
-      "lots": 116609.05767768063,
-      "open_time": "2026-07-24 08:00:00+00:00",
-      "cost": 23.321811535536128,
-      "margin": 542.2321182012149,
-      "atr": 0.0017945049781943985,
-      "rule": {
-        "direction": "sell",
-        "when": [
-          "ema_fast_below",
-          "sweep_down"
-        ],
-        "regime": "down"
-      },
-      "regime_at_open": "down"
-    }
-  ],
+  "balance": 4813.518062933242,
+  "open": [],
   "closed": [
     {
       "symbol": "OPUSDT",
@@ -77,6 +55,27 @@
       "open_time": "2026-07-17 16:00:00+00:00",
       "close_time": "2026-07-20 12:00:00+00:00",
       "balance_after": 4418.33,
+      "rule": {
+        "direction": "sell",
+        "when": [
+          "ema_fast_below",
+          "sweep_down"
+        ],
+        "regime": "down"
+      },
+      "regime_at_open": "down"
+    },
+    {
+      "symbol": "OPUSDT",
+      "direction": "sell",
+      "entry": 0.093,
+      "exit": 0.08941,
+      "outcome": "tp",
+      "lots": 116609.05767768063,
+      "pnl": 395.19,
+      "open_time": "2026-07-24 08:00:00+00:00",
+      "close_time": "2026-07-27 20:00:00+00:00",
+      "balance_after": 4813.52,
       "rule": {
         "direction": "sell",
         "when": [
@@ -1543,6 +1542,11 @@
       "time": "2026-07-27 23:34:32.378255+00:00",
       "balance": 4418.33,
       "open_positions": 1
+    },
+    {
+      "time": "2026-07-28 01:04:15.271318+00:00",
+      "balance": 4813.52,
+      "open_positions": 0
     }
   ],
   "cand_born": "2026-07-06T00:04:29.982277+00:00"
