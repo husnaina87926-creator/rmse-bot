@@ -1,6 +1,29 @@
 {
   "balance": 4813.518062933242,
-  "open": [],
+  "open": [
+    {
+      "symbol": "OPUSDT",
+      "direction": "sell",
+      "entry": 0.0884,
+      "sl": 0.09242214192125406,
+      "tp": 0.08437785807874595,
+      "lots": 114006.54342532241,
+      "open_time": "2026-07-28 12:00:00+00:00",
+      "cost": 22.801308685064484,
+      "margin": 503.90892193992505,
+      "atr": 0.002011070960627029,
+      "rule": {
+        "direction": "sell",
+        "when": [
+          "rsi_bear",
+          "high_vol",
+          "strong_trend"
+        ],
+        "regime": "down"
+      },
+      "regime_at_open": "down"
+    }
+  ],
   "closed": [
     {
       "symbol": "OPUSDT",
@@ -1572,6 +1595,11 @@
       "time": "2026-07-28 14:41:27.178634+00:00",
       "balance": 4813.52,
       "open_positions": 0
+    },
+    {
+      "time": "2026-07-28 16:24:42.767849+00:00",
+      "balance": 4813.52,
+      "open_positions": 1
     }
   ],
   "cand_born": "2026-07-06T00:04:29.982277+00:00"
