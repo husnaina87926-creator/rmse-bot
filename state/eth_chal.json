@@ -1985,6 +1985,11 @@
       "time": "2026-07-29 03:39:46.369056+00:00",
       "balance": 4050.0,
       "open_positions": 1
+    },
+    {
+      "time": "2026-07-29 06:18:39.478966+00:00",
+      "balance": 4050.0,
+      "open_positions": 1
     }
   ],
   "cand_born": null

@@ -1,6 +1,29 @@
 {
   "balance": 4919.539091792464,
-  "open": [],
+  "open": [
+    {
+      "symbol": "SEIUSDT",
+      "direction": "sell",
+      "entry": 0.04203,
+      "sl": 0.04383636016328019,
+      "tp": 0.0402236398367198,
+      "lots": 258059.26847147383,
+      "open_time": "2026-07-29 00:00:00+00:00",
+      "cost": 25.805926847147383,
+      "margin": 542.3115526928023,
+      "atr": 0.0009031800816400964,
+      "rule": {
+        "direction": "sell",
+        "when": [
+          "rsi_bear",
+          "high_vol",
+          "strong_trend"
+        ],
+        "regime": "down"
+      },
+      "regime_at_open": "down"
+    }
+  ],
   "closed": [
     {
       "symbol": "SEIUSDT",
@@ -1594,6 +1617,11 @@
       "time": "2026-07-29 03:39:46.369056+00:00",
       "balance": 4919.54,
       "open_positions": 0
+    },
+    {
+      "time": "2026-07-29 06:18:39.478966+00:00",
+      "balance": 4919.54,
+      "open_positions": 1
     }
   ],
   "cand_born": "2026-07-06T00:04:41.060215+00:00"
