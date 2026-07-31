@@ -1,29 +1,6 @@
 {
-  "balance": 6398.012417163021,
-  "open": [
-    {
-      "symbol": "OPUSDT",
-      "direction": "sell",
-      "entry": 0.0884,
-      "sl": 0.09242214192125406,
-      "tp": 0.08437785807874595,
-      "lots": 151534.7550245942,
-      "open_time": "2026-07-28 12:00:00+00:00",
-      "cost": 30.30695100491884,
-      "margin": 669.7836172087065,
-      "atr": 0.002011070960627029,
-      "rule": {
-        "direction": "sell",
-        "when": [
-          "rsi_bear",
-          "high_vol",
-          "strong_trend"
-        ],
-        "regime": "down"
-      },
-      "regime_at_open": "down"
-    }
-  ],
+  "balance": 6977.199756869486,
+  "open": [],
   "closed": [
     {
       "symbol": "OPUSDT",
@@ -120,6 +97,28 @@
         "direction": "sell",
         "when": [
           "vol_rising"
+        ],
+        "regime": "down"
+      },
+      "regime_at_open": "down"
+    },
+    {
+      "symbol": "OPUSDT",
+      "direction": "sell",
+      "entry": 0.0884,
+      "exit": 0.08438,
+      "outcome": "tp",
+      "lots": 151534.7550245942,
+      "pnl": 579.19,
+      "open_time": "2026-07-28 12:00:00+00:00",
+      "close_time": "2026-07-31 12:00:00+00:00",
+      "balance_after": 6977.2,
+      "rule": {
+        "direction": "sell",
+        "when": [
+          "rsi_bear",
+          "high_vol",
+          "strong_trend"
         ],
         "regime": "down"
       },
@@ -1801,6 +1800,11 @@
       "time": "2026-07-31 14:06:22.580521+00:00",
       "balance": 6398.01,
       "open_positions": 1
+    },
+    {
+      "time": "2026-07-31 16:12:11.613467+00:00",
+      "balance": 6977.2,
+      "open_positions": 0
     }
   ],
   "cand_born": "2026-07-06T00:04:29.982063+00:00"
