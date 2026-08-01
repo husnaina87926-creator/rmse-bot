@@ -1,29 +1,6 @@
 {
-  "balance": 4392.48375142722,
-  "open": [
-    {
-      "symbol": "ETHUSDT",
-      "direction": "sell",
-      "entry": 1892.53,
-      "sl": 1948.2017849750932,
-      "tp": 1836.8582150249067,
-      "lots": 7.122355471308585,
-      "open_time": "2026-07-27 20:00:00+00:00",
-      "cost": 42.73413282785151,
-      "margin": 673.9635700057818,
-      "atr": 27.83589248754658,
-      "rule": {
-        "direction": "sell",
-        "when": [
-          "rsi_bear",
-          "high_vol",
-          "strong_trend"
-        ],
-        "regime": "down"
-      },
-      "regime_at_open": "down"
-    }
-  ],
+  "balance": 4562.9217178556355,
+  "open": [],
   "closed": [
     {
       "symbol": "ETHUSDT",
@@ -82,6 +59,28 @@
       "open_time": "2026-07-17 04:00:00+00:00",
       "close_time": "2026-07-20 00:00:00+00:00",
       "balance_after": 4392.48,
+      "rule": {
+        "direction": "sell",
+        "when": [
+          "rsi_bear",
+          "high_vol",
+          "strong_trend"
+        ],
+        "regime": "down"
+      },
+      "regime_at_open": "down"
+    },
+    {
+      "symbol": "ETHUSDT",
+      "direction": "sell",
+      "entry": 1892.53,
+      "exit": 1862.6,
+      "outcome": "time",
+      "lots": 7.122355471308585,
+      "pnl": 170.44,
+      "open_time": "2026-07-27 20:00:00+00:00",
+      "close_time": "2026-07-31 20:00:00+00:00",
+      "balance_after": 4562.92,
       "rule": {
         "direction": "sell",
         "when": [
@@ -2554,6 +2553,11 @@
       "time": "2026-07-31 23:00:34.506594+00:00",
       "balance": 4392.48,
       "open_positions": 1
+    },
+    {
+      "time": "2026-08-01 00:10:59.513682+00:00",
+      "balance": 4562.92,
+      "open_positions": 0
     }
   ]
 }
