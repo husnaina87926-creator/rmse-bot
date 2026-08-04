@@ -33,6 +33,13 @@ governor:                     # P3 portfolio risk governor (crypto). max_concurr
   max_concurrent_same_dir: 5  # cap simultaneous same-direction crypto positions (ranked by signal recency)
   corr_sizing_dark: true      # log the sqrt(1/k) size it WOULD use; do NOT change live sizing yet
   day_loss_flag_pct: 15       # Phase-2 readiness: flag (not act) if portfolio day loss exceeds this % (inert on paper)
+exit_challengers:             # W1: forward-test alternate EXITS on the biggest-lever coins as challengers;
+  enabled: true               # entries identical to champion, promote ONLY via the paired per-trade-R gate
+  coins: [BTCUSDT, ETHUSDT]   # P1 counterfactual: current exit does -0.707R on majors; breakeven/trail beat it
+  variants:
+    breakeven_1.0: {be_atr: 1.0}
+    trail_1.5: {trail_atr: 1.5}
+  gate: {min_paired: 15, t_stat: 2.0}
 signal:
   confidence_threshold: 70
   ema_fast: 9

@@ -24,6 +24,7 @@ from rmse_bot.news_filter import fetch_calendar, is_news_blocked, nearest_event
 from rmse_bot.self_improve import load_live_rules, rules_for, candidate_list, chal_account
 from rmse_bot.journal import integrity_check, diff_and_journal, append_event
 from rmse_bot.discovery import set_market_context
+from rmse_bot import governor
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATE = os.path.join(ROOT, "state")
@@ -121,8 +122,13 @@ def main():
         # champion
         cs = load_state(os.path.join(STATE, f"{acc['name']}.json"), start_bal)
         b_open, b_n = [dict(p) for p in cs["open"]], len(cs["closed"])
-        step(cs, data, cfg, {sym: champ_rules}, now, params=acc["params"],
+        from rmse_bot.exit_challenger import apply_live_exit
+        champ_params = (apply_live_exit(acc["params"], acc["name"], STATE)   # promoted exit (no-op until gate passes)
+                        if acc["kind"] == "crypto" else acc["params"])
+        step(cs, data, cfg, {sym: champ_rules}, now, params=champ_params,
              regime_state_by_symbol=rs, news_blocked=news_blocked)
+        governor.enforce_after_step(cfg, STATE, acc["name"], cs, b_open,   # W2 portfolio cap (crypto)
+                                    journal_fn=lambda e: append_event(STATE, e))
         save_state(cs, os.path.join(STATE, f"{acc['name']}.json"))
         diff_and_journal(STATE, acc["name"], b_open, b_n, cs, bar_time, interval_s, extra=extra)
 
@@ -141,6 +147,19 @@ def main():
             save_state(chs, os.path.join(STATE, f"{cn}.json"))
             diff_and_journal(STATE, cn, b_open, b_n, chs, bar_time, interval_s, extra=extra)
             chal_line += f" | {cn.split('_', 1)[1]} ${chs['balance']:.0f}/{len(chs['closed'])}tr"
+
+        # W1 EXIT-CHALLENGERS (btc/eth): champion's ENTRIES exactly, alternate EXIT params. Judged by
+        # the paired per-trade-R gate (exit_challenger.pooled_verdict), never the independent balance.
+        from rmse_bot.exit_challenger import specs_for as _exit_specs
+        for _lbl, _ov, _suf in _exit_specs(cfg, sym):
+            en = f"{acc['name']}_{_suf}"
+            es = load_state(os.path.join(STATE, f"{en}.json"), start_bal)
+            eo, enn = [dict(p) for p in es["open"]], len(es["closed"])
+            step(es, data, cfg, {sym: champ_rules}, now, params={**acc["params"], **_ov},
+                 regime_state_by_symbol=rs, news_blocked=news_blocked)
+            save_state(es, os.path.join(STATE, f"{en}.json"))
+            diff_and_journal(STATE, en, eo, enn, es, bar_time, interval_s, extra=extra)
+            chal_line += f" | {_suf} ${es['balance']:.0f}/{len(es['closed'])}tr"
 
         wins = [t for t in cs["closed"] if t["pnl"] > 0]
         wr = len(wins) / len(cs["closed"]) if cs["closed"] else 0

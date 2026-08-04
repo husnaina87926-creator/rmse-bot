@@ -79,6 +79,18 @@ def main():
             print(f"[brain] WARN promo/demo pass: {e}", flush=True)
 
         try:
+            from rmse_bot.exit_challenger import exit_challenger_pass
+            from rmse_bot.journal import append_event
+            ev = exit_challenger_pass(STATE, cfg, cfg["crypto_rules"]["risk_pct"],
+                                      journal_fn=lambda e: append_event(STATE, e))
+            for lbl, v in ev.items():
+                if v["verdict"] != "hold":
+                    print(f"[brain {now:%m-%d %H:%M}] EXIT-GATE {lbl}: {v['verdict']} "
+                          f"(n={v['n']} t={v['t']} both_halves={v['both_halves']})", flush=True)
+        except Exception as e:
+            print(f"[brain] WARN exit-challenger gate: {e}", flush=True)
+
+        try:
             health = health_snapshot(STATE, acct_names, start_bal)
             for nm, h in health.items():
                 if isinstance(h, dict) and h.get("unhealthy"):

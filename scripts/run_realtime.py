@@ -25,6 +25,7 @@ from rmse_bot.regime import regime_state
 from rmse_bot.paper_trader import load_state, save_state, step, default_params
 from rmse_bot.news_filter import fetch_calendar, is_news_blocked, nearest_event
 from rmse_bot.self_improve import load_live_rules, rules_for, candidate_list, chal_account
+from rmse_bot import governor
 from rmse_bot.discovery import set_market_context
 
 import websockets
@@ -137,8 +138,12 @@ def run_symbol(sym, kind, params):
     cs = load_state(os.path.join(STATE, f"{name}.json"), START_BAL)
     before = (len(cs["open"]), len(cs["closed"]))
     b_open, b_n = [dict(p) for p in cs["open"]], len(cs["closed"])
-    step(cs, data, cfg, {sym: champ_rules}, now, params=params,
+    from rmse_bot.exit_challenger import apply_live_exit
+    champ_params = apply_live_exit(params, name, STATE) if kind == "crypto" else params
+    step(cs, data, cfg, {sym: champ_rules}, now, params=champ_params,
          regime_state_by_symbol=rs, news_blocked=news_blocked)
+    governor.enforce_after_step(cfg, STATE, name, cs, b_open,          # W2 portfolio cap (crypto)
+                                journal_fn=lambda e: append_event(STATE, e))
     save_state(cs, os.path.join(STATE, f"{name}.json"))
     diff_and_journal(STATE, name, b_open, b_n, cs, bar_time, interval_s, extra=extra)
     for cand in candidate_list(candidates, sym):
@@ -153,6 +158,16 @@ def run_symbol(sym, kind, params):
              regime_state_by_symbol=rs, news_blocked=news_blocked)
         save_state(chs, os.path.join(STATE, f"{cn}.json"))
         diff_and_journal(STATE, cn, b_open, b_n, chs, bar_time, interval_s, extra=extra)
+    # W1 EXIT-CHALLENGERS (btc/eth): champion entries, alternate exit; paired-R gate decides promotion.
+    from rmse_bot.exit_challenger import specs_for as _exit_specs
+    for _lbl, _ov, _suf in _exit_specs(cfg, sym):
+        en = f"{name}_{_suf}"
+        es = load_state(os.path.join(STATE, f"{en}.json"), START_BAL)
+        eo, enn = [dict(p) for p in es["open"]], len(es["closed"])
+        step(es, data, cfg, {sym: champ_rules}, now, params={**params, **_ov},
+             regime_state_by_symbol=rs, news_blocked=news_blocked)
+        save_state(es, os.path.join(STATE, f"{en}.json"))
+        diff_and_journal(STATE, en, eo, enn, es, bar_time, interval_s, extra=extra)
     changed = (len(cs["open"]), len(cs["closed"])) != before
     flag = "  <== ACTION" if changed else ""
     print(f"[{now:%H:%M:%S}] {name:5} {sym:9} regime={reg or '-':4} bal=${cs['balance']:.2f} "

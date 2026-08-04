@@ -36,6 +36,28 @@ def test_day_loss_flag_inert_threshold():
     # the flag never blocks trading — it is a Phase-2 readiness signal only (asserted by design)
 
 
+def test_governor_enforce_cap_reverts_and_journals(tmp_path):
+    import json
+    cfg = {"governor": {"enabled": True, "max_concurrent_same_dir": 5, "corr_sizing_dark": True},
+           "crypto_rules": {"symbols": ["BTCUSDT", "ETHUSDT", "SOLUSDT", "ADAUSDT", "OPUSDT", "SEIUSDT"]}}
+    for nm in ["btc", "eth", "sol", "ada", "op"]:                 # 5 champions already short crypto
+        json.dump({"balance": 5000, "open": [{"symbol": nm.upper() + "USDT", "direction": "sell",
+                   "open_time": "T" + nm}], "closed": [], "history": []},
+                  open(tmp_path / f"{nm}.json", "w"))
+    ev = []
+    st = {"balance": 5000, "open": [{"symbol": "SEIUSDT", "direction": "sell", "open_time": "Tsei"}], "closed": []}
+    gov.enforce_after_step(cfg, str(tmp_path), "sei", st, before_open=[], journal_fn=ev.append)
+    assert st["open"] == []                                       # 6th same-dir -> reverted
+    assert ev[-1]["type"] == "governor_skipped" and ev[-1]["open_same_dir"] == 5 and ev[-1]["cap"] == 5
+
+    (tmp_path / "op.json").unlink()                              # now only 4 existing shorts
+    ev2 = []
+    st2 = {"balance": 5000, "open": [{"symbol": "SEIUSDT", "direction": "sell", "open_time": "Tsei2"}], "closed": []}
+    gov.enforce_after_step(cfg, str(tmp_path), "sei", st2, before_open=[], journal_fn=ev2.append)
+    assert len(st2["open"]) == 1                                  # within cap -> KEPT (dark, never reverted)
+    assert ev2[-1]["type"] == "governor_dark_size" and ev2[-1]["would_size_factor"] == gov.dark_size_factor(cfg, 5)
+
+
 def test_p6_min_conditions_config_present():
     cfg = load_config("config.yaml")
     assert cfg.get("discovery", {}).get("min_conditions", 2) >= 2  # single-condition candidates rejected
