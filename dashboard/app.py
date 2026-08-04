@@ -367,6 +367,21 @@ page = st.radio("nav", _opts, format_func=lambda o: NAV_DISP[o],
                 horizontal=True, label_visibility="collapsed")
 st.markdown('</div>', unsafe_allow_html=True)
 
+st.caption("📊 Source: **GitHub-Actions arm (throttled ~1–4h cron)**  ·  Canonical record = **VPS** "
+           "(always-on real-time executor, Phase-2 target). The numbers on this page are the throttled "
+           "experiment arm; the VPS copy is the graduation-gate authority.")
+
+_sil = load_json("state/silent_reasons.json")
+if _sil and _sil.get("by_account"):
+    with st.expander("Why is the bot silent right now? — per-account gate reason"):
+        rows = []
+        for _an, _rs in _sil["by_account"].items():
+            if _rs:
+                _last = _rs[-1]
+                rows.append(f"**{_an}** — `{_last.get('reason')}` {_last.get('values', {})}")
+        st.markdown("  \n".join(rows) if rows else "All accounts evaluated a rule this cycle.")
+        st.caption(f"snapshot {str(_sil.get('ts',''))[:16]} UTC · regime_unknown = fail-closed (no definite up/down)")
+
 if not any(states.values()):
     st.warning("State load nahi hua — thori dair baad Refresh karein.")
     st.stop()

@@ -19,7 +19,7 @@ from rmse_bot.config import load_config
 from rmse_bot.data_feed import fetch_twelvedata, fetch_dukascopy, drop_forming
 from rmse_bot.binance_feed import fetch_binance_klines
 from rmse_bot.regime import regime_state
-from rmse_bot.paper_trader import load_state, save_state, step, default_params
+from rmse_bot.paper_trader import load_state, save_state, step, default_params, drain_silent_reasons
 from rmse_bot.news_filter import fetch_calendar, is_news_blocked, nearest_event
 from rmse_bot.self_improve import load_live_rules, rules_for, candidate_list, chal_account
 from rmse_bot.journal import integrity_check, diff_and_journal, append_event
@@ -76,6 +76,7 @@ def main():
              "llm_sentiment": latest_sentiment(STATE)}
 
     print(f"[{now:%Y-%m-%d %H:%M} UTC] bots step")
+    _silent = {}                       # P4.1: per-account "why silent" snapshot for the dashboard
     for acc in accts:
         sym = acc["symbol"]
         try:
@@ -165,6 +166,14 @@ def main():
         wr = len(wins) / len(cs["closed"]) if cs["closed"] else 0
         print(f"  {acc['name']:5} {sym:8} regime={reg or '-':4} balance=${cs['balance']:.2f} "
               f"open={len(cs['open'])} closed={len(cs['closed'])} win={wr:.0%}{chal_line}")
+        _silent[acc["name"]] = drain_silent_reasons()[-6:]
+
+    try:
+        from rmse_bot.atomic import atomic_json_dump
+        atomic_json_dump({"ts": now.isoformat(), "by_account": _silent},
+                         os.path.join(STATE, "silent_reasons.json"))
+    except Exception as e:
+        print(f"  WARN silent_reasons snapshot: {e}")
 
 
 if __name__ == "__main__":
