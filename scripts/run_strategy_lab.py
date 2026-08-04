@@ -22,10 +22,18 @@ STATE_DIR = os.path.join(ROOT, "state")
 
 
 def _get_data(sym, now):
-    path = os.path.join(ROOT, "data", f"{sym}_15m.csv")
-    if os.path.exists(path):
-        return load_csv(path)
-    return fetch_dukascopy(sym, "15m", now - dt.timedelta(days=400), now)
+    # crypto lives on Binance (4h); forex/metals on Dukascopy (15m). Dukascopy has NO crypto symbols,
+    # so routing every edge_rules symbol through it KeyError'd on SOLUSDT and failed the whole lab.
+    is_crypto = sym.endswith("USDT")
+    tf = "4h" if is_crypto else "15m"
+    for name in (f"{sym}_{tf}.csv", f"{sym}_{tf}_long.csv"):
+        path = os.path.join(ROOT, "data", name)
+        if os.path.exists(path):
+            return load_csv(path)
+    if is_crypto:
+        from rmse_bot.binance_feed import fetch_binance_klines
+        return fetch_binance_klines(sym, tf, now - dt.timedelta(days=400), now)
+    return fetch_dukascopy(sym, tf, now - dt.timedelta(days=400), now)
 
 
 def main():

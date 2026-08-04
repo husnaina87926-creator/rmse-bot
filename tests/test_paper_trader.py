@@ -126,6 +126,27 @@ def test_regime_specific_rule_fires_only_in_matching_regime():
     assert len(s2["open"]) == 0
 
 
+def test_no_regime_data_fails_closed():
+    """P4.3: with regime state supplied, a symbol lacking a definite up/down reading takes NO trade —
+    even for a rule with no `regime` key (the DOGE 2026-07-01 regime=None entry that lost -$523). A
+    definite regime still trades; not passing regime state at all stays backward-compatible."""
+    cfg = load_config("config.yaml")
+    rules = {"XAUUSD": [{"direction": "sell", "when": ["trend_down"]}]}   # NO regime key
+    df = _downtrend()
+    s0 = new_state(5000)
+    scan_for_entries(s0, {"XAUUSD": df}, cfg, rules, regime_state_by_symbol={"XAUUSD": None})
+    assert len(s0["open"]) == 0                         # regime unknown -> fail-closed
+    s1 = new_state(5000)
+    scan_for_entries(s1, {"XAUUSD": df}, cfg, rules, regime_state_by_symbol={})
+    assert len(s1["open"]) == 0                         # symbol missing from regime map -> fail-closed
+    s2 = new_state(5000)
+    scan_for_entries(s2, {"XAUUSD": df}, cfg, rules, regime_state_by_symbol={"XAUUSD": "down"})
+    assert len(s2["open"]) == 1                         # definite regime -> the rule fires
+    s3 = new_state(5000)
+    scan_for_entries(s3, {"XAUUSD": df}, cfg, rules)    # no regime state at all -> unchanged
+    assert len(s3["open"]) == 1
+
+
 def test_state_persistence(tmp_path):
     p = tmp_path / "state.json"
     s = new_state(100)

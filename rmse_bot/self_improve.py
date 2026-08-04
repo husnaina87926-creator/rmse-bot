@@ -96,9 +96,14 @@ def top_candidates(symbol: str, df, cfg: dict, current_rules: list, n: int = 1,
     regime-stratified split-half validation (stratified_ok) under the uniform live
     exit; at most max_tried leaderboard entries are examined."""
     cur = {frozenset(r["when"]) for r in current_rules}
+    # P6 candidate-birth quality: a challenger slot is scarce and expensive, so a candidate must be a
+    # SERIOUS hypothesis — at least MIN_CONDITIONS entry conditions (single-condition rules like
+    # "buy [weak_trend]" are noise that never survives the forward gate) AND it must clear the same
+    # regime-stratified split-half bar the champions passed (stratified_ok, below), before it recruits.
+    min_conds = int(cfg.get("discovery", {}).get("min_conditions", 2))
     out, tried = [], 0
     for s in generate_strategies(df, cfg, symbol, max_entries=8, min_count=min_count):
-        if s["return"] <= 0 or frozenset(s["entry"]) in cur:
+        if s["return"] <= 0 or len(s["entry"]) < min_conds or frozenset(s["entry"]) in cur:
             continue
         tried += 1
         if tried > max_tried:

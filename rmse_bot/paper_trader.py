@@ -17,6 +17,24 @@ from rmse_bot.atomic import atomic_json_dump
 
 MAX_HISTORY = 1000        # keep state files bounded (they are committed every 15 min)
 
+# P4.1 silent-gate diagnostics — a transient, module-level buffer of WHY entries were skipped this
+# cycle (regime / conditions / news / feed). Never persisted, never affects trading; the runner drains
+# it after each account's step and journals a sampled subset for the dashboard "why silent" panel.
+_SILENT_REASONS: list = []
+
+
+def _diag(state: dict, sym: str, reason: str, values: dict = None) -> None:
+    _SILENT_REASONS.append({"symbol": sym, "reason": reason, "values": values or {}})
+    if len(_SILENT_REASONS) > 500:
+        del _SILENT_REASONS[:-500]
+
+
+def drain_silent_reasons() -> list:
+    """Return and clear this process's accumulated silent-gate reasons."""
+    global _SILENT_REASONS
+    out, _SILENT_REASONS = _SILENT_REASONS, []
+    return out
+
 
 def new_state(starting_balance: float) -> dict:
     return {"balance": float(starting_balance), "open": [], "closed": [], "history": []}
@@ -154,6 +172,7 @@ def scan_for_entries(state: dict, data_by_symbol: dict, cfg: dict, rules_by_symb
             continue
         df = data_by_symbol.get(sym)
         if df is None or len(df) < 250:
+            _diag(state, sym, "feed", {"bars": (0 if df is None else len(df))})
             continue
         # BACKTEST PARITY (re-entry cooldown): the validated backtest advances
         # i += max_hold after every entry — max one trade per max_hold window per
@@ -176,6 +195,15 @@ def scan_for_entries(state: dict, data_by_symbol: dict, cfg: dict, rules_by_symb
         row = feats.iloc[-1]
         sym_regime = (regime_state_by_symbol or {}).get(sym)
 
+        # P4.3 FAIL-CLOSED regime gate. The daily regime filter is the validated core edge; a trade
+        # taken without a definite up/down regime is UNVALIDATED. Previously a rule with no `regime`
+        # key would still fire when regime data was missing (the DOGE 2026-07-01 entry opened
+        # regime=None and lost -$523). Now: if the caller supplies regime state but this symbol has no
+        # up/down reading, take NO trade here. Backward-compatible (skipped only when regime is used).
+        if regime_state_by_symbol is not None and sym_regime not in ("up", "down"):
+            _diag(state, sym, "regime_unknown", {"regime": sym_regime})
+            continue
+
         def ok(r):
             if r.get("regime") and r["regime"] != sym_regime:   # regime-specific rule
                 return False
@@ -183,6 +211,8 @@ def scan_for_entries(state: dict, data_by_symbol: dict, cfg: dict, rules_by_symb
 
         matched = next((r for r in rules if ok(r)), None)
         if matched is None:
+            _diag(state, sym, "conditions", {"regime": sym_regime,
+                  "vals": {c: bool(row[c]) for r in rules for c in r["when"] if c in row.index}})
             continue
         ai = float(a.iloc[-1])
         if ai != ai or ai == 0:
