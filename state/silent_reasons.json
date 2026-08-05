@@ -1,5 +1,5 @@
 {
-  "ts": "2026-08-05T00:14:45.060452+00:00",
+  "ts": "2026-08-05T03:38:21.001263+00:00",
   "by_account": {
     "gold": [
       {
@@ -9,8 +9,8 @@
           "regime": "down",
           "vals": {
             "trend_up": true,
-            "rsi_overbought": false,
-            "high_vol": false
+            "rsi_overbought": true,
+            "high_vol": true
           }
         }
       },
@@ -21,21 +21,9 @@
           "regime": "down",
           "vals": {
             "trend_up": true,
-            "rsi_overbought": false,
-            "high_vol": false
-          }
-        }
-      },
-      {
-        "symbol": "XAUUSD",
-        "reason": "conditions",
-        "values": {
-          "regime": "down",
-          "vals": {
-            "trend_up": true,
-            "rsi_overbought": false,
-            "high_vol": false,
-            "weak_trend": true,
+            "rsi_overbought": true,
+            "high_vol": true,
+            "weak_trend": false,
             "session_ny": false,
             "vol_quiet": false
           }
@@ -48,8 +36,8 @@
           "regime": "down",
           "vals": {
             "trend_up": true,
-            "rsi_overbought": false,
-            "high_vol": false,
+            "rsi_overbought": true,
+            "high_vol": true,
             "session_ny": false,
             "vol_quiet": false
           }

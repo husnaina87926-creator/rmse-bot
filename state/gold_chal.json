@@ -1,6 +1,27 @@
 {
   "balance": 5655.366231049679,
-  "open": [],
+  "open": [
+    {
+      "symbol": "XAUUSD",
+      "direction": "buy",
+      "entry": 4132.34316,
+      "sl": 4117.021330615682,
+      "tp": 4147.664989384319,
+      "lots": 0.3597142605230533,
+      "open_time": "2026-08-05 03:15:00+00:00",
+      "cost": 14.38857042092213,
+      "margin": 297.29255280537944,
+      "atr": 7.660914692158974,
+      "rule": {
+        "direction": "buy",
+        "when": [
+          "rsi_overbought",
+          "high_vol"
+        ]
+      },
+      "regime_at_open": "down"
+    }
+  ],
   "closed": [
     {
       "symbol": "XAUUSD",
@@ -2898,6 +2919,11 @@
       "time": "2026-08-05 00:14:45.060452+00:00",
       "balance": 5655.37,
       "open_positions": 0
+    },
+    {
+      "time": "2026-08-05 03:38:21.001263+00:00",
+      "balance": 5655.37,
+      "open_positions": 1
     }
   ],
   "cand_born": null
