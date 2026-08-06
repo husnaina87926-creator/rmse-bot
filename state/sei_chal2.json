@@ -1,28 +1,6 @@
 {
-  "balance": 4989.215094279761,
-  "open": [
-    {
-      "symbol": "SEIUSDT",
-      "direction": "sell",
-      "entry": 0.04166,
-      "sl": 0.043013026496200334,
-      "tp": 0.04030697350379967,
-      "lots": 343367.1104640262,
-      "open_time": "2026-08-02 00:00:00+00:00",
-      "cost": 34.33671104640263,
-      "margin": 715.2336910965666,
-      "atr": 0.0006765132481001644,
-      "rule": {
-        "direction": "sell",
-        "when": [
-          "ema_fast_below",
-          "weekend"
-        ],
-        "regime": "down"
-      },
-      "regime_at_open": "down"
-    }
-  ],
+  "balance": 5195.235360558177,
+  "open": [],
   "closed": [
     {
       "symbol": "SEIUSDT",
@@ -104,6 +82,27 @@
           "rsi_bear",
           "high_vol",
           "strong_trend"
+        ],
+        "regime": "down"
+      },
+      "regime_at_open": "down"
+    },
+    {
+      "symbol": "SEIUSDT",
+      "direction": "sell",
+      "entry": 0.04166,
+      "exit": 0.04096,
+      "outcome": "time",
+      "lots": 343367.1104640262,
+      "pnl": 206.02,
+      "open_time": "2026-08-02 00:00:00+00:00",
+      "close_time": "2026-08-06 00:00:00+00:00",
+      "balance_after": 5195.24,
+      "rule": {
+        "direction": "sell",
+        "when": [
+          "ema_fast_below",
+          "weekend"
         ],
         "regime": "down"
       },
@@ -1735,6 +1734,11 @@
       "time": "2026-08-06 03:37:10.384231+00:00",
       "balance": 4989.22,
       "open_positions": 1
+    },
+    {
+      "time": "2026-08-06 06:14:58.304978+00:00",
+      "balance": 5195.24,
+      "open_positions": 0
     }
   ],
   "cand_born": "2026-07-12T23:45:58.176593+00:00"
