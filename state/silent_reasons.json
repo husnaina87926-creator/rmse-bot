@@ -1,49 +1,7 @@
 {
-  "ts": "2026-08-07T11:22:12.580591+00:00",
+  "ts": "2026-08-07T12:08:43.770366+00:00",
   "by_account": {
-    "gold": [
-      {
-        "symbol": "XAUUSD",
-        "reason": "conditions",
-        "values": {
-          "regime": "down",
-          "vals": {
-            "trend_up": true,
-            "rsi_overbought": true,
-            "high_vol": true
-          }
-        }
-      },
-      {
-        "symbol": "XAUUSD",
-        "reason": "conditions",
-        "values": {
-          "regime": "down",
-          "vals": {
-            "trend_up": true,
-            "rsi_overbought": true,
-            "high_vol": true,
-            "weak_trend": false,
-            "session_ny": false,
-            "vol_quiet": false
-          }
-        }
-      },
-      {
-        "symbol": "XAUUSD",
-        "reason": "conditions",
-        "values": {
-          "regime": "down",
-          "vals": {
-            "trend_up": true,
-            "rsi_overbought": true,
-            "high_vol": true,
-            "session_ny": false,
-            "vol_quiet": false
-          }
-        }
-      }
-    ],
+    "gold": [],
     "btc": [
       {
         "symbol": "BTCUSDT",
@@ -405,7 +363,7 @@
         "values": {
           "regime": "down",
           "vals": {
-            "rsi_bear": false,
+            "rsi_bear": true,
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false
@@ -421,7 +379,7 @@
         "values": {
           "regime": "down",
           "vals": {
-            "rsi_bear": false,
+            "rsi_bear": true,
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false
@@ -434,7 +392,7 @@
         "values": {
           "regime": "down",
           "vals": {
-            "rsi_bear": false,
+            "rsi_bear": true,
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
@@ -449,7 +407,7 @@
         "values": {
           "regime": "down",
           "vals": {
-            "rsi_bear": false,
+            "rsi_bear": true,
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
@@ -514,7 +472,7 @@
             "strong_trend": false,
             "rsi_overbought": false,
             "ema_fast_below": true,
-            "session_asia": true,
+            "session_asia": false,
             "weekend": false
           }
         }
