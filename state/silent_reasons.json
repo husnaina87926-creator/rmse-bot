@@ -1,5 +1,5 @@
 {
-  "ts": "2026-08-07T15:36:23.916863+00:00",
+  "ts": "2026-08-07T16:34:14.843400+00:00",
   "by_account": {
     "gold": [
       {
@@ -68,7 +68,7 @@
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
-            "weak_trend": true
+            "weak_trend": false
           }
         }
       },
@@ -237,9 +237,9 @@
         "values": {
           "regime": "down",
           "vals": {
-            "rsi_bear": true,
+            "rsi_bear": false,
             "high_vol": false,
-            "strong_trend": true,
+            "strong_trend": false,
             "rsi_overbought": false
           }
         }
@@ -250,9 +250,9 @@
         "values": {
           "regime": "down",
           "vals": {
-            "rsi_bear": true,
+            "rsi_bear": false,
             "high_vol": false,
-            "strong_trend": true,
+            "strong_trend": false,
             "rsi_overbought": false,
             "trend_down": true,
             "weekend": false
@@ -267,8 +267,8 @@
         "values": {
           "regime": "down",
           "vals": {
-            "rsi_bear": false,
-            "high_vol": false,
+            "rsi_bear": true,
+            "high_vol": true,
             "strong_trend": false,
             "rsi_overbought": false
           }
@@ -280,8 +280,8 @@
         "values": {
           "regime": "down",
           "vals": {
-            "rsi_bear": false,
-            "high_vol": false,
+            "rsi_bear": true,
+            "high_vol": true,
             "strong_trend": false,
             "rsi_overbought": false,
             "ema_fast_below": false,
