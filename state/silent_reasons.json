@@ -1,7 +1,19 @@
 {
-  "ts": "2026-08-07T16:34:14.843400+00:00",
+  "ts": "2026-08-07T17:33:54.464671+00:00",
   "by_account": {
     "gold": [
+      {
+        "symbol": "XAUUSD",
+        "reason": "conditions",
+        "values": {
+          "regime": "down",
+          "vals": {
+            "trend_up": true,
+            "rsi_overbought": false,
+            "high_vol": true
+          }
+        }
+      },
       {
         "symbol": "XAUUSD",
         "reason": "conditions",
