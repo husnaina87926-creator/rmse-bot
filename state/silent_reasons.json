@@ -1,5 +1,5 @@
 {
-  "ts": "2026-08-07T03:39:01.135374+00:00",
+  "ts": "2026-08-07T05:23:36.603611+00:00",
   "by_account": {
     "gold": [
       {
@@ -80,7 +80,7 @@
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
-            "weak_trend": false
+            "weak_trend": true
           }
         }
       },
@@ -279,7 +279,7 @@
         "values": {
           "regime": "down",
           "vals": {
-            "rsi_bear": true,
+            "rsi_bear": false,
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false
@@ -292,7 +292,21 @@
         "values": {
           "regime": "down",
           "vals": {
-            "rsi_bear": true,
+            "rsi_bear": false,
+            "high_vol": false,
+            "strong_trend": false,
+            "rsi_overbought": false,
+            "vol_rising": false
+          }
+        }
+      },
+      {
+        "symbol": "OPUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "down",
+          "vals": {
+            "rsi_bear": false,
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
@@ -432,7 +446,7 @@
         "values": {
           "regime": "down",
           "vals": {
-            "rsi_bear": false,
+            "rsi_bear": true,
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
@@ -512,7 +526,7 @@
             "strong_trend": false,
             "rsi_overbought": false,
             "ema_fast_below": true,
-            "session_asia": false,
+            "session_asia": true,
             "weekend": false
           }
         }
