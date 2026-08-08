@@ -1,5 +1,5 @@
 {
-  "ts": "2026-08-08T19:53:58.191913+00:00",
+  "ts": "2026-08-08T20:29:45.026909+00:00",
   "by_account": {
     "gold": [
       {
@@ -211,7 +211,21 @@
             "rsi_oversold": false,
             "high_vol": false,
             "strong_trend": false,
-            "rsi_overbought": true
+            "rsi_overbought": false
+          }
+        }
+      },
+      {
+        "symbol": "SOLUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "down",
+          "vals": {
+            "rsi_oversold": false,
+            "high_vol": false,
+            "strong_trend": false,
+            "rsi_overbought": false,
+            "sweep_up": false
           }
         }
       }
@@ -332,7 +346,7 @@
             "rsi_bear": false,
             "high_vol": false,
             "strong_trend": false,
-            "rsi_overbought": false
+            "rsi_overbought": true
           }
         }
       },
@@ -345,7 +359,7 @@
             "rsi_bear": false,
             "high_vol": false,
             "strong_trend": false,
-            "rsi_overbought": false,
+            "rsi_overbought": true,
             "vol_quiet": false
           }
         }
