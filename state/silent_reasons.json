@@ -1,5 +1,5 @@
 {
-  "ts": "2026-08-09T02:28:40.820389+00:00",
+  "ts": "2026-08-09T04:01:21.200605+00:00",
   "by_account": {
     "gold": [
       {
@@ -238,25 +238,10 @@
         "values": {
           "regime": "down",
           "vals": {
-            "rsi_bear": false,
+            "rsi_bear": true,
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false
-          }
-        }
-      },
-      {
-        "symbol": "DOGEUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": false,
-            "strong_trend": false,
-            "rsi_overbought": false,
-            "trend_down": true,
-            "weekend": true
           }
         }
       }
@@ -416,7 +401,7 @@
         "values": {
           "regime": "down",
           "vals": {
-            "rsi_bear": false,
+            "rsi_bear": true,
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false
