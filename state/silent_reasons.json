@@ -1,5 +1,5 @@
 {
-  "ts": "2026-08-09T15:48:02.791678+00:00",
+  "ts": "2026-08-09T16:34:36.350515+00:00",
   "by_account": {
     "gold": [
       {
@@ -55,7 +55,7 @@
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
-            "weak_trend": true
+            "weak_trend": false
           }
         }
       },
@@ -210,8 +210,8 @@
           "vals": {
             "rsi_oversold": false,
             "high_vol": false,
-            "strong_trend": false,
-            "rsi_overbought": false
+            "strong_trend": true,
+            "rsi_overbought": true
           }
         }
       },
@@ -223,8 +223,8 @@
           "vals": {
             "rsi_oversold": false,
             "high_vol": false,
-            "strong_trend": false,
-            "rsi_overbought": false,
+            "strong_trend": true,
+            "rsi_overbought": true,
             "sweep_up": false
           }
         }
@@ -300,7 +300,20 @@
           "vals": {
             "rsi_bear": false,
             "high_vol": false,
-            "strong_trend": false,
+            "strong_trend": true,
+            "rsi_overbought": false
+          }
+        }
+      },
+      {
+        "symbol": "VETUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "down",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": false,
+            "strong_trend": true,
             "rsi_overbought": false
           }
         }
@@ -416,7 +429,7 @@
         "values": {
           "regime": "down",
           "vals": {
-            "rsi_bear": true,
+            "rsi_bear": false,
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false
