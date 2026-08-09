@@ -1,5 +1,5 @@
 {
-  "ts": "2026-08-08T23:37:31.725862+00:00",
+  "ts": "2026-08-09T00:03:11.240108+00:00",
   "by_account": {
     "gold": [
       {
@@ -346,7 +346,7 @@
             "rsi_bear": false,
             "high_vol": false,
             "strong_trend": false,
-            "rsi_overbought": true
+            "rsi_overbought": false
           }
         }
       },
@@ -359,7 +359,7 @@
             "rsi_bear": false,
             "high_vol": false,
             "strong_trend": false,
-            "rsi_overbought": true,
+            "rsi_overbought": false,
             "vol_quiet": false
           }
         }
@@ -389,7 +389,7 @@
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
-            "ema_fast_below": true,
+            "ema_fast_below": false,
             "weekend": true
           }
         }
@@ -435,22 +435,6 @@
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false
-          }
-        }
-      },
-      {
-        "symbol": "HBARUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": false,
-            "strong_trend": false,
-            "rsi_overbought": false,
-            "trend_down": true,
-            "vol_quiet": false,
-            "weekend": true
           }
         }
       }
