@@ -1,5 +1,5 @@
 {
-  "ts": "2026-08-11T23:12:29.258823+00:00",
+  "ts": "2026-08-12T00:01:16.225285+00:00",
   "by_account": {
     "gold": [
       {
@@ -326,7 +326,7 @@
           "regime": "down",
           "vals": {
             "rsi_bear": true,
-            "high_vol": true,
+            "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false
           }
@@ -387,6 +387,20 @@
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
+            "weak_trend": false
+          }
+        }
+      },
+      {
+        "symbol": "XTZUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "down",
+          "vals": {
+            "rsi_bear": true,
+            "high_vol": false,
+            "strong_trend": false,
+            "rsi_overbought": false,
             "vol_quiet": false
           }
         }
@@ -399,7 +413,7 @@
         "values": {
           "regime": "down",
           "vals": {
-            "rsi_bear": false,
+            "rsi_bear": true,
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false
@@ -412,7 +426,7 @@
         "values": {
           "regime": "down",
           "vals": {
-            "rsi_bear": false,
+            "rsi_bear": true,
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
@@ -427,7 +441,7 @@
         "values": {
           "regime": "down",
           "vals": {
-            "rsi_bear": false,
+            "rsi_bear": true,
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
