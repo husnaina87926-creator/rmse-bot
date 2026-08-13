@@ -1,7 +1,36 @@
 {
-  "ts": "2026-08-13T12:09:23.100727+00:00",
+  "ts": "2026-08-13T13:47:45.985089+00:00",
   "by_account": {
-    "gold": [],
+    "gold": [
+      {
+        "symbol": "XAUUSD",
+        "reason": "regime_unknown",
+        "values": {
+          "regime": null
+        }
+      },
+      {
+        "symbol": "XAUUSD",
+        "reason": "regime_unknown",
+        "values": {
+          "regime": null
+        }
+      },
+      {
+        "symbol": "XAUUSD",
+        "reason": "regime_unknown",
+        "values": {
+          "regime": null
+        }
+      },
+      {
+        "symbol": "XAUUSD",
+        "reason": "regime_unknown",
+        "values": {
+          "regime": null
+        }
+      }
+    ],
     "btc": [
       {
         "symbol": "BTCUSDT",
