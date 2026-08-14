@@ -1,5 +1,5 @@
 {
-  "ts": "2026-08-14T19:37:05.960735+00:00",
+  "ts": "2026-08-14T20:14:54.744501+00:00",
   "by_account": {
     "gold": [
       {
@@ -350,50 +350,7 @@
         }
       }
     ],
-    "sand": [
-      {
-        "symbol": "SANDUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": false,
-            "strong_trend": true,
-            "rsi_overbought": false
-          }
-        }
-      },
-      {
-        "symbol": "SANDUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": false,
-            "strong_trend": true,
-            "rsi_overbought": false,
-            "ema_fast_below": true,
-            "weekend": false
-          }
-        }
-      },
-      {
-        "symbol": "SANDUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": false,
-            "strong_trend": true,
-            "rsi_overbought": false,
-            "weekend": false
-          }
-        }
-      }
-    ],
+    "sand": [],
     "mana": [
       {
         "symbol": "MANAUSDT",
@@ -402,7 +359,7 @@
           "regime": "down",
           "vals": {
             "rsi_bear": true,
-            "high_vol": false,
+            "high_vol": true,
             "strong_trend": false,
             "rsi_overbought": false
           }
