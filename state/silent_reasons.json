@@ -1,5 +1,5 @@
 {
-  "ts": "2026-08-15T07:52:35.147077+00:00",
+  "ts": "2026-08-15T08:28:09.074192+00:00",
   "by_account": {
     "gold": [
       {
@@ -243,20 +243,6 @@
             "rsi_overbought": false
           }
         }
-      },
-      {
-        "symbol": "ADAUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": true,
-            "high_vol": false,
-            "strong_trend": true,
-            "rsi_overbought": false,
-            "trend_down": false
-          }
-        }
       }
     ],
     "doge": [
@@ -266,25 +252,10 @@
         "values": {
           "regime": "down",
           "vals": {
-            "rsi_bear": false,
+            "rsi_bear": true,
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false
-          }
-        }
-      },
-      {
-        "symbol": "DOGEUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": false,
-            "strong_trend": false,
-            "rsi_overbought": false,
-            "trend_down": true,
-            "weekend": true
           }
         }
       }
@@ -302,11 +273,39 @@
             "rsi_overbought": false
           }
         }
+      },
+      {
+        "symbol": "OPUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "down",
+          "vals": {
+            "rsi_bear": true,
+            "high_vol": true,
+            "strong_trend": false,
+            "rsi_overbought": false,
+            "vol_rising": false
+          }
+        }
       }
     ],
     "sei": [],
     "vet": [],
-    "gala": [],
+    "gala": [
+      {
+        "symbol": "GALAUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "down",
+          "vals": {
+            "rsi_bear": true,
+            "high_vol": false,
+            "strong_trend": false,
+            "rsi_overbought": false
+          }
+        }
+      }
+    ],
     "xtz": [
       {
         "symbol": "XTZUSDT",
@@ -318,20 +317,6 @@
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false
-          }
-        }
-      },
-      {
-        "symbol": "XTZUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": false,
-            "strong_trend": false,
-            "rsi_overbought": false,
-            "weak_trend": false
           }
         }
       }
