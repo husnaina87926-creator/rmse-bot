@@ -1,5 +1,5 @@
 {
-  "ts": "2026-08-15T23:59:46.979850+00:00",
+  "ts": "2026-08-16T01:52:02.251752+00:00",
   "by_account": {
     "gold": [
       {
@@ -333,20 +333,6 @@
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false
-          }
-        }
-      },
-      {
-        "symbol": "MANAUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": true,
-            "high_vol": false,
-            "strong_trend": false,
-            "rsi_overbought": false,
-            "weak_trend": false
           }
         }
       }
