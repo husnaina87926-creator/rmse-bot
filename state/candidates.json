@@ -147,6 +147,22 @@
       "return": 6625.72,
       "pf": 1.2,
       "slot": 0
+    },
+    {
+      "rule": {
+        "direction": "buy",
+        "when": [
+          "ema_fast_above",
+          "rsi_bull",
+          "weekend"
+        ],
+        "regime": "up"
+      },
+      "score": 8585.07,
+      "return": 11446.77,
+      "pf": 1.58,
+      "slot": 1,
+      "born": "2026-08-16T23:13:17.542207+00:00"
     }
   ],
   "ADAUSDT": [
