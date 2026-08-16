@@ -1,5 +1,5 @@
 {
-  "ts": "2026-08-16T22:51:09.295536+00:00",
+  "ts": "2026-08-16T23:19:26.796003+00:00",
   "by_account": {
     "gold": [
       {
@@ -226,6 +226,22 @@
             "strong_trend": false,
             "rsi_overbought": false,
             "sweep_up": false
+          }
+        }
+      },
+      {
+        "symbol": "SOLUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "down",
+          "vals": {
+            "rsi_oversold": false,
+            "high_vol": false,
+            "strong_trend": false,
+            "rsi_overbought": false,
+            "ema_fast_above": false,
+            "rsi_bull": false,
+            "weekend": true
           }
         }
       }
