@@ -1,29 +1,6 @@
 {
-  "balance": 4896.559909609989,
-  "open": [
-    {
-      "symbol": "SANDUSDT",
-      "direction": "sell",
-      "entry": 0.03926,
-      "sl": 0.04068926024444632,
-      "tp": 0.037830739755553684,
-      "lots": 320191.408061015,
-      "open_time": "2026-08-14 16:00:00+00:00",
-      "cost": 32.019140806101504,
-      "margin": 628.5357340237725,
-      "atr": 0.0007146301222231603,
-      "rule": {
-        "direction": "sell",
-        "when": [
-          "rsi_bear",
-          "high_vol",
-          "strong_trend"
-        ],
-        "regime": "down"
-      },
-      "regime_at_open": "down"
-    }
-  ],
+  "balance": 4406.90391864899,
+  "open": [],
   "closed": [
     {
       "symbol": "SANDUSDT",
@@ -58,6 +35,28 @@
       "open_time": "2026-08-01 12:00:00+00:00",
       "close_time": "2026-08-02 12:00:00+00:00",
       "balance_after": 4896.56,
+      "rule": {
+        "direction": "sell",
+        "when": [
+          "rsi_bear",
+          "high_vol",
+          "strong_trend"
+        ],
+        "regime": "down"
+      },
+      "regime_at_open": "down"
+    },
+    {
+      "symbol": "SANDUSDT",
+      "direction": "sell",
+      "entry": 0.03926,
+      "exit": 0.04069,
+      "outcome": "loss",
+      "lots": 320191.408061015,
+      "pnl": -489.66,
+      "open_time": "2026-08-14 16:00:00+00:00",
+      "close_time": "2026-08-17 04:00:00+00:00",
+      "balance_after": 4406.9,
       "rule": {
         "direction": "sell",
         "when": [
@@ -3870,6 +3869,11 @@
       "time": "2026-08-17 07:15:57.240445+00:00",
       "balance": 4896.56,
       "open_positions": 1
+    },
+    {
+      "time": "2026-08-17 08:07:08.192645+00:00",
+      "balance": 4406.9,
+      "open_positions": 0
     }
   ]
 }
