@@ -1,27 +1,6 @@
 {
-  "balance": 3560.104374069953,
-  "open": [
-    {
-      "symbol": "MANAUSDT",
-      "direction": "sell",
-      "entry": 0.0638,
-      "sl": 0.06518229380073146,
-      "tp": 0.062417706199268536,
-      "lots": 236977.90487696577,
-      "open_time": "2026-08-17 12:00:00+00:00",
-      "cost": 28.437348585235892,
-      "margin": 755.9595165575208,
-      "atr": 0.0006911469003657284,
-      "rule": {
-        "direction": "sell",
-        "when": [
-          "low_vol"
-        ],
-        "regime": "down"
-      },
-      "regime_at_open": "down"
-    }
-  ],
+  "balance": 3859.2401143064762,
+  "open": [],
   "closed": [
     {
       "symbol": "MANAUSDT",
@@ -218,6 +197,26 @@
       "open_time": "2026-08-13 12:00:00+00:00",
       "close_time": "2026-08-14 16:00:00+00:00",
       "balance_after": 3560.1,
+      "rule": {
+        "direction": "sell",
+        "when": [
+          "low_vol"
+        ],
+        "regime": "down"
+      },
+      "regime_at_open": "down"
+    },
+    {
+      "symbol": "MANAUSDT",
+      "direction": "sell",
+      "entry": 0.0638,
+      "exit": 0.06242,
+      "outcome": "tp",
+      "lots": 236977.90487696577,
+      "pnl": 299.14,
+      "open_time": "2026-08-17 12:00:00+00:00",
+      "close_time": "2026-08-18 00:00:00+00:00",
+      "balance_after": 3859.24,
       "rule": {
         "direction": "sell",
         "when": [
@@ -3833,6 +3832,11 @@
       "time": "2026-08-18 03:24:12.552011+00:00",
       "balance": 3560.1,
       "open_positions": 1
+    },
+    {
+      "time": "2026-08-18 04:07:23.021898+00:00",
+      "balance": 3859.24,
+      "open_positions": 0
     }
   ],
   "cand_born": "2026-07-06T00:05:49.825383+00:00"
