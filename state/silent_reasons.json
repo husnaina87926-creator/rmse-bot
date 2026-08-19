@@ -1,5 +1,5 @@
 {
-  "ts": "2026-08-19T07:45:46.602817+00:00",
+  "ts": "2026-08-19T08:37:03.232821+00:00",
   "by_account": {
     "gold": [
       {
@@ -274,6 +274,21 @@
             "rsi_overbought": false
           }
         }
+      },
+      {
+        "symbol": "DOGEUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "down",
+          "vals": {
+            "rsi_bear": true,
+            "high_vol": false,
+            "strong_trend": false,
+            "rsi_overbought": false,
+            "trend_down": true,
+            "weekend": false
+          }
+        }
       }
     ],
     "op": [
@@ -405,6 +420,20 @@
             "high_vol": true,
             "strong_trend": false,
             "rsi_overbought": false,
+            "weak_trend": false
+          }
+        }
+      },
+      {
+        "symbol": "XTZUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "down",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": true,
+            "strong_trend": false,
+            "rsi_overbought": false,
             "vol_quiet": false
           }
         }
@@ -480,6 +509,20 @@
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false
+          }
+        }
+      },
+      {
+        "symbol": "HBARUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "down",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": false,
+            "strong_trend": false,
+            "rsi_overbought": false,
+            "trend_down": true
           }
         }
       },
