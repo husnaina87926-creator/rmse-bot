@@ -1,29 +1,6 @@
 {
-  "balance": 5842.967064235421,
-  "open": [
-    {
-      "symbol": "GALAUSDT",
-      "direction": "sell",
-      "entry": 0.001426,
-      "sl": 0.001519502216022074,
-      "tp": 0.001332497783977926,
-      "lots": 5955999.060123875,
-      "open_time": "2026-08-19 20:00:00+00:00",
-      "cost": 27.397595676569825,
-      "margin": 424.6627329868323,
-      "atr": 4.6751108011037004e-05,
-      "rule": {
-        "direction": "sell",
-        "when": [
-          "rsi_bear",
-          "high_vol",
-          "strong_trend"
-        ],
-        "regime": "down"
-      },
-      "regime_at_open": "down"
-    }
-  ],
+  "balance": 5258.6703578118795,
+  "open": [],
   "closed": [
     {
       "symbol": "GALAUSDT",
@@ -80,6 +57,28 @@
       "open_time": "2026-08-11 04:00:00+00:00",
       "close_time": "2026-08-11 12:00:00+00:00",
       "balance_after": 5842.97,
+      "rule": {
+        "direction": "sell",
+        "when": [
+          "rsi_bear",
+          "high_vol",
+          "strong_trend"
+        ],
+        "regime": "down"
+      },
+      "regime_at_open": "down"
+    },
+    {
+      "symbol": "GALAUSDT",
+      "direction": "sell",
+      "entry": 0.001426,
+      "exit": 0.00152,
+      "outcome": "loss",
+      "lots": 5955999.060123875,
+      "pnl": -584.3,
+      "open_time": "2026-08-19 20:00:00+00:00",
+      "close_time": "2026-08-20 12:00:00+00:00",
+      "balance_after": 5258.67,
       "rule": {
         "direction": "sell",
         "when": [
@@ -4492,6 +4491,11 @@
       "time": "2026-08-20 15:33:18.332531+00:00",
       "balance": 5842.97,
       "open_positions": 1
+    },
+    {
+      "time": "2026-08-20 16:04:26.618814+00:00",
+      "balance": 5258.67,
+      "open_positions": 0
     }
   ]
 }
