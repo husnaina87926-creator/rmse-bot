@@ -1,234 +1,162 @@
 {
-  "ts": "2026-08-19T23:47:13.241339+00:00",
+  "ts": "2026-08-20T01:13:16.245090+00:00",
   "by_account": {
     "gold": [
       {
         "symbol": "XAUUSD",
-        "reason": "regime_unknown",
+        "reason": "conditions",
         "values": {
-          "regime": null
+          "regime": "up",
+          "vals": {
+            "trend_up": true,
+            "rsi_overbought": false,
+            "high_vol": false
+          }
         }
       },
       {
         "symbol": "XAUUSD",
-        "reason": "regime_unknown",
+        "reason": "conditions",
         "values": {
-          "regime": null
+          "regime": "up",
+          "vals": {
+            "trend_up": true,
+            "rsi_overbought": false,
+            "high_vol": false
+          }
         }
       },
       {
         "symbol": "XAUUSD",
-        "reason": "regime_unknown",
+        "reason": "conditions",
         "values": {
-          "regime": null
+          "regime": "up",
+          "vals": {
+            "trend_up": true,
+            "rsi_overbought": false,
+            "high_vol": false,
+            "weak_trend": false,
+            "session_ny": false,
+            "vol_quiet": false
+          }
         }
       },
       {
         "symbol": "XAUUSD",
-        "reason": "regime_unknown",
+        "reason": "conditions",
         "values": {
-          "regime": null
+          "regime": "up",
+          "vals": {
+            "trend_up": true,
+            "rsi_overbought": false,
+            "high_vol": false,
+            "session_ny": false,
+            "vol_quiet": false
+          }
         }
       }
     ],
     "btc": [
       {
         "symbol": "BTCUSDT",
-        "reason": "conditions",
+        "reason": "regime_unknown",
         "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": true,
-            "strong_trend": true,
-            "rsi_overbought": true
-          }
+          "regime": null
         }
       },
       {
         "symbol": "BTCUSDT",
-        "reason": "conditions",
+        "reason": "regime_unknown",
         "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": true,
-            "strong_trend": true,
-            "rsi_overbought": true,
-            "weak_trend": false
-          }
+          "regime": null
         }
       },
       {
         "symbol": "BTCUSDT",
-        "reason": "conditions",
+        "reason": "regime_unknown",
         "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": true,
-            "strong_trend": true,
-            "rsi_overbought": true,
-            "trend_up": true,
-            "ema_fast_above": true,
-            "weekend": false
-          }
+          "regime": null
         }
       },
       {
         "symbol": "BTCUSDT",
-        "reason": "conditions",
+        "reason": "regime_unknown",
         "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": true,
-            "strong_trend": true,
-            "rsi_overbought": true,
-            "trend_up": true,
-            "weekend": false
-          }
+          "regime": null
         }
       },
       {
         "symbol": "BTCUSDT",
-        "reason": "conditions",
+        "reason": "regime_unknown",
         "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": true,
-            "strong_trend": true,
-            "rsi_overbought": true
-          }
+          "regime": null
         }
       },
       {
         "symbol": "BTCUSDT",
-        "reason": "conditions",
+        "reason": "regime_unknown",
         "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": true,
-            "strong_trend": true,
-            "rsi_overbought": true
-          }
+          "regime": null
         }
       }
     ],
     "eth": [
       {
         "symbol": "ETHUSDT",
-        "reason": "conditions",
+        "reason": "regime_unknown",
         "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": true,
-            "strong_trend": false,
-            "rsi_overbought": true
-          }
+          "regime": null
         }
       },
       {
         "symbol": "ETHUSDT",
-        "reason": "conditions",
+        "reason": "regime_unknown",
         "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": true,
-            "strong_trend": false,
-            "rsi_overbought": true,
-            "rsi_oversold": false
-          }
+          "regime": null
         }
       },
       {
         "symbol": "ETHUSDT",
-        "reason": "conditions",
+        "reason": "regime_unknown",
         "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": true,
-            "strong_trend": false,
-            "rsi_overbought": true,
-            "ema_fast_above": true,
-            "weekend": false
-          }
+          "regime": null
         }
       },
       {
         "symbol": "ETHUSDT",
-        "reason": "conditions",
+        "reason": "regime_unknown",
         "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": true,
-            "strong_trend": false,
-            "rsi_overbought": true,
-            "weekend": false
-          }
+          "regime": null
         }
       },
       {
         "symbol": "ETHUSDT",
-        "reason": "conditions",
+        "reason": "regime_unknown",
         "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": true,
-            "strong_trend": false,
-            "rsi_overbought": true
-          }
+          "regime": null
         }
       },
       {
         "symbol": "ETHUSDT",
-        "reason": "conditions",
+        "reason": "regime_unknown",
         "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": true,
-            "strong_trend": false,
-            "rsi_overbought": true
-          }
+          "regime": null
         }
       }
     ],
     "sol": [
       {
         "symbol": "SOLUSDT",
-        "reason": "conditions",
+        "reason": "regime_unknown",
         "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_oversold": false,
-            "high_vol": true,
-            "strong_trend": true,
-            "rsi_overbought": true
-          }
+          "regime": null
         }
       },
       {
         "symbol": "SOLUSDT",
-        "reason": "conditions",
+        "reason": "regime_unknown",
         "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_oversold": false,
-            "high_vol": true,
-            "strong_trend": true,
-            "rsi_overbought": true,
-            "ema_fast_above": true,
-            "rsi_bull": false,
-            "weekend": false
-          }
+          "regime": null
         }
       }
     ],
@@ -240,9 +168,9 @@
           "regime": "down",
           "vals": {
             "rsi_bear": false,
-            "high_vol": false,
+            "high_vol": true,
             "strong_trend": true,
-            "rsi_overbought": false
+            "rsi_overbought": true
           }
         }
       },
@@ -253,9 +181,9 @@
           "regime": "down",
           "vals": {
             "rsi_bear": false,
-            "high_vol": false,
+            "high_vol": true,
             "strong_trend": true,
-            "rsi_overbought": false,
+            "rsi_overbought": true,
             "weekend": false
           }
         }
@@ -299,9 +227,9 @@
           "regime": "down",
           "vals": {
             "rsi_bear": false,
-            "high_vol": false,
+            "high_vol": true,
             "strong_trend": true,
-            "rsi_overbought": false
+            "rsi_overbought": true
           }
         }
       }
@@ -367,21 +295,7 @@
         }
       }
     ],
-    "gala": [
-      {
-        "symbol": "GALAUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": true,
-            "strong_trend": true,
-            "rsi_overbought": false
-          }
-        }
-      }
-    ],
+    "gala": [],
     "xtz": [
       {
         "symbol": "XTZUSDT",
@@ -392,7 +306,7 @@
             "rsi_bear": false,
             "high_vol": true,
             "strong_trend": true,
-            "rsi_overbought": false
+            "rsi_overbought": true
           }
         }
       },
@@ -405,7 +319,7 @@
             "rsi_bear": false,
             "high_vol": true,
             "strong_trend": true,
-            "rsi_overbought": false,
+            "rsi_overbought": true,
             "vol_quiet": false
           }
         }
@@ -419,7 +333,7 @@
             "rsi_bear": false,
             "high_vol": true,
             "strong_trend": true,
-            "rsi_overbought": false,
+            "rsi_overbought": true,
             "weak_trend": false
           }
         }
@@ -433,7 +347,7 @@
             "rsi_bear": false,
             "high_vol": true,
             "strong_trend": true,
-            "rsi_overbought": false,
+            "rsi_overbought": true,
             "vol_quiet": false
           }
         }
