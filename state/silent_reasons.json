@@ -1,5 +1,5 @@
 {
-  "ts": "2026-08-22T07:54:50.956313+00:00",
+  "ts": "2026-08-22T08:29:43.128974+00:00",
   "by_account": {
     "gold": [
       {
@@ -164,6 +164,13 @@
       }
     ],
     "op": [
+      {
+        "symbol": "OPUSDT",
+        "reason": "regime_unknown",
+        "values": {
+          "regime": null
+        }
+      },
       {
         "symbol": "OPUSDT",
         "reason": "regime_unknown",
