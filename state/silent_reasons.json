@@ -1,5 +1,5 @@
 {
-  "ts": "2026-08-22T03:25:56.362621+00:00",
+  "ts": "2026-08-22T04:06:14.415404+00:00",
   "by_account": {
     "gold": [
       {
@@ -138,6 +138,13 @@
         "values": {
           "regime": null
         }
+      },
+      {
+        "symbol": "ADAUSDT",
+        "reason": "regime_unknown",
+        "values": {
+          "regime": null
+        }
       }
     ],
     "doge": [
@@ -198,7 +205,7 @@
             "rsi_overbought": true,
             "ema_fast_below": false,
             "low_vol": false,
-            "weekend": false
+            "weekend": true
           }
         }
       },
@@ -213,7 +220,7 @@
             "strong_trend": true,
             "rsi_overbought": true,
             "ema_fast_below": false,
-            "weekend": false
+            "weekend": true
           }
         }
       },
@@ -229,12 +236,19 @@
             "rsi_overbought": true,
             "trend_down": false,
             "ema_fast_below": false,
-            "weekend": false
+            "weekend": true
           }
         }
       }
     ],
     "vet": [
+      {
+        "symbol": "VETUSDT",
+        "reason": "regime_unknown",
+        "values": {
+          "regime": null
+        }
+      },
       {
         "symbol": "VETUSDT",
         "reason": "regime_unknown",
@@ -340,7 +354,7 @@
             "strong_trend": true,
             "rsi_overbought": true,
             "ema_fast_below": false,
-            "weekend": false
+            "weekend": true
           }
         }
       },
@@ -354,7 +368,7 @@
             "high_vol": true,
             "strong_trend": true,
             "rsi_overbought": true,
-            "weekend": false
+            "weekend": true
           }
         }
       }
