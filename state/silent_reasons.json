@@ -1,5 +1,5 @@
 {
-  "ts": "2026-08-23T07:47:13.039173+00:00",
+  "ts": "2026-08-23T08:29:49.117072+00:00",
   "by_account": {
     "gold": [
       {
@@ -125,6 +125,13 @@
       }
     ],
     "ada": [
+      {
+        "symbol": "ADAUSDT",
+        "reason": "regime_unknown",
+        "values": {
+          "regime": null
+        }
+      },
       {
         "symbol": "ADAUSDT",
         "reason": "regime_unknown",
@@ -338,6 +345,13 @@
     ],
     "sand": [],
     "mana": [
+      {
+        "symbol": "MANAUSDT",
+        "reason": "regime_unknown",
+        "values": {
+          "regime": null
+        }
+      },
       {
         "symbol": "MANAUSDT",
         "reason": "regime_unknown",
