@@ -1,5 +1,5 @@
 {
-  "ts": "2026-08-23T23:45:51.079542+00:00",
+  "ts": "2026-08-24T01:17:12.555924+00:00",
   "by_account": {
     "gold": [
       {
@@ -11,7 +11,7 @@
             "trend_up": true,
             "rsi_overbought": false,
             "high_vol": true,
-            "session_asia": false
+            "session_asia": true
           }
         }
       },
@@ -31,71 +31,34 @@
         }
       }
     ],
-    "btc": [
-      {
-        "symbol": "BTCUSDT",
-        "reason": "regime_unknown",
-        "values": {
-          "regime": null
-        }
-      },
-      {
-        "symbol": "BTCUSDT",
-        "reason": "regime_unknown",
-        "values": {
-          "regime": null
-        }
-      },
-      {
-        "symbol": "BTCUSDT",
-        "reason": "regime_unknown",
-        "values": {
-          "regime": null
-        }
-      },
-      {
-        "symbol": "BTCUSDT",
-        "reason": "regime_unknown",
-        "values": {
-          "regime": null
-        }
-      },
-      {
-        "symbol": "BTCUSDT",
-        "reason": "regime_unknown",
-        "values": {
-          "regime": null
-        }
-      }
-    ],
+    "btc": [],
     "eth": [],
     "sol": [
       {
         "symbol": "SOLUSDT",
-        "reason": "regime_unknown",
+        "reason": "conditions",
         "values": {
-          "regime": null
+          "regime": "up",
+          "vals": {
+            "rsi_oversold": false,
+            "high_vol": true,
+            "strong_trend": true,
+            "rsi_overbought": false
+          }
         }
       },
       {
         "symbol": "SOLUSDT",
-        "reason": "regime_unknown",
+        "reason": "conditions",
         "values": {
-          "regime": null
-        }
-      },
-      {
-        "symbol": "SOLUSDT",
-        "reason": "regime_unknown",
-        "values": {
-          "regime": null
-        }
-      },
-      {
-        "symbol": "SOLUSDT",
-        "reason": "regime_unknown",
-        "values": {
-          "regime": null
+          "regime": "up",
+          "vals": {
+            "rsi_oversold": false,
+            "high_vol": true,
+            "strong_trend": true,
+            "rsi_overbought": false,
+            "sweep_up": false
+          }
         }
       }
     ],
@@ -259,7 +222,21 @@
         }
       }
     ],
-    "gala": [],
+    "gala": [
+      {
+        "symbol": "GALAUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "down",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": true,
+            "strong_trend": true,
+            "rsi_overbought": false
+          }
+        }
+      }
+    ],
     "xtz": [
       {
         "symbol": "XTZUSDT",
