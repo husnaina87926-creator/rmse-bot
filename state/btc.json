@@ -1,29 +1,6 @@
 {
-  "balance": 5357.440913934834,
-  "open": [
-    {
-      "symbol": "BTCUSDT",
-      "direction": "buy",
-      "entry": 77734.0,
-      "sl": 75469.33766867693,
-      "tp": 79998.66233132307,
-      "lots": 0.22466245403232413,
-      "open_time": "2026-08-23 20:00:00+00:00",
-      "cost": 26.959494483878895,
-      "margin": 873.1955600874342,
-      "atr": 1132.3311656615342,
-      "rule": {
-        "direction": "buy",
-        "when": [
-          "rsi_overbought",
-          "high_vol",
-          "strong_trend"
-        ],
-        "regime": "up"
-      },
-      "regime_at_open": "up"
-    }
-  ],
+  "balance": 5839.266016360559,
+  "open": [],
   "closed": [
     {
       "symbol": "BTCUSDT",
@@ -82,14 +59,31 @@
         "regime": "down"
       },
       "regime_at_open": "down"
+    },
+    {
+      "symbol": "BTCUSDT",
+      "direction": "buy",
+      "entry": 77734.0,
+      "exit": 79998.66233,
+      "outcome": "tp",
+      "lots": 0.22466245403232413,
+      "pnl": 481.83,
+      "open_time": "2026-08-23 20:00:00+00:00",
+      "close_time": "2026-08-24 12:00:00+00:00",
+      "balance_after": 5839.27,
+      "rule": {
+        "direction": "buy",
+        "when": [
+          "rsi_overbought",
+          "high_vol",
+          "strong_trend"
+        ],
+        "regime": "up"
+      },
+      "regime_at_open": "up"
     }
   ],
   "history": [
-    {
-      "time": "2026-07-02 21:08:01.917399+00:00",
-      "balance": 5952.71,
-      "open_positions": 0
-    },
     {
       "time": "2026-07-02 22:18:59.197460+00:00",
       "balance": 5952.71,
@@ -5084,6 +5078,11 @@
       "time": "2026-08-24 15:22:52.666984+00:00",
       "balance": 5357.44,
       "open_positions": 1
+    },
+    {
+      "time": "2026-08-24 16:04:26.367015+00:00",
+      "balance": 5839.27,
+      "open_positions": 0
     }
   ]
 }
