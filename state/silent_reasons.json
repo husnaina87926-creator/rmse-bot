@@ -1,5 +1,5 @@
 {
-  "ts": "2026-08-24T20:02:33.919796+00:00",
+  "ts": "2026-08-24T20:48:21.185662+00:00",
   "by_account": {
     "gold": [
       {
@@ -10,7 +10,7 @@
           "vals": {
             "trend_up": true,
             "rsi_overbought": false,
-            "high_vol": true
+            "high_vol": false
           }
         }
       },
@@ -22,7 +22,7 @@
           "vals": {
             "trend_up": true,
             "rsi_overbought": false,
-            "high_vol": true
+            "high_vol": false
           }
         }
       },
@@ -34,7 +34,7 @@
           "vals": {
             "trend_up": true,
             "rsi_overbought": false,
-            "high_vol": true,
+            "high_vol": false,
             "session_asia": false
           }
         }
@@ -47,8 +47,8 @@
           "vals": {
             "trend_up": true,
             "rsi_overbought": false,
-            "high_vol": true,
-            "low_vol": false,
+            "high_vol": false,
+            "low_vol": true,
             "session_ny": true,
             "vol_quiet": false
           }
