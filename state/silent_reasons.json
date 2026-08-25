@@ -1,6 +1,60 @@
 {
-  "ts": "2026-08-25T17:31:26.226862+00:00",
+  "ts": "2026-08-25T18:03:42.619867+00:00",
   "by_account": {
+    "gold": [
+      {
+        "symbol": "XAUUSD",
+        "reason": "conditions",
+        "values": {
+          "regime": "up",
+          "vals": {
+            "trend_up": true,
+            "rsi_overbought": false,
+            "high_vol": false
+          }
+        }
+      },
+      {
+        "symbol": "XAUUSD",
+        "reason": "conditions",
+        "values": {
+          "regime": "up",
+          "vals": {
+            "trend_up": true,
+            "rsi_overbought": false,
+            "high_vol": false
+          }
+        }
+      },
+      {
+        "symbol": "XAUUSD",
+        "reason": "conditions",
+        "values": {
+          "regime": "up",
+          "vals": {
+            "trend_up": true,
+            "rsi_overbought": false,
+            "high_vol": false,
+            "session_asia": false
+          }
+        }
+      },
+      {
+        "symbol": "XAUUSD",
+        "reason": "conditions",
+        "values": {
+          "regime": "up",
+          "vals": {
+            "trend_up": true,
+            "rsi_overbought": false,
+            "high_vol": false,
+            "low_vol": true,
+            "session_ny": true,
+            "vol_quiet": false
+          }
+        }
+      }
+    ],
     "btc": [],
     "eth": [
       {
