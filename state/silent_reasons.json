@@ -1,5 +1,5 @@
 {
-  "ts": "2026-08-24T23:46:49.513985+00:00",
+  "ts": "2026-08-25T01:14:59.842941+00:00",
   "by_account": {
     "gold": [
       {
@@ -35,7 +35,7 @@
             "trend_up": true,
             "rsi_overbought": false,
             "high_vol": false,
-            "session_asia": false
+            "session_asia": true
           }
         }
       },
@@ -56,15 +56,14 @@
       }
     ],
     "btc": [],
-    "eth": [],
-    "sol": [
+    "eth": [
       {
-        "symbol": "SOLUSDT",
+        "symbol": "ETHUSDT",
         "reason": "conditions",
         "values": {
           "regime": "up",
           "vals": {
-            "rsi_oversold": false,
+            "rsi_bear": false,
             "high_vol": true,
             "strong_trend": true,
             "rsi_overbought": false
@@ -72,20 +71,47 @@
         }
       },
       {
-        "symbol": "SOLUSDT",
+        "symbol": "ETHUSDT",
         "reason": "conditions",
         "values": {
           "regime": "up",
           "vals": {
-            "rsi_oversold": false,
+            "rsi_bear": false,
             "high_vol": true,
             "strong_trend": true,
             "rsi_overbought": false,
-            "sweep_up": false
+            "rsi_oversold": false
+          }
+        }
+      },
+      {
+        "symbol": "ETHUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "up",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": true,
+            "strong_trend": true,
+            "rsi_overbought": false
+          }
+        }
+      },
+      {
+        "symbol": "ETHUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "up",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": true,
+            "strong_trend": true,
+            "rsi_overbought": false
           }
         }
       }
     ],
+    "sol": [],
     "ada": [
       {
         "symbol": "ADAUSDT",
