@@ -1,5 +1,5 @@
 {
-  "ts": "2026-08-25T06:46:49.707927+00:00",
+  "ts": "2026-08-25T07:42:53.800280+00:00",
   "by_account": {
     "gold": [
       {
@@ -35,7 +35,7 @@
             "trend_up": true,
             "rsi_overbought": false,
             "high_vol": false,
-            "session_asia": true
+            "session_asia": false
           }
         }
       },
