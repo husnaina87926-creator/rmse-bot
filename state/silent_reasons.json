@@ -1,5 +1,5 @@
 {
-  "ts": "2026-08-31T14:27:50.202653+00:00",
+  "ts": "2026-08-31T20:18:29.771277+00:00",
   "by_account": {
     "gold": [
       {
@@ -10,7 +10,7 @@
           "vals": {
             "trend_up": false,
             "rsi_overbought": false,
-            "high_vol": true
+            "high_vol": false
           }
         }
       },
@@ -22,7 +22,7 @@
           "vals": {
             "trend_up": false,
             "rsi_overbought": false,
-            "high_vol": true
+            "high_vol": false
           }
         }
       },
@@ -34,7 +34,7 @@
           "vals": {
             "trend_up": false,
             "rsi_overbought": false,
-            "high_vol": true,
+            "high_vol": false,
             "session_asia": false
           }
         }
@@ -47,8 +47,8 @@
           "vals": {
             "trend_up": false,
             "rsi_overbought": false,
-            "high_vol": true,
-            "low_vol": false,
+            "high_vol": false,
+            "low_vol": true,
             "session_ny": true,
             "vol_quiet": false
           }
@@ -79,7 +79,7 @@
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
-            "ema_fast_above": false,
+            "ema_fast_above": true,
             "weekend": false
           }
         }
@@ -118,7 +118,7 @@
         "values": {
           "regime": "up",
           "vals": {
-            "rsi_bear": true,
+            "rsi_bear": false,
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false
@@ -131,7 +131,7 @@
         "values": {
           "regime": "up",
           "vals": {
-            "rsi_bear": true,
+            "rsi_bear": false,
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
@@ -145,7 +145,7 @@
         "values": {
           "regime": "up",
           "vals": {
-            "rsi_bear": true,
+            "rsi_bear": false,
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false
@@ -158,7 +158,7 @@
         "values": {
           "regime": "up",
           "vals": {
-            "rsi_bear": true,
+            "rsi_bear": false,
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false
@@ -175,7 +175,7 @@
           "vals": {
             "rsi_oversold": false,
             "high_vol": false,
-            "strong_trend": true,
+            "strong_trend": false,
             "rsi_overbought": false
           }
         }
@@ -188,7 +188,7 @@
           "vals": {
             "rsi_oversold": false,
             "high_vol": false,
-            "strong_trend": true,
+            "strong_trend": false,
             "rsi_overbought": false,
             "sweep_up": false
           }
