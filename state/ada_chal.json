@@ -1,6 +1,29 @@
 {
   "balance": 5000.0,
-  "open": [],
+  "open": [
+    {
+      "symbol": "ADAUSDT",
+      "direction": "buy",
+      "entry": 0.224,
+      "sl": 0.21286217096109064,
+      "tp": 0.23513782903890937,
+      "lots": 43714.589394464034,
+      "open_time": "2026-09-04 00:00:00+00:00",
+      "cost": 13.11437681833921,
+      "margin": 489.6034012179972,
+      "atr": 0.005568914519454687,
+      "rule": {
+        "direction": "buy",
+        "when": [
+          "rsi_overbought",
+          "high_vol",
+          "strong_trend"
+        ],
+        "regime": "up"
+      },
+      "regime_at_open": "up"
+    }
+  ],
   "closed": [],
   "history": [
     {
@@ -637,6 +660,11 @@
       "time": "2026-09-04 01:10:48.797285+00:00",
       "balance": 5000.0,
       "open_positions": 0
+    },
+    {
+      "time": "2026-09-04 05:55:00.300056+00:00",
+      "balance": 5000.0,
+      "open_positions": 1
     }
   ],
   "cand_born": "2026-08-23T23:16:16.564568+00:00"

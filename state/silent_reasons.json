@@ -1,5 +1,5 @@
 {
-  "ts": "2026-09-04T01:10:48.797285+00:00",
+  "ts": "2026-09-04T05:55:00.300056+00:00",
   "by_account": {
     "gold": [
       {
@@ -171,63 +171,7 @@
         }
       }
     ],
-    "ada": [
-      {
-        "symbol": "ADAUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "up",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": false,
-            "strong_trend": true,
-            "rsi_overbought": true
-          }
-        }
-      },
-      {
-        "symbol": "ADAUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "up",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": false,
-            "strong_trend": true,
-            "rsi_overbought": true,
-            "trend_down": false
-          }
-        }
-      },
-      {
-        "symbol": "ADAUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "up",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": false,
-            "strong_trend": true,
-            "rsi_overbought": true,
-            "ema_fast_below": false
-          }
-        }
-      },
-      {
-        "symbol": "ADAUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "up",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": false,
-            "strong_trend": true,
-            "rsi_overbought": true,
-            "ema_fast_below": false
-          }
-        }
-      }
-    ],
+    "ada": [],
     "doge": [
       {
         "symbol": "DOGEUSDT",
