@@ -1,20 +1,19 @@
 {
-  "date": "2026-08-31",
+  "date": "2026-09-07",
   "board": {
     "XAUUSD": [
       {
-        "return": 16878.84,
-        "pf": 1.86,
-        "win": 0.4,
-        "maxdd": 5195.35,
-        "trades": 55,
+        "return": 68381.8,
+        "pf": 1.59,
+        "win": 0.34,
+        "maxdd": 16112.98,
+        "trades": 191,
         "consistency": 0.75,
-        "score": 12659.13,
+        "score": 51286.35,
         "direction": "buy",
         "entry": [
-          "rsi_overbought",
           "high_vol",
-          "session_asia"
+          "vol_quiet"
         ],
         "exit": {
           "rr": 1.5,
@@ -23,18 +22,17 @@
         }
       },
       {
-        "return": 10347.18,
-        "pf": 1.76,
-        "win": 0.49,
-        "maxdd": 3599.96,
-        "trades": 55,
-        "consistency": 1.0,
-        "score": 10347.18,
+        "return": 43372.22,
+        "pf": 1.57,
+        "win": 0.43,
+        "maxdd": 7216.64,
+        "trades": 191,
+        "consistency": 0.75,
+        "score": 32529.16,
         "direction": "buy",
         "entry": [
-          "rsi_overbought",
           "high_vol",
-          "session_asia"
+          "vol_quiet"
         ],
         "exit": {
           "rr": 1.0,
@@ -43,18 +41,57 @@
         }
       },
       {
-        "return": 7778.21,
-        "pf": 1.69,
-        "win": 0.58,
-        "maxdd": 2997.36,
-        "trades": 55,
-        "consistency": 1.0,
-        "score": 7778.21,
+        "return": 25294.64,
+        "pf": 1.6,
+        "win": 0.44,
+        "maxdd": 6522.17,
+        "trades": 132,
+        "consistency": 0.75,
+        "score": 18970.98,
         "direction": "buy",
         "entry": [
-          "rsi_overbought",
           "high_vol",
-          "session_asia"
+          "strong_trend",
+          "vol_quiet"
+        ],
+        "exit": {
+          "rr": 1.0,
+          "be": 1.0,
+          "hold": 24
+        }
+      },
+      {
+        "return": 24872.27,
+        "pf": 1.57,
+        "win": 0.33,
+        "maxdd": 10278.34,
+        "trades": 132,
+        "consistency": 0.75,
+        "score": 18654.2,
+        "direction": "buy",
+        "entry": [
+          "high_vol",
+          "strong_trend",
+          "vol_quiet"
+        ],
+        "exit": {
+          "rr": 1.5,
+          "be": 1.0,
+          "hold": 24
+        }
+      },
+      {
+        "return": 19744.65,
+        "pf": 1.4,
+        "win": 0.51,
+        "maxdd": 5189.76,
+        "trades": 191,
+        "consistency": 0.75,
+        "score": 14808.49,
+        "direction": "buy",
+        "entry": [
+          "high_vol",
+          "vol_quiet"
         ],
         "exit": {
           "rr": 0.75,
@@ -63,158 +100,37 @@
         }
       },
       {
-        "return": 6955.16,
-        "pf": 1.3,
+        "return": 16118.91,
+        "pf": 1.51,
         "win": 0.53,
-        "maxdd": 5059.6,
-        "trades": 55,
+        "maxdd": 5248.13,
+        "trades": 132,
         "consistency": 0.75,
-        "score": 5216.37,
+        "score": 12089.18,
         "direction": "buy",
         "entry": [
-          "rsi_overbought",
           "high_vol",
-          "session_asia"
-        ],
-        "exit": {
-          "rr": 1.5,
-          "be": 0.0,
-          "hold": 24
-        }
-      },
-      {
-        "return": 6199.88,
-        "pf": 1.56,
-        "win": 0.69,
-        "maxdd": 2627.13,
-        "trades": 55,
-        "consistency": 0.75,
-        "score": 4649.91,
-        "direction": "buy",
-        "entry": [
-          "rsi_overbought",
-          "high_vol",
-          "session_asia"
+          "strong_trend",
+          "vol_quiet"
         ],
         "exit": {
           "rr": 0.75,
-          "be": 0.0,
-          "hold": 24
-        }
-      },
-      {
-        "return": 4955.71,
-        "pf": 1.34,
-        "win": 0.6,
-        "maxdd": 2335.29,
-        "trades": 55,
-        "consistency": 0.5,
-        "score": 2477.85,
-        "direction": "buy",
-        "entry": [
-          "rsi_overbought",
-          "high_vol",
-          "session_asia"
-        ],
-        "exit": {
-          "rr": 1.0,
-          "be": 0.0,
-          "hold": 24
-        }
-      },
-      {
-        "return": 2050.99,
-        "pf": 1.03,
-        "win": 0.32,
-        "maxdd": 20974.81,
-        "trades": 158,
-        "consistency": 0.75,
-        "score": 1538.24,
-        "direction": "buy",
-        "entry": [
-          "trend_up",
-          "rsi_overbought",
-          "high_vol"
-        ],
-        "exit": {
-          "rr": 1.5,
           "be": 1.0,
           "hold": 24
         }
       },
       {
-        "return": 728.34,
-        "pf": 1.02,
-        "win": 0.42,
-        "maxdd": 12013.11,
-        "trades": 158,
-        "consistency": 0.75,
-        "score": 546.26,
-        "direction": "buy",
-        "entry": [
-          "trend_up",
-          "rsi_overbought",
-          "high_vol"
-        ],
-        "exit": {
-          "rr": 1.0,
-          "be": 1.0,
-          "hold": 24
-        }
-      },
-      {
-        "return": -4109.71,
-        "pf": 0.79,
+        "return": 14465.35,
+        "pf": 1.21,
         "win": 0.55,
-        "maxdd": 6483.33,
-        "trades": 199,
-        "consistency": 0.0,
-        "score": -0.0,
-        "direction": "sell",
+        "maxdd": 6879.0,
+        "trades": 191,
+        "consistency": 0.75,
+        "score": 10849.01,
+        "direction": "buy",
         "entry": [
-          "trend_up",
-          "rsi_bull",
-          "session_london"
-        ],
-        "exit": {
-          "rr": 0.75,
-          "be": 0.0,
-          "hold": 24
-        }
-      },
-      {
-        "return": -3774.77,
-        "pf": 0.79,
-        "win": 0.4,
-        "maxdd": 5732.66,
-        "trades": 199,
-        "consistency": 0.0,
-        "score": -0.0,
-        "direction": "sell",
-        "entry": [
-          "trend_up",
-          "rsi_bull",
-          "session_london"
-        ],
-        "exit": {
-          "rr": 0.75,
-          "be": 1.0,
-          "hold": 24
-        }
-      },
-      {
-        "return": -4779.75,
-        "pf": 0.73,
-        "win": 0.46,
-        "maxdd": 7308.12,
-        "trades": 199,
-        "consistency": 0.0,
-        "score": -0.0,
-        "direction": "sell",
-        "entry": [
-          "trend_up",
-          "rsi_bull",
-          "session_london"
+          "high_vol",
+          "vol_quiet"
         ],
         "exit": {
           "rr": 1.0,
@@ -223,86 +139,279 @@
         }
       },
       {
-        "return": -4230.2,
-        "pf": 0.76,
-        "win": 0.28,
-        "maxdd": 6854.02,
-        "trades": 199,
-        "consistency": 0.0,
-        "score": -0.0,
-        "direction": "sell",
-        "entry": [
-          "trend_up",
-          "rsi_bull",
-          "session_london"
-        ],
-        "exit": {
-          "rr": 1.0,
-          "be": 1.0,
-          "hold": 24
-        }
-      },
-      {
-        "return": -4634.51,
-        "pf": 0.77,
-        "win": 0.41,
-        "maxdd": 7142.08,
-        "trades": 199,
-        "consistency": 0.0,
-        "score": -0.0,
-        "direction": "sell",
-        "entry": [
-          "trend_up",
-          "rsi_bull",
-          "session_london"
-        ],
-        "exit": {
-          "rr": 1.5,
-          "be": 0.0,
-          "hold": 24
-        }
-      },
-      {
-        "return": -4307.25,
-        "pf": 0.71,
-        "win": 0.2,
-        "maxdd": 6053.66,
-        "trades": 199,
-        "consistency": 0.0,
-        "score": -0.0,
-        "direction": "sell",
-        "entry": [
-          "trend_up",
-          "rsi_bull",
-          "session_london"
-        ],
-        "exit": {
-          "rr": 1.5,
-          "be": 1.0,
-          "hold": 24
-        }
-      },
-      {
-        "return": -1719.39,
-        "pf": 0.96,
-        "win": 0.45,
-        "maxdd": 11303.46,
-        "trades": 158,
+        "return": 20364.1,
+        "pf": 1.17,
+        "win": 0.49,
+        "maxdd": 19331.5,
+        "trades": 191,
         "consistency": 0.5,
-        "score": -859.7,
+        "score": 10182.05,
+        "direction": "buy",
+        "entry": [
+          "high_vol",
+          "vol_quiet"
+        ],
+        "exit": {
+          "rr": 1.5,
+          "be": 0.0,
+          "hold": 24
+        }
+      },
+      {
+        "return": 12066.63,
+        "pf": 1.25,
+        "win": 0.57,
+        "maxdd": 8312.63,
+        "trades": 132,
+        "consistency": 0.75,
+        "score": 9049.97,
+        "direction": "buy",
+        "entry": [
+          "high_vol",
+          "strong_trend",
+          "vol_quiet"
+        ],
+        "exit": {
+          "rr": 1.0,
+          "be": 0.0,
+          "hold": 24
+        }
+      },
+      {
+        "return": 10907.42,
+        "pf": 1.19,
+        "win": 0.5,
+        "maxdd": 12476.62,
+        "trades": 132,
+        "consistency": 0.75,
+        "score": 8180.56,
+        "direction": "buy",
+        "entry": [
+          "high_vol",
+          "strong_trend",
+          "vol_quiet"
+        ],
+        "exit": {
+          "rr": 1.5,
+          "be": 0.0,
+          "hold": 24
+        }
+      },
+      {
+        "return": 10830.05,
+        "pf": 1.2,
+        "win": 0.53,
+        "maxdd": 9694.63,
+        "trades": 135,
+        "consistency": 0.75,
+        "score": 8122.54,
         "direction": "buy",
         "entry": [
           "trend_up",
-          "rsi_overbought",
-          "high_vol"
+          "rsi_bear",
+          "session_london"
         ],
         "exit": {
-          "rr": 1.5,
+          "rr": 0.75,
+          "be": 1.0,
+          "hold": 24
+        }
+      },
+      {
+        "return": 9324.38,
+        "pf": 1.18,
+        "win": 0.61,
+        "maxdd": 7378.47,
+        "trades": 191,
+        "consistency": 0.75,
+        "score": 6993.28,
+        "direction": "buy",
+        "entry": [
+          "high_vol",
+          "vol_quiet"
+        ],
+        "exit": {
+          "rr": 0.75,
           "be": 0.0,
+          "hold": 24
+        }
+      },
+      {
+        "return": 7917.87,
+        "pf": 1.11,
+        "win": 0.64,
+        "maxdd": 14204.06,
+        "trades": 135,
+        "consistency": 0.75,
+        "score": 5938.4,
+        "direction": "buy",
+        "entry": [
+          "trend_up",
+          "rsi_bear",
+          "session_london"
+        ],
+        "exit": {
+          "rr": 0.75,
+          "be": 0.0,
+          "hold": 24
+        }
+      },
+      {
+        "return": 10705.26,
+        "pf": 1.3,
+        "win": 0.64,
+        "maxdd": 6431.57,
+        "trades": 132,
+        "consistency": 0.5,
+        "score": 5352.63,
+        "direction": "buy",
+        "entry": [
+          "high_vol",
+          "strong_trend",
+          "vol_quiet"
+        ],
+        "exit": {
+          "rr": 0.75,
+          "be": 0.0,
+          "hold": 24
+        }
+      },
+      {
+        "return": 4468.74,
+        "pf": 1.1,
+        "win": 0.36,
+        "maxdd": 15361.29,
+        "trades": 135,
+        "consistency": 0.5,
+        "score": 2234.37,
+        "direction": "buy",
+        "entry": [
+          "trend_up",
+          "rsi_bear",
+          "session_london"
+        ],
+        "exit": {
+          "rr": 1.0,
+          "be": 1.0,
           "hold": 24
         }
       }
     ],
-    "SOLUSDT": []
+    "SOLUSDT": [
+      {
+        "return": -2411.44,
+        "pf": 0.52,
+        "win": 0.36,
+        "maxdd": 2686.39,
+        "trades": 36,
+        "consistency": 0.0,
+        "score": -0.0,
+        "direction": "sell",
+        "entry": [
+          "trend_down",
+          "high_vol"
+        ],
+        "exit": {
+          "rr": 0.75,
+          "be": 1.0,
+          "hold": 24
+        }
+      },
+      {
+        "return": -482.72,
+        "pf": 0.96,
+        "win": 0.5,
+        "maxdd": 5064.94,
+        "trades": 36,
+        "consistency": 0.5,
+        "score": -241.36,
+        "direction": "sell",
+        "entry": [
+          "trend_down",
+          "high_vol"
+        ],
+        "exit": {
+          "rr": 1.5,
+          "be": 0.0,
+          "hold": 24
+        }
+      },
+      {
+        "return": -2084.87,
+        "pf": 0.72,
+        "win": 0.53,
+        "maxdd": 2621.8,
+        "trades": 36,
+        "consistency": 0.25,
+        "score": -521.22,
+        "direction": "sell",
+        "entry": [
+          "trend_down",
+          "high_vol"
+        ],
+        "exit": {
+          "rr": 0.75,
+          "be": 0.0,
+          "hold": 24
+        }
+      },
+      {
+        "return": -1101.19,
+        "pf": 0.87,
+        "win": 0.53,
+        "maxdd": 3033.85,
+        "trades": 36,
+        "consistency": 0.5,
+        "score": -550.6,
+        "direction": "sell",
+        "entry": [
+          "trend_down",
+          "high_vol"
+        ],
+        "exit": {
+          "rr": 1.0,
+          "be": 0.0,
+          "hold": 24
+        }
+      },
+      {
+        "return": -2434.26,
+        "pf": 0.52,
+        "win": 0.28,
+        "maxdd": 2595.2,
+        "trades": 36,
+        "consistency": 0.25,
+        "score": -608.57,
+        "direction": "sell",
+        "entry": [
+          "trend_down",
+          "high_vol"
+        ],
+        "exit": {
+          "rr": 1.0,
+          "be": 1.0,
+          "hold": 24
+        }
+      },
+      {
+        "return": -2497.16,
+        "pf": 0.51,
+        "win": 0.22,
+        "maxdd": 2752.1,
+        "trades": 36,
+        "consistency": 0.25,
+        "score": -624.29,
+        "direction": "sell",
+        "entry": [
+          "trend_down",
+          "high_vol"
+        ],
+        "exit": {
+          "rr": 1.5,
+          "be": 1.0,
+          "hold": 24
+        }
+      }
+    ]
   }
 }
