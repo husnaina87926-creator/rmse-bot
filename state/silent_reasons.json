@@ -1,5 +1,5 @@
 {
-  "ts": "2026-09-07T22:44:51.385561+00:00",
+  "ts": "2026-09-08T00:43:16.571645+00:00",
   "by_account": {
     "gold": [
       {
@@ -8,7 +8,7 @@
         "values": {
           "regime": "up",
           "vals": {
-            "trend_up": false,
+            "trend_up": true,
             "rsi_overbought": false,
             "high_vol": false
           }
@@ -20,7 +20,7 @@
         "values": {
           "regime": "up",
           "vals": {
-            "trend_up": false,
+            "trend_up": true,
             "rsi_overbought": false,
             "high_vol": false
           }
@@ -32,10 +32,10 @@
         "values": {
           "regime": "up",
           "vals": {
-            "trend_up": false,
+            "trend_up": true,
             "rsi_overbought": false,
             "high_vol": false,
-            "session_asia": false
+            "session_asia": true
           }
         }
       },
@@ -45,7 +45,7 @@
         "values": {
           "regime": "up",
           "vals": {
-            "trend_up": false,
+            "trend_up": true,
             "rsi_overbought": false,
             "high_vol": false,
             "low_vol": true,
@@ -215,30 +215,61 @@
     "sei": [
       {
         "symbol": "SEIUSDT",
-        "reason": "regime_unknown",
+        "reason": "conditions",
         "values": {
-          "regime": null
+          "regime": "down",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": true,
+            "strong_trend": true,
+            "rsi_overbought": false
+          }
         }
       },
       {
         "symbol": "SEIUSDT",
-        "reason": "regime_unknown",
+        "reason": "conditions",
         "values": {
-          "regime": null
+          "regime": "down",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": true,
+            "strong_trend": true,
+            "rsi_overbought": false,
+            "ema_fast_below": false,
+            "weekend": false
+          }
         }
       },
       {
         "symbol": "SEIUSDT",
-        "reason": "regime_unknown",
+        "reason": "conditions",
         "values": {
-          "regime": null
+          "regime": "down",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": true,
+            "strong_trend": true,
+            "rsi_overbought": false,
+            "ema_fast_below": false,
+            "low_vol": false,
+            "weekend": false
+          }
         }
       },
       {
         "symbol": "SEIUSDT",
-        "reason": "regime_unknown",
+        "reason": "conditions",
         "values": {
-          "regime": null
+          "regime": "down",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": true,
+            "strong_trend": true,
+            "rsi_overbought": false,
+            "ema_fast_below": false,
+            "weekend": false
+          }
         }
       }
     ],
@@ -349,23 +380,45 @@
     "mana": [
       {
         "symbol": "MANAUSDT",
-        "reason": "regime_unknown",
+        "reason": "conditions",
         "values": {
-          "regime": null
+          "regime": "up",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": false,
+            "strong_trend": false,
+            "rsi_overbought": false
+          }
         }
       },
       {
         "symbol": "MANAUSDT",
-        "reason": "regime_unknown",
+        "reason": "conditions",
         "values": {
-          "regime": null
+          "regime": "up",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": false,
+            "strong_trend": false,
+            "rsi_overbought": false,
+            "ema_fast_below": false,
+            "low_vol": true
+          }
         }
       },
       {
         "symbol": "MANAUSDT",
-        "reason": "regime_unknown",
+        "reason": "conditions",
         "values": {
-          "regime": null
+          "regime": "up",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": false,
+            "strong_trend": false,
+            "rsi_overbought": false,
+            "weak_trend": true,
+            "weekend": false
+          }
         }
       }
     ],
