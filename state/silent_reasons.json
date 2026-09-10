@@ -1,5 +1,5 @@
 {
-  "ts": "2026-09-10T15:55:47.952047+00:00",
+  "ts": "2026-09-10T18:59:37.731977+00:00",
   "by_account": {
     "gold": [
       {
@@ -291,7 +291,7 @@
           "regime": "up",
           "vals": {
             "rsi_bear": true,
-            "high_vol": false,
+            "high_vol": true,
             "strong_trend": true,
             "rsi_overbought": false
           }
@@ -308,7 +308,7 @@
         "values": {
           "regime": "down",
           "vals": {
-            "rsi_bear": true,
+            "rsi_bear": false,
             "high_vol": true,
             "strong_trend": false,
             "rsi_overbought": false
@@ -334,7 +334,7 @@
           "vals": {
             "rsi_bear": false,
             "high_vol": false,
-            "strong_trend": false,
+            "strong_trend": true,
             "rsi_overbought": false
           }
         }
