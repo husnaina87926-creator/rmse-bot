@@ -1,5 +1,5 @@
 {
-  "ts": "2026-09-11T18:37:29.359670+00:00",
+  "ts": "2026-09-11T21:19:50.500393+00:00",
   "by_account": {
     "gold": [
       {
@@ -40,7 +40,7 @@
           "vals": {
             "rsi_bear": true,
             "high_vol": true,
-            "strong_trend": true,
+            "strong_trend": false,
             "rsi_overbought": false
           }
         }
@@ -53,7 +53,21 @@
           "vals": {
             "rsi_bear": true,
             "high_vol": true,
-            "strong_trend": true,
+            "strong_trend": false,
+            "rsi_overbought": false,
+            "weak_trend": false
+          }
+        }
+      },
+      {
+        "symbol": "BTCUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "up",
+          "vals": {
+            "rsi_bear": true,
+            "high_vol": true,
+            "strong_trend": false,
             "rsi_overbought": false,
             "ema_fast_above": false,
             "weekend": false
@@ -68,7 +82,7 @@
           "vals": {
             "rsi_bear": true,
             "high_vol": true,
-            "strong_trend": true,
+            "strong_trend": false,
             "rsi_overbought": false,
             "trend_up": true,
             "ema_fast_above": false,
@@ -84,7 +98,7 @@
           "vals": {
             "rsi_bear": true,
             "high_vol": true,
-            "strong_trend": true,
+            "strong_trend": false,
             "rsi_overbought": false
           }
         }
@@ -97,7 +111,7 @@
           "vals": {
             "rsi_bear": true,
             "high_vol": true,
-            "strong_trend": true,
+            "strong_trend": false,
             "rsi_overbought": false
           }
         }
@@ -197,7 +211,7 @@
             "strong_trend": false,
             "rsi_overbought": false,
             "ema_fast_above": false,
-            "rsi_bull": false,
+            "rsi_bull": true,
             "weekend": false
           }
         }
@@ -212,7 +226,7 @@
             "high_vol": true,
             "strong_trend": false,
             "rsi_overbought": false,
-            "rsi_bull": false,
+            "rsi_bull": true,
             "weekend": false
           }
         }
