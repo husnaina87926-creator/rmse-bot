@@ -1,5 +1,5 @@
 {
-  "ts": "2026-09-12T23:23:52.818507+00:00",
+  "ts": "2026-09-13T01:18:32.999687+00:00",
   "by_account": {
     "gold": [
       {
@@ -364,30 +364,60 @@
     "mana": [
       {
         "symbol": "MANAUSDT",
-        "reason": "regime_unknown",
+        "reason": "conditions",
         "values": {
-          "regime": null
+          "regime": "up",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": false,
+            "strong_trend": false,
+            "rsi_overbought": false
+          }
         }
       },
       {
         "symbol": "MANAUSDT",
-        "reason": "regime_unknown",
+        "reason": "conditions",
         "values": {
-          "regime": null
+          "regime": "up",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": false,
+            "strong_trend": false,
+            "rsi_overbought": false,
+            "ema_fast_below": false,
+            "low_vol": true
+          }
         }
       },
       {
         "symbol": "MANAUSDT",
-        "reason": "regime_unknown",
+        "reason": "conditions",
         "values": {
-          "regime": null
+          "regime": "up",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": false,
+            "strong_trend": false,
+            "rsi_overbought": false,
+            "low_vol": true,
+            "weak_trend": true
+          }
         }
       },
       {
         "symbol": "MANAUSDT",
-        "reason": "regime_unknown",
+        "reason": "conditions",
         "values": {
-          "regime": null
+          "regime": "up",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": false,
+            "strong_trend": false,
+            "rsi_overbought": false,
+            "weak_trend": true,
+            "weekend": true
+          }
         }
       }
     ],
