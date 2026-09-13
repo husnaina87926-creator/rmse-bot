@@ -1,5 +1,5 @@
 {
-  "ts": "2026-09-13T12:18:17.092386+00:00",
+  "ts": "2026-09-13T16:33:34.574553+00:00",
   "by_account": {
     "gold": [
       {
@@ -42,20 +42,6 @@
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false
-          }
-        }
-      },
-      {
-        "symbol": "BTCUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "up",
-          "vals": {
-            "rsi_bear": true,
-            "high_vol": false,
-            "strong_trend": false,
-            "rsi_overbought": false,
-            "weak_trend": false
           }
         }
       },
@@ -370,7 +356,7 @@
           "vals": {
             "rsi_bear": false,
             "high_vol": true,
-            "strong_trend": false,
+            "strong_trend": true,
             "rsi_overbought": false
           }
         }
@@ -383,7 +369,7 @@
           "vals": {
             "rsi_bear": false,
             "high_vol": true,
-            "strong_trend": false,
+            "strong_trend": true,
             "rsi_overbought": false,
             "ema_fast_below": false,
             "low_vol": false
@@ -398,7 +384,7 @@
           "vals": {
             "rsi_bear": false,
             "high_vol": true,
-            "strong_trend": false,
+            "strong_trend": true,
             "rsi_overbought": false,
             "low_vol": false,
             "weak_trend": false
@@ -413,7 +399,7 @@
           "vals": {
             "rsi_bear": false,
             "high_vol": true,
-            "strong_trend": false,
+            "strong_trend": true,
             "rsi_overbought": false,
             "weak_trend": false,
             "weekend": true
