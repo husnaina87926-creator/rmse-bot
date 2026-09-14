@@ -1,5 +1,5 @@
 {
-  "ts": "2026-09-14T06:46:33.008724+00:00",
+  "ts": "2026-09-14T13:41:29.292897+00:00",
   "by_account": {
     "gold": [
       {
@@ -197,7 +197,7 @@
             "strong_trend": false,
             "rsi_overbought": false,
             "ema_fast_above": false,
-            "rsi_bull": false,
+            "rsi_bull": true,
             "weekend": false
           }
         }
@@ -210,7 +210,7 @@
         "values": {
           "regime": "up",
           "vals": {
-            "rsi_bear": true,
+            "rsi_bear": false,
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false
@@ -223,7 +223,7 @@
         "values": {
           "regime": "up",
           "vals": {
-            "rsi_bear": true,
+            "rsi_bear": false,
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
@@ -237,7 +237,7 @@
         "values": {
           "regime": "up",
           "vals": {
-            "rsi_bear": true,
+            "rsi_bear": false,
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
@@ -251,7 +251,7 @@
         "values": {
           "regime": "up",
           "vals": {
-            "rsi_bear": true,
+            "rsi_bear": false,
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
@@ -383,7 +383,7 @@
             "high_vol": true,
             "strong_trend": true,
             "rsi_overbought": false,
-            "session_london": false
+            "session_london": true
           }
         }
       }
@@ -408,7 +408,7 @@
           "vals": {
             "rsi_bear": false,
             "high_vol": true,
-            "strong_trend": true,
+            "strong_trend": false,
             "rsi_overbought": false
           }
         }
@@ -421,7 +421,7 @@
           "vals": {
             "rsi_bear": false,
             "high_vol": true,
-            "strong_trend": true,
+            "strong_trend": false,
             "rsi_overbought": false,
             "ema_fast_below": false,
             "low_vol": false
@@ -436,7 +436,7 @@
           "vals": {
             "rsi_bear": false,
             "high_vol": true,
-            "strong_trend": true,
+            "strong_trend": false,
             "rsi_overbought": false,
             "low_vol": false,
             "weak_trend": false
@@ -451,7 +451,7 @@
           "vals": {
             "rsi_bear": false,
             "high_vol": true,
-            "strong_trend": true,
+            "strong_trend": false,
             "rsi_overbought": false,
             "weak_trend": false,
             "weekend": false
