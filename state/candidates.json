@@ -156,20 +156,6 @@
       "rule": {
         "direction": "sell",
         "when": [
-          "trend_down"
-        ],
-        "regime": "down"
-      },
-      "score": 16710.92,
-      "return": 22281.22,
-      "pf": 1.35,
-      "slot": 2,
-      "born": "2026-07-26T23:55:20.008623+00:00"
-    },
-    {
-      "rule": {
-        "direction": "sell",
-        "when": [
           "ema_fast_below",
           "high_vol"
         ],
@@ -195,6 +181,21 @@
       "pf": 1.29,
       "slot": 1,
       "born": "2026-08-31T01:02:25.708048+00:00"
+    },
+    {
+      "rule": {
+        "direction": "sell",
+        "when": [
+          "trend_up",
+          "ema_fast_below"
+        ],
+        "regime": "down"
+      },
+      "score": 26319.09,
+      "return": 26319.09,
+      "pf": 2.33,
+      "slot": 2,
+      "born": "2026-09-14T00:34:56.604179+00:00"
     }
   ],
   "OPUSDT": [
@@ -229,21 +230,6 @@
       "pf": 1.54,
       "slot": 2,
       "born": "2026-08-31T01:03:02.337244+00:00"
-    },
-    {
-      "rule": {
-        "direction": "sell",
-        "when": [
-          "ema_fast_below",
-          "sweep_down"
-        ],
-        "regime": "down"
-      },
-      "score": 13084.43,
-      "return": 16833.17,
-      "pf": 1.27,
-      "slot": 1,
-      "born": "2026-07-06T00:04:29.982277+00:00"
     }
   ],
   "SEIUSDT": [
@@ -278,21 +264,6 @@
       "pf": 1.37,
       "slot": 2,
       "born": "2026-08-31T01:03:18.396978+00:00"
-    },
-    {
-      "rule": {
-        "direction": "sell",
-        "when": [
-          "ema_fast_below",
-          "weekend"
-        ],
-        "regime": "down"
-      },
-      "score": 21255.43,
-      "return": 28341.03,
-      "pf": 1.37,
-      "slot": 1,
-      "born": "2026-07-12T23:45:58.176593+00:00"
     }
   ],
   "VETUSDT": [
@@ -315,21 +286,6 @@
       "rule": {
         "direction": "sell",
         "when": [
-          "weak_trend",
-          "weekend"
-        ],
-        "regime": "down"
-      },
-      "score": 7267.36,
-      "return": 11659.35,
-      "pf": 1.58,
-      "slot": 2,
-      "born": "2026-07-19T23:52:23.576671+00:00"
-    },
-    {
-      "rule": {
-        "direction": "sell",
-        "when": [
           "low_vol",
           "weak_trend",
           "weekend"
@@ -341,6 +297,21 @@
       "pf": 1.61,
       "slot": 1,
       "born": "2026-09-07T00:36:07.757538+00:00"
+    },
+    {
+      "rule": {
+        "direction": "sell",
+        "when": [
+          "rsi_bear",
+          "session_london"
+        ],
+        "regime": "down"
+      },
+      "score": 25380.51,
+      "return": 25380.51,
+      "pf": 1.25,
+      "slot": 2,
+      "born": "2026-09-14T00:36:08.883079+00:00"
     }
   ],
   "MANAUSDT": [
