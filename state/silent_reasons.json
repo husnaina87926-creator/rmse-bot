@@ -1,5 +1,5 @@
 {
-  "ts": "2026-09-14T18:52:55.953751+00:00",
+  "ts": "2026-09-14T22:17:08.453192+00:00",
   "by_account": {
     "gold": [
       {
@@ -196,7 +196,7 @@
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
-            "ema_fast_above": false,
+            "ema_fast_above": true,
             "rsi_bull": true,
             "weekend": false
           }
@@ -227,7 +227,7 @@
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
-            "ema_fast_below": true
+            "ema_fast_below": false
           }
         }
       },
@@ -241,7 +241,7 @@
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
-            "ema_fast_below": true
+            "ema_fast_below": false
           }
         }
       },
@@ -256,7 +256,7 @@
             "strong_trend": false,
             "rsi_overbought": false,
             "trend_up": true,
-            "ema_fast_below": true
+            "ema_fast_below": false
           }
         }
       }
@@ -294,7 +294,7 @@
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
-            "ema_fast_below": true,
+            "ema_fast_below": false,
             "weekend": false
           }
         }
@@ -309,7 +309,7 @@
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
-            "ema_fast_below": true,
+            "ema_fast_below": false,
             "sweep_down": false
           }
         }
@@ -383,7 +383,7 @@
             "high_vol": true,
             "strong_trend": true,
             "rsi_overbought": false,
-            "session_london": true
+            "session_london": false
           }
         }
       }
