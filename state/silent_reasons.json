@@ -1,5 +1,5 @@
 {
-  "ts": "2026-09-15T00:47:51.934399+00:00",
+  "ts": "2026-09-15T05:54:26.612225+00:00",
   "by_account": {
     "gold": [
       {
@@ -38,8 +38,8 @@
         "values": {
           "regime": "up",
           "vals": {
-            "rsi_bear": false,
-            "high_vol": true,
+            "rsi_bear": true,
+            "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false
           }
@@ -51,8 +51,8 @@
         "values": {
           "regime": "up",
           "vals": {
-            "rsi_bear": false,
-            "high_vol": true,
+            "rsi_bear": true,
+            "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
             "ema_fast_above": true,
@@ -66,8 +66,8 @@
         "values": {
           "regime": "up",
           "vals": {
-            "rsi_bear": false,
-            "high_vol": true,
+            "rsi_bear": true,
+            "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
             "trend_up": true,
@@ -82,8 +82,8 @@
         "values": {
           "regime": "up",
           "vals": {
-            "rsi_bear": false,
-            "high_vol": true,
+            "rsi_bear": true,
+            "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false
           }
@@ -95,8 +95,8 @@
         "values": {
           "regime": "up",
           "vals": {
-            "rsi_bear": false,
-            "high_vol": true,
+            "rsi_bear": true,
+            "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false
           }
@@ -110,7 +110,7 @@
         "values": {
           "regime": "up",
           "vals": {
-            "rsi_bear": false,
+            "rsi_bear": true,
             "high_vol": true,
             "strong_trend": false,
             "rsi_overbought": false
@@ -123,7 +123,7 @@
         "values": {
           "regime": "up",
           "vals": {
-            "rsi_bear": false,
+            "rsi_bear": true,
             "high_vol": true,
             "strong_trend": false,
             "rsi_overbought": false,
@@ -137,7 +137,7 @@
         "values": {
           "regime": "up",
           "vals": {
-            "rsi_bear": false,
+            "rsi_bear": true,
             "high_vol": true,
             "strong_trend": false,
             "rsi_overbought": false
@@ -150,7 +150,7 @@
         "values": {
           "regime": "up",
           "vals": {
-            "rsi_bear": false,
+            "rsi_bear": true,
             "high_vol": true,
             "strong_trend": false,
             "rsi_overbought": false
@@ -197,7 +197,7 @@
             "strong_trend": false,
             "rsi_overbought": false,
             "ema_fast_above": true,
-            "rsi_bull": true,
+            "rsi_bull": false,
             "weekend": false
           }
         }
@@ -227,7 +227,7 @@
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
-            "ema_fast_below": false
+            "ema_fast_below": true
           }
         }
       },
@@ -241,7 +241,7 @@
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
-            "ema_fast_below": false
+            "ema_fast_below": true
           }
         }
       },
@@ -256,7 +256,7 @@
             "strong_trend": false,
             "rsi_overbought": false,
             "trend_up": true,
-            "ema_fast_below": false
+            "ema_fast_below": true
           }
         }
       }
@@ -394,7 +394,21 @@
         }
       }
     ],
-    "gala": [],
+    "gala": [
+      {
+        "symbol": "GALAUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "down",
+          "vals": {
+            "rsi_bear": true,
+            "high_vol": false,
+            "strong_trend": false,
+            "rsi_overbought": false
+          }
+        }
+      }
+    ],
     "xtz": [
       {
         "symbol": "XTZUSDT",
