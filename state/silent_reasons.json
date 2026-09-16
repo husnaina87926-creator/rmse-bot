@@ -1,7 +1,36 @@
 {
-  "ts": "2026-09-16T18:49:16.168383+00:00",
+  "ts": "2026-09-16T21:55:10.848630+00:00",
   "by_account": {
-    "gold": [],
+    "gold": [
+      {
+        "symbol": "XAUUSD",
+        "reason": "regime_unknown",
+        "values": {
+          "regime": null
+        }
+      },
+      {
+        "symbol": "XAUUSD",
+        "reason": "regime_unknown",
+        "values": {
+          "regime": null
+        }
+      },
+      {
+        "symbol": "XAUUSD",
+        "reason": "regime_unknown",
+        "values": {
+          "regime": null
+        }
+      },
+      {
+        "symbol": "XAUUSD",
+        "reason": "regime_unknown",
+        "values": {
+          "regime": null
+        }
+      }
+    ],
     "btc": [
       {
         "symbol": "BTCUSDT",
@@ -11,7 +40,7 @@
           "vals": {
             "rsi_bear": true,
             "high_vol": true,
-            "strong_trend": false,
+            "strong_trend": true,
             "rsi_overbought": false
           }
         }
@@ -24,7 +53,7 @@
           "vals": {
             "rsi_bear": true,
             "high_vol": true,
-            "strong_trend": false,
+            "strong_trend": true,
             "rsi_overbought": false,
             "ema_fast_above": false,
             "weekend": false
@@ -39,7 +68,7 @@
           "vals": {
             "rsi_bear": true,
             "high_vol": true,
-            "strong_trend": false,
+            "strong_trend": true,
             "rsi_overbought": false,
             "trend_up": true,
             "ema_fast_above": false,
@@ -55,7 +84,7 @@
           "vals": {
             "rsi_bear": true,
             "high_vol": true,
-            "strong_trend": false,
+            "strong_trend": true,
             "rsi_overbought": false
           }
         }
@@ -68,7 +97,7 @@
           "vals": {
             "rsi_bear": true,
             "high_vol": true,
-            "strong_trend": false,
+            "strong_trend": true,
             "rsi_overbought": false
           }
         }
@@ -137,7 +166,7 @@
           "regime": "up",
           "vals": {
             "rsi_oversold": false,
-            "high_vol": false,
+            "high_vol": true,
             "strong_trend": false,
             "rsi_overbought": false
           }
@@ -150,7 +179,7 @@
           "regime": "up",
           "vals": {
             "rsi_oversold": false,
-            "high_vol": false,
+            "high_vol": true,
             "strong_trend": false,
             "rsi_overbought": false,
             "sweep_up": false
@@ -164,7 +193,7 @@
           "regime": "up",
           "vals": {
             "rsi_oversold": false,
-            "high_vol": false,
+            "high_vol": true,
             "strong_trend": false,
             "rsi_overbought": false,
             "ema_fast_above": false,
@@ -180,7 +209,7 @@
           "regime": "up",
           "vals": {
             "rsi_oversold": false,
-            "high_vol": false,
+            "high_vol": true,
             "strong_trend": false,
             "rsi_overbought": false,
             "rsi_bull": false,
@@ -268,7 +297,7 @@
             "strong_trend": false,
             "rsi_overbought": false,
             "ema_fast_below": true,
-            "sweep_down": false
+            "sweep_down": true
           }
         }
       }
@@ -280,7 +309,7 @@
         "values": {
           "regime": "down",
           "vals": {
-            "rsi_bear": false,
+            "rsi_bear": true,
             "high_vol": false,
             "strong_trend": true,
             "rsi_overbought": false
@@ -341,7 +370,7 @@
             "high_vol": true,
             "strong_trend": false,
             "rsi_overbought": false,
-            "session_london": true
+            "session_london": false
           }
         }
       }
@@ -377,7 +406,7 @@
         "values": {
           "regime": "down",
           "vals": {
-            "rsi_bear": false,
+            "rsi_bear": true,
             "high_vol": false,
             "strong_trend": true,
             "rsi_overbought": false
