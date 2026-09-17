@@ -1,5 +1,5 @@
 {
-  "ts": "2026-09-17T00:09:38.071104+00:00",
+  "ts": "2026-09-17T04:53:20.546393+00:00",
   "by_account": {
     "gold": [
       {
@@ -197,7 +197,7 @@
             "strong_trend": false,
             "rsi_overbought": false,
             "ema_fast_above": false,
-            "rsi_bull": false,
+            "rsi_bull": true,
             "weekend": false
           }
         }
@@ -212,7 +212,7 @@
             "high_vol": true,
             "strong_trend": false,
             "rsi_overbought": false,
-            "rsi_bull": false,
+            "rsi_bull": true,
             "weekend": false
           }
         }
@@ -311,7 +311,7 @@
           "vals": {
             "rsi_bear": true,
             "high_vol": false,
-            "strong_trend": true,
+            "strong_trend": false,
             "rsi_overbought": false
           }
         }
@@ -384,7 +384,7 @@
           "vals": {
             "rsi_bear": true,
             "high_vol": false,
-            "strong_trend": true,
+            "strong_trend": false,
             "rsi_overbought": false
           }
         }
@@ -421,7 +421,7 @@
         "values": {
           "regime": "up",
           "vals": {
-            "rsi_bear": false,
+            "rsi_bear": true,
             "high_vol": true,
             "strong_trend": false,
             "rsi_overbought": false
@@ -434,7 +434,7 @@
         "values": {
           "regime": "up",
           "vals": {
-            "rsi_bear": false,
+            "rsi_bear": true,
             "high_vol": true,
             "strong_trend": false,
             "rsi_overbought": false,
@@ -449,7 +449,7 @@
         "values": {
           "regime": "up",
           "vals": {
-            "rsi_bear": false,
+            "rsi_bear": true,
             "high_vol": true,
             "strong_trend": false,
             "rsi_overbought": false,
@@ -464,7 +464,7 @@
         "values": {
           "regime": "up",
           "vals": {
-            "rsi_bear": false,
+            "rsi_bear": true,
             "high_vol": true,
             "strong_trend": false,
             "rsi_overbought": false,
