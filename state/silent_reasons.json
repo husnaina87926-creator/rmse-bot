@@ -1,5 +1,5 @@
 {
-  "ts": "2026-09-16T21:55:10.848630+00:00",
+  "ts": "2026-09-17T00:09:38.071104+00:00",
   "by_account": {
     "gold": [
       {
@@ -384,7 +384,7 @@
           "vals": {
             "rsi_bear": true,
             "high_vol": false,
-            "strong_trend": false,
+            "strong_trend": true,
             "rsi_overbought": false
           }
         }
@@ -417,30 +417,60 @@
     "mana": [
       {
         "symbol": "MANAUSDT",
-        "reason": "regime_unknown",
+        "reason": "conditions",
         "values": {
-          "regime": null
+          "regime": "up",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": true,
+            "strong_trend": false,
+            "rsi_overbought": false
+          }
         }
       },
       {
         "symbol": "MANAUSDT",
-        "reason": "regime_unknown",
+        "reason": "conditions",
         "values": {
-          "regime": null
+          "regime": "up",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": true,
+            "strong_trend": false,
+            "rsi_overbought": false,
+            "ema_fast_below": true,
+            "low_vol": false
+          }
         }
       },
       {
         "symbol": "MANAUSDT",
-        "reason": "regime_unknown",
+        "reason": "conditions",
         "values": {
-          "regime": null
+          "regime": "up",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": true,
+            "strong_trend": false,
+            "rsi_overbought": false,
+            "low_vol": false,
+            "weak_trend": false
+          }
         }
       },
       {
         "symbol": "MANAUSDT",
-        "reason": "regime_unknown",
+        "reason": "conditions",
         "values": {
-          "regime": null
+          "regime": "up",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": true,
+            "strong_trend": false,
+            "rsi_overbought": false,
+            "weak_trend": false,
+            "weekend": false
+          }
         }
       }
     ],
