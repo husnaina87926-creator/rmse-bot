@@ -1,29 +1,6 @@
 {
-  "balance": 4500.0,
-  "open": [
-    {
-      "symbol": "ADAUSDT",
-      "direction": "buy",
-      "entry": 0.2224,
-      "sl": 0.2114757965344176,
-      "tp": 0.23332420346558239,
-      "lots": 40091.93181323451,
-      "open_time": "2026-09-18 16:00:00+00:00",
-      "cost": 12.02757954397035,
-      "margin": 445.82228176316767,
-      "atr": 0.0054621017327912,
-      "rule": {
-        "direction": "buy",
-        "when": [
-          "rsi_overbought",
-          "high_vol",
-          "strong_trend"
-        ],
-        "regime": "up"
-      },
-      "regime_at_open": "up"
-    }
-  ],
+  "balance": 4925.94484091206,
+  "open": [],
   "closed": [
     {
       "symbol": "ADAUSDT",
@@ -36,6 +13,28 @@
       "open_time": "2026-09-04 00:00:00+00:00",
       "close_time": "2026-09-04 12:00:00+00:00",
       "balance_after": 4500.0,
+      "rule": {
+        "direction": "buy",
+        "when": [
+          "rsi_overbought",
+          "high_vol",
+          "strong_trend"
+        ],
+        "regime": "up"
+      },
+      "regime_at_open": "up"
+    },
+    {
+      "symbol": "ADAUSDT",
+      "direction": "buy",
+      "entry": 0.2224,
+      "exit": 0.23332,
+      "outcome": "tp",
+      "lots": 40091.93181323451,
+      "pnl": 425.94,
+      "open_time": "2026-09-18 16:00:00+00:00",
+      "close_time": "2026-09-19 00:00:00+00:00",
+      "balance_after": 4925.94,
       "rule": {
         "direction": "buy",
         "when": [
@@ -1203,6 +1202,11 @@
       "time": "2026-09-19 03:27:30.057148+00:00",
       "balance": 4500.0,
       "open_positions": 1
+    },
+    {
+      "time": "2026-09-19 08:15:12.690420+00:00",
+      "balance": 4925.94,
+      "open_positions": 0
     }
   ],
   "cand_born": "2026-08-23T23:16:16.564568+00:00"
