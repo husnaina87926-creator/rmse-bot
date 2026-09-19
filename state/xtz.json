@@ -1,6 +1,29 @@
 {
   "balance": 5677.727270341777,
-  "open": [],
+  "open": [
+    {
+      "symbol": "XTZUSDT",
+      "direction": "buy",
+      "entry": 0.2958,
+      "sl": 0.2785747609707198,
+      "tp": 0.3130252390292802,
+      "lots": 32213.618555240966,
+      "open_time": "2026-09-18 20:00:00+00:00",
+      "cost": 12.885447422096387,
+      "margin": 476.4394184320139,
+      "atr": 0.008612619514640093,
+      "rule": {
+        "direction": "buy",
+        "when": [
+          "rsi_overbought",
+          "high_vol",
+          "strong_trend"
+        ],
+        "regime": "up"
+      },
+      "regime_at_open": "up"
+    }
+  ],
   "closed": [
     {
       "symbol": "XTZUSDT",
@@ -70,11 +93,6 @@
     }
   ],
   "history": [
-    {
-      "time": "2026-07-18 22:50:19.342955+00:00",
-      "balance": 5472.93,
-      "open_positions": 0
-    },
     {
       "time": "2026-07-18 23:54:11.998859+00:00",
       "balance": 5472.93,
@@ -5069,6 +5087,11 @@
       "time": "2026-09-18 23:54:33.759710+00:00",
       "balance": 5677.73,
       "open_positions": 0
+    },
+    {
+      "time": "2026-09-19 03:27:30.057148+00:00",
+      "balance": 5677.73,
+      "open_positions": 1
     }
   ]
 }
