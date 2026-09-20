@@ -1,6 +1,29 @@
 {
   "balance": 5000.0,
-  "open": [],
+  "open": [
+    {
+      "symbol": "HBARUSDT",
+      "direction": "buy",
+      "entry": 0.08656,
+      "sl": 0.08163734231199302,
+      "tp": 0.09148265768800698,
+      "lots": 98762.35582438424,
+      "open_time": "2026-09-20 12:00:00+00:00",
+      "cost": 13.826729815413792,
+      "margin": 427.443476007935,
+      "atr": 0.002461328844003493,
+      "rule": {
+        "direction": "buy",
+        "when": [
+          "rsi_overbought",
+          "high_vol",
+          "strong_trend"
+        ],
+        "regime": "up"
+      },
+      "regime_at_open": "up"
+    }
+  ],
   "closed": [],
   "history": [
     {
@@ -1207,6 +1230,11 @@
       "time": "2026-09-20 14:53:25.956440+00:00",
       "balance": 5000.0,
       "open_positions": 0
+    },
+    {
+      "time": "2026-09-20 18:00:43.206926+00:00",
+      "balance": 5000.0,
+      "open_positions": 1
     }
   ],
   "cand_born": "2026-08-23T23:18:52.959621+00:00"
