@@ -1,5 +1,5 @@
 {
-  "ts": "2026-09-19T23:05:40.629027+00:00",
+  "ts": "2026-09-20T01:09:42.318642+00:00",
   "by_account": {
     "gold": [
       {
@@ -35,7 +35,7 @@
             "trend_up": true,
             "rsi_overbought": false,
             "high_vol": false,
-            "session_asia": false
+            "session_asia": true
           }
         }
       },
@@ -59,7 +59,21 @@
     "eth": [],
     "sol": [],
     "ada": [],
-    "doge": [],
+    "doge": [
+      {
+        "symbol": "DOGEUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "up",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": true,
+            "strong_trend": true,
+            "rsi_overbought": false
+          }
+        }
+      }
+    ],
     "op": [
       {
         "symbol": "OPUSDT",
@@ -86,46 +100,23 @@
     "sei": [
       {
         "symbol": "SEIUSDT",
-        "reason": "conditions",
+        "reason": "regime_unknown",
         "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": false,
-            "strong_trend": true,
-            "rsi_overbought": true
-          }
+          "regime": null
         }
       },
       {
         "symbol": "SEIUSDT",
-        "reason": "conditions",
+        "reason": "regime_unknown",
         "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": false,
-            "strong_trend": true,
-            "rsi_overbought": true,
-            "ema_fast_below": false,
-            "weekend": true
-          }
+          "regime": null
         }
       },
       {
         "symbol": "SEIUSDT",
-        "reason": "conditions",
+        "reason": "regime_unknown",
         "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": false,
-            "strong_trend": true,
-            "rsi_overbought": true,
-            "ema_fast_below": false,
-            "low_vol": true,
-            "weekend": true
-          }
+          "regime": null
         }
       }
     ],
