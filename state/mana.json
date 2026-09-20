@@ -1,29 +1,6 @@
 {
-  "balance": 4532.984996213292,
-  "open": [
-    {
-      "symbol": "MANAUSDT",
-      "direction": "buy",
-      "entry": 0.0833,
-      "sl": 0.07964118228162223,
-      "tp": 0.08695881771837777,
-      "lots": 119957.75753267307,
-      "open_time": "2026-09-19 08:00:00+00:00",
-      "cost": 14.39493090392077,
-      "margin": 499.6240601235833,
-      "atr": 0.001829408859188882,
-      "rule": {
-        "direction": "buy",
-        "when": [
-          "rsi_overbought",
-          "high_vol",
-          "strong_trend"
-        ],
-        "regime": "up"
-      },
-      "regime_at_open": "up"
-    }
-  ],
+  "balance": 4957.49363402678,
+  "open": [],
   "closed": [
     {
       "symbol": "MANAUSDT",
@@ -68,14 +45,31 @@
         "regime": "down"
       },
       "regime_at_open": "down"
+    },
+    {
+      "symbol": "MANAUSDT",
+      "direction": "buy",
+      "entry": 0.0833,
+      "exit": 0.08696,
+      "outcome": "tp",
+      "lots": 119957.75753267307,
+      "pnl": 424.51,
+      "open_time": "2026-09-19 08:00:00+00:00",
+      "close_time": "2026-09-20 00:00:00+00:00",
+      "balance_after": 4957.49,
+      "rule": {
+        "direction": "buy",
+        "when": [
+          "rsi_overbought",
+          "high_vol",
+          "strong_trend"
+        ],
+        "regime": "up"
+      },
+      "regime_at_open": "up"
     }
   ],
   "history": [
-    {
-      "time": "2026-07-19 13:53:26.398804+00:00",
-      "balance": 4532.98,
-      "open_positions": 0
-    },
     {
       "time": "2026-07-19 14:55:57.082667+00:00",
       "balance": 4532.98,
@@ -5070,6 +5064,11 @@
       "time": "2026-09-20 01:09:42.318642+00:00",
       "balance": 4532.98,
       "open_positions": 1
+    },
+    {
+      "time": "2026-09-20 06:17:04.511408+00:00",
+      "balance": 4957.49,
+      "open_positions": 0
     }
   ]
 }
