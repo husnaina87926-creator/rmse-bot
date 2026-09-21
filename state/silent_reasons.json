@@ -1,5 +1,5 @@
 {
-  "ts": "2026-09-20T23:01:54.055030+00:00",
+  "ts": "2026-09-21T01:05:30.755275+00:00",
   "by_account": {
     "gold": [
       {
@@ -35,7 +35,7 @@
             "trend_up": false,
             "rsi_overbought": false,
             "high_vol": true,
-            "session_asia": false
+            "session_asia": true
           }
         }
       },
@@ -72,32 +72,76 @@
             "rsi_overbought": false
           }
         }
+      },
+      {
+        "symbol": "DOGEUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "up",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": true,
+            "strong_trend": true,
+            "rsi_overbought": false,
+            "ema_fast_below": false,
+            "low_vol": false
+          }
+        }
       }
     ],
     "op": [
       {
         "symbol": "OPUSDT",
-        "reason": "regime_unknown",
+        "reason": "conditions",
         "values": {
-          "regime": null
+          "regime": "up",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": true,
+            "strong_trend": true,
+            "rsi_overbought": false
+          }
         }
       },
       {
         "symbol": "OPUSDT",
-        "reason": "regime_unknown",
+        "reason": "conditions",
         "values": {
-          "regime": null
+          "regime": "up",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": true,
+            "strong_trend": true,
+            "rsi_overbought": false,
+            "ema_fast_below": false,
+            "weekend": true
+          }
         }
       },
       {
         "symbol": "OPUSDT",
-        "reason": "regime_unknown",
+        "reason": "conditions",
         "values": {
-          "regime": null
+          "regime": "up",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": true,
+            "strong_trend": true,
+            "rsi_overbought": false,
+            "ema_fast_below": false,
+            "sweep_down": false
+          }
         }
       }
     ],
     "sei": [
+      {
+        "symbol": "SEIUSDT",
+        "reason": "regime_unknown",
+        "values": {
+          "regime": null
+        }
+      },
       {
         "symbol": "SEIUSDT",
         "reason": "regime_unknown",
@@ -132,6 +176,22 @@
             "high_vol": true,
             "strong_trend": true,
             "rsi_overbought": false
+          }
+        }
+      },
+      {
+        "symbol": "GALAUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "down",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": true,
+            "strong_trend": true,
+            "rsi_overbought": false,
+            "ema_fast_below": false,
+            "low_vol": false,
+            "vol_rising": false
           }
         }
       }
