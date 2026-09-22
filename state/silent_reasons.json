@@ -1,5 +1,5 @@
 {
-  "ts": "2026-09-22T11:46:08.316631+00:00",
+  "ts": "2026-09-22T16:24:20.951393+00:00",
   "by_account": {
     "gold": [
       {
@@ -33,7 +33,66 @@
     ],
     "btc": [],
     "eth": [],
-    "sol": [],
+    "sol": [
+      {
+        "symbol": "SOLUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "up",
+          "vals": {
+            "rsi_oversold": false,
+            "high_vol": true,
+            "strong_trend": true,
+            "rsi_overbought": false
+          }
+        }
+      },
+      {
+        "symbol": "SOLUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "up",
+          "vals": {
+            "rsi_oversold": false,
+            "high_vol": true,
+            "strong_trend": true,
+            "rsi_overbought": false,
+            "sweep_up": false
+          }
+        }
+      },
+      {
+        "symbol": "SOLUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "up",
+          "vals": {
+            "rsi_oversold": false,
+            "high_vol": true,
+            "strong_trend": true,
+            "rsi_overbought": false,
+            "ema_fast_above": true,
+            "rsi_bull": true,
+            "weekend": false
+          }
+        }
+      },
+      {
+        "symbol": "SOLUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "up",
+          "vals": {
+            "rsi_oversold": false,
+            "high_vol": true,
+            "strong_trend": true,
+            "rsi_overbought": false,
+            "rsi_bull": true,
+            "weekend": false
+          }
+        }
+      }
+    ],
     "ada": [],
     "doge": [],
     "op": [
@@ -138,7 +197,7 @@
             "rsi_overbought": false,
             "ema_fast_below": false,
             "low_vol": false,
-            "vol_rising": true
+            "vol_rising": false
           }
         }
       }
@@ -154,7 +213,7 @@
             "rsi_bear": false,
             "high_vol": true,
             "strong_trend": true,
-            "rsi_overbought": true
+            "rsi_overbought": false
           }
         }
       }
