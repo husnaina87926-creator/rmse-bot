@@ -1,57 +1,33 @@
 {
-  "ts": "2026-09-21T22:16:34.379328+00:00",
+  "ts": "2026-09-22T01:01:09.493863+00:00",
   "by_account": {
     "gold": [
       {
         "symbol": "XAUUSD",
-        "reason": "conditions",
+        "reason": "regime_unknown",
         "values": {
-          "regime": "up",
-          "vals": {
-            "trend_up": false,
-            "rsi_overbought": false,
-            "high_vol": false
-          }
+          "regime": null
         }
       },
       {
         "symbol": "XAUUSD",
-        "reason": "conditions",
+        "reason": "regime_unknown",
         "values": {
-          "regime": "up",
-          "vals": {
-            "trend_up": false,
-            "rsi_overbought": false,
-            "high_vol": false
-          }
+          "regime": null
         }
       },
       {
         "symbol": "XAUUSD",
-        "reason": "conditions",
+        "reason": "regime_unknown",
         "values": {
-          "regime": "up",
-          "vals": {
-            "trend_up": false,
-            "rsi_overbought": false,
-            "high_vol": false,
-            "session_asia": false
-          }
+          "regime": null
         }
       },
       {
         "symbol": "XAUUSD",
-        "reason": "conditions",
+        "reason": "regime_unknown",
         "values": {
-          "regime": "up",
-          "vals": {
-            "trend_up": false,
-            "rsi_overbought": false,
-            "high_vol": false,
-            "low_vol": true,
-            "session_ny": false,
-            "vol_quiet": false
-          }
+          "regime": null
         }
       }
     ],
@@ -146,7 +122,7 @@
             "rsi_bear": false,
             "high_vol": true,
             "strong_trend": true,
-            "rsi_overbought": true
+            "rsi_overbought": false
           }
         }
       },
@@ -159,7 +135,7 @@
             "rsi_bear": false,
             "high_vol": true,
             "strong_trend": true,
-            "rsi_overbought": true,
+            "rsi_overbought": false,
             "ema_fast_below": false,
             "low_vol": false,
             "vol_rising": true
