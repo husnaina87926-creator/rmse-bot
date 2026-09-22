@@ -1,5 +1,5 @@
 {
-  "ts": "2026-09-22T19:49:07.243873+00:00",
+  "ts": "2026-09-22T22:45:32.617441+00:00",
   "by_account": {
     "gold": [
       {
@@ -33,66 +33,7 @@
     ],
     "btc": [],
     "eth": [],
-    "sol": [
-      {
-        "symbol": "SOLUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "up",
-          "vals": {
-            "rsi_oversold": false,
-            "high_vol": true,
-            "strong_trend": true,
-            "rsi_overbought": false
-          }
-        }
-      },
-      {
-        "symbol": "SOLUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "up",
-          "vals": {
-            "rsi_oversold": false,
-            "high_vol": true,
-            "strong_trend": true,
-            "rsi_overbought": false,
-            "sweep_up": false
-          }
-        }
-      },
-      {
-        "symbol": "SOLUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "up",
-          "vals": {
-            "rsi_oversold": false,
-            "high_vol": true,
-            "strong_trend": true,
-            "rsi_overbought": false,
-            "ema_fast_above": true,
-            "rsi_bull": true,
-            "weekend": false
-          }
-        }
-      },
-      {
-        "symbol": "SOLUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "up",
-          "vals": {
-            "rsi_oversold": false,
-            "high_vol": true,
-            "strong_trend": true,
-            "rsi_overbought": false,
-            "rsi_bull": true,
-            "weekend": false
-          }
-        }
-      }
-    ],
+    "sol": [],
     "ada": [],
     "doge": [],
     "op": [
@@ -197,7 +138,7 @@
             "rsi_overbought": false,
             "ema_fast_below": false,
             "low_vol": false,
-            "vol_rising": false
+            "vol_rising": true
           }
         }
       }
