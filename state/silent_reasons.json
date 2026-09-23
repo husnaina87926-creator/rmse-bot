@@ -1,33 +1,57 @@
 {
-  "ts": "2026-09-22T22:45:32.617441+00:00",
+  "ts": "2026-09-23T01:16:28.260212+00:00",
   "by_account": {
     "gold": [
       {
         "symbol": "XAUUSD",
-        "reason": "regime_unknown",
+        "reason": "conditions",
         "values": {
-          "regime": null
+          "regime": "up",
+          "vals": {
+            "trend_up": false,
+            "rsi_overbought": false,
+            "high_vol": false
+          }
         }
       },
       {
         "symbol": "XAUUSD",
-        "reason": "regime_unknown",
+        "reason": "conditions",
         "values": {
-          "regime": null
+          "regime": "up",
+          "vals": {
+            "trend_up": false,
+            "rsi_overbought": false,
+            "high_vol": false
+          }
         }
       },
       {
         "symbol": "XAUUSD",
-        "reason": "regime_unknown",
+        "reason": "conditions",
         "values": {
-          "regime": null
+          "regime": "up",
+          "vals": {
+            "trend_up": false,
+            "rsi_overbought": false,
+            "high_vol": false,
+            "session_asia": true
+          }
         }
       },
       {
         "symbol": "XAUUSD",
-        "reason": "regime_unknown",
+        "reason": "conditions",
         "values": {
-          "regime": null
+          "regime": "up",
+          "vals": {
+            "trend_up": false,
+            "rsi_overbought": false,
+            "high_vol": false,
+            "low_vol": true,
+            "session_ny": false,
+            "vol_quiet": false
+          }
         }
       }
     ],
@@ -115,9 +139,25 @@
     "gala": [
       {
         "symbol": "GALAUSDT",
+        "reason": "regime_unknown",
+        "values": {
+          "regime": null
+        }
+      },
+      {
+        "symbol": "GALAUSDT",
+        "reason": "regime_unknown",
+        "values": {
+          "regime": null
+        }
+      }
+    ],
+    "xtz": [
+      {
+        "symbol": "XTZUSDT",
         "reason": "conditions",
         "values": {
-          "regime": "down",
+          "regime": "up",
           "vals": {
             "rsi_bear": false,
             "high_vol": true,
@@ -125,25 +165,8 @@
             "rsi_overbought": false
           }
         }
-      },
-      {
-        "symbol": "GALAUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": true,
-            "strong_trend": true,
-            "rsi_overbought": false,
-            "ema_fast_below": false,
-            "low_vol": false,
-            "vol_rising": true
-          }
-        }
       }
     ],
-    "xtz": [],
     "sand": [
       {
         "symbol": "SANDUSDT",
@@ -154,7 +177,7 @@
             "rsi_bear": false,
             "high_vol": true,
             "strong_trend": true,
-            "rsi_overbought": false
+            "rsi_overbought": true
           }
         }
       }
