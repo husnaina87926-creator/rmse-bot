@@ -1,5 +1,5 @@
 {
-  "ts": "2026-09-23T01:16:28.260212+00:00",
+  "ts": "2026-09-23T06:22:27.340552+00:00",
   "by_account": {
     "gold": [
       {
@@ -60,51 +60,7 @@
     "sol": [],
     "ada": [],
     "doge": [],
-    "op": [
-      {
-        "symbol": "OPUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "up",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": true,
-            "strong_trend": true,
-            "rsi_overbought": false
-          }
-        }
-      },
-      {
-        "symbol": "OPUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "up",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": true,
-            "strong_trend": true,
-            "rsi_overbought": false,
-            "ema_fast_below": false,
-            "weekend": false
-          }
-        }
-      },
-      {
-        "symbol": "OPUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "up",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": true,
-            "strong_trend": true,
-            "rsi_overbought": false,
-            "ema_fast_below": false,
-            "sweep_down": false
-          }
-        }
-      }
-    ],
+    "op": [],
     "sei": [
       {
         "symbol": "SEIUSDT",
