@@ -1,6 +1,28 @@
 {
   "balance": 5427.800979440759,
-  "open": [],
+  "open": [
+    {
+      "symbol": "ETHUSDT",
+      "direction": "buy",
+      "entry": 2687.98,
+      "sl": 2608.656198751852,
+      "tp": 2767.303801248148,
+      "lots": 6.361414869052823,
+      "open_time": "2026-09-26 00:00:00+00:00",
+      "cost": 38.16848921431694,
+      "margin": 854.9677969858305,
+      "atr": 39.661900624073915,
+      "rule": {
+        "direction": "buy",
+        "when": [
+          "ema_fast_above",
+          "weekend"
+        ],
+        "regime": "up"
+      },
+      "regime_at_open": "up"
+    }
+  ],
   "closed": [
     {
       "symbol": "ETHUSDT",
@@ -174,6 +196,11 @@
       "time": "2026-09-26 02:00:49.450106+00:00",
       "balance": 5427.8,
       "open_positions": 0
+    },
+    {
+      "time": "2026-09-26 07:41:31.769443+00:00",
+      "balance": 5427.8,
+      "open_positions": 1
     }
   ],
   "cand_born": "2026-09-21T00:43:59.508223+00:00"
