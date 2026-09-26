@@ -1,5 +1,5 @@
 {
-  "ts": "2026-09-26T12:28:22.229645+00:00",
+  "ts": "2026-09-26T16:40:28.092357+00:00",
   "by_account": {
     "gold": [
       {
@@ -49,13 +49,84 @@
             "rsi_overbought": false,
             "high_vol": false,
             "low_vol": true,
-            "session_ny": false,
+            "session_ny": true,
             "vol_quiet": false
           }
         }
       }
     ],
-    "btc": [],
+    "btc": [
+      {
+        "symbol": "BTCUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "up",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": false,
+            "strong_trend": false,
+            "rsi_overbought": false
+          }
+        }
+      },
+      {
+        "symbol": "BTCUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "up",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": false,
+            "strong_trend": false,
+            "rsi_overbought": false,
+            "ema_fast_above": false,
+            "weekend": true
+          }
+        }
+      },
+      {
+        "symbol": "BTCUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "up",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": false,
+            "strong_trend": false,
+            "rsi_overbought": false,
+            "trend_up": true,
+            "ema_fast_above": false,
+            "weekend": true
+          }
+        }
+      },
+      {
+        "symbol": "BTCUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "up",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": false,
+            "strong_trend": false,
+            "rsi_overbought": false
+          }
+        }
+      },
+      {
+        "symbol": "BTCUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "up",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": false,
+            "strong_trend": false,
+            "rsi_overbought": false
+          }
+        }
+      }
+    ],
     "eth": [
       {
         "symbol": "ETHUSDT",
