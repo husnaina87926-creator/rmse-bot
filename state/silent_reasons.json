@@ -1,5 +1,5 @@
 {
-  "ts": "2026-09-27T00:36:06.243917+00:00",
+  "ts": "2026-09-27T05:48:04.712841+00:00",
   "by_account": {
     "gold": [
       {
@@ -66,37 +66,6 @@
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false
-          }
-        }
-      },
-      {
-        "symbol": "BTCUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "up",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": false,
-            "strong_trend": false,
-            "rsi_overbought": false,
-            "ema_fast_above": false,
-            "weekend": true
-          }
-        }
-      },
-      {
-        "symbol": "BTCUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "up",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": false,
-            "strong_trend": false,
-            "rsi_overbought": false,
-            "trend_up": true,
-            "ema_fast_above": false,
-            "weekend": true
           }
         }
       },
@@ -276,7 +245,7 @@
         "values": {
           "regime": "up",
           "vals": {
-            "rsi_bear": false,
+            "rsi_bear": true,
             "high_vol": true,
             "strong_trend": true,
             "rsi_overbought": false
@@ -289,7 +258,7 @@
         "values": {
           "regime": "up",
           "vals": {
-            "rsi_bear": false,
+            "rsi_bear": true,
             "high_vol": true,
             "strong_trend": true,
             "rsi_overbought": false,
@@ -299,7 +268,51 @@
         }
       }
     ],
-    "op": [],
+    "op": [
+      {
+        "symbol": "OPUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "up",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": true,
+            "strong_trend": true,
+            "rsi_overbought": false
+          }
+        }
+      },
+      {
+        "symbol": "OPUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "up",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": true,
+            "strong_trend": true,
+            "rsi_overbought": false,
+            "ema_fast_below": false,
+            "weekend": true
+          }
+        }
+      },
+      {
+        "symbol": "OPUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "up",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": true,
+            "strong_trend": true,
+            "rsi_overbought": false,
+            "ema_fast_below": false,
+            "sweep_down": false
+          }
+        }
+      }
+    ],
     "sei": [],
     "vet": [],
     "gala": [],
