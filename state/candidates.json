@@ -118,6 +118,22 @@
       "pf": 1.39,
       "slot": 1,
       "born": "2026-09-21T00:43:59.508223+00:00"
+    },
+    {
+      "rule": {
+        "direction": "buy",
+        "when": [
+          "trend_up",
+          "strong_trend",
+          "weekend"
+        ],
+        "regime": "up"
+      },
+      "score": 5141.79,
+      "return": 6855.72,
+      "pf": 1.5,
+      "slot": 2,
+      "born": "2026-09-28T01:20:36.009933+00:00"
     }
   ],
   "SOLUSDT": [
@@ -263,6 +279,22 @@
       "pf": 1.54,
       "slot": 2,
       "born": "2026-08-31T01:03:02.337244+00:00"
+    },
+    {
+      "rule": {
+        "direction": "sell",
+        "when": [
+          "trend_down",
+          "ema_fast_below",
+          "weekend"
+        ],
+        "regime": "down"
+      },
+      "score": 2458.75,
+      "return": 3278.33,
+      "pf": 1.17,
+      "slot": 1,
+      "born": "2026-09-28T01:21:15.845805+00:00"
     }
   ],
   "SEIUSDT": [
@@ -378,6 +410,23 @@
       "pf": 1.5,
       "slot": 0,
       "born": "2026-09-21T00:44:48.221022+00:00"
+    }
+  ],
+  "XTZUSDT": [
+    {
+      "rule": {
+        "direction": "sell",
+        "when": [
+          "ema_fast_below",
+          "vol_quiet"
+        ],
+        "regime": "down"
+      },
+      "score": 5607.81,
+      "return": 7477.08,
+      "pf": 1.34,
+      "slot": 0,
+      "born": "2026-09-28T01:21:45.855000+00:00"
     }
   ],
   "MANAUSDT": [
