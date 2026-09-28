@@ -1,29 +1,6 @@
 {
-  "balance": 5472.3465403691725,
-  "open": [
-    {
-      "symbol": "HBARUSDT",
-      "direction": "buy",
-      "entry": 0.11752,
-      "sl": 0.10918177301783914,
-      "tp": 0.12585822698216087,
-      "lots": 64545.88384910673,
-      "open_time": "2026-09-28 08:00:00+00:00",
-      "cost": 9.03642373887494,
-      "margin": 379.27161349735115,
-      "atr": 0.004169113491080429,
-      "rule": {
-        "direction": "buy",
-        "when": [
-          "rsi_overbought",
-          "high_vol",
-          "strong_trend"
-        ],
-        "regime": "up"
-      },
-      "regime_at_open": "up"
-    }
-  ],
+  "balance": 6001.508346928341,
+  "open": [],
   "closed": [
     {
       "symbol": "HBARUSDT",
@@ -36,6 +13,28 @@
       "open_time": "2026-09-20 12:00:00+00:00",
       "close_time": "2026-09-21 12:00:00+00:00",
       "balance_after": 5472.35,
+      "rule": {
+        "direction": "buy",
+        "when": [
+          "rsi_overbought",
+          "high_vol",
+          "strong_trend"
+        ],
+        "regime": "up"
+      },
+      "regime_at_open": "up"
+    },
+    {
+      "symbol": "HBARUSDT",
+      "direction": "buy",
+      "entry": 0.11752,
+      "exit": 0.12586,
+      "outcome": "tp",
+      "lots": 64545.88384910673,
+      "pnl": 529.16,
+      "open_time": "2026-09-28 08:00:00+00:00",
+      "close_time": "2026-09-28 12:00:00+00:00",
+      "balance_after": 6001.51,
       "rule": {
         "direction": "buy",
         "when": [
@@ -738,6 +737,11 @@
       "time": "2026-09-28 15:04:26.016352+00:00",
       "balance": 5472.35,
       "open_positions": 1
+    },
+    {
+      "time": "2026-09-28 21:14:09.401980+00:00",
+      "balance": 6001.51,
+      "open_positions": 0
     }
   ],
   "cand_born": "2026-09-07T00:37:03.424557+00:00"
