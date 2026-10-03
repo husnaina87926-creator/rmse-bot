@@ -1,5 +1,5 @@
 {
-  "ts": "2026-10-03T01:50:52.139917+00:00",
+  "ts": "2026-10-03T07:41:09.002829+00:00",
   "by_account": {
     "gold": [
       {
@@ -35,7 +35,7 @@
             "trend_up": false,
             "rsi_overbought": false,
             "high_vol": false,
-            "session_asia": true
+            "session_asia": false
           }
         }
       },
@@ -94,8 +94,8 @@
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
-            "ema_fast_above": true,
-            "weekend": false
+            "ema_fast_above": false,
+            "weekend": true
           }
         }
       },
@@ -110,7 +110,7 @@
             "strong_trend": false,
             "rsi_overbought": false,
             "trend_up": true,
-            "weekend": false
+            "weekend": true
           }
         }
       },
@@ -149,7 +149,7 @@
           "regime": "up",
           "vals": {
             "rsi_oversold": false,
-            "high_vol": true,
+            "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false
           }
@@ -162,41 +162,10 @@
           "regime": "up",
           "vals": {
             "rsi_oversold": false,
-            "high_vol": true,
+            "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
             "sweep_up": false
-          }
-        }
-      },
-      {
-        "symbol": "SOLUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "up",
-          "vals": {
-            "rsi_oversold": false,
-            "high_vol": true,
-            "strong_trend": false,
-            "rsi_overbought": false,
-            "ema_fast_above": true,
-            "rsi_bull": false,
-            "weekend": false
-          }
-        }
-      },
-      {
-        "symbol": "SOLUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "up",
-          "vals": {
-            "rsi_oversold": false,
-            "high_vol": true,
-            "strong_trend": false,
-            "rsi_overbought": false,
-            "rsi_bull": false,
-            "weekend": false
           }
         }
       }
@@ -314,7 +283,7 @@
             "strong_trend": false,
             "rsi_overbought": false,
             "ema_fast_below": true,
-            "weekend": false
+            "weekend": true
           }
         }
       },
@@ -345,7 +314,7 @@
             "rsi_overbought": false,
             "trend_down": false,
             "ema_fast_below": true,
-            "weekend": false
+            "weekend": true
           }
         }
       }
@@ -375,7 +344,7 @@
             "strong_trend": false,
             "rsi_overbought": false,
             "ema_fast_below": true,
-            "weekend": false
+            "weekend": true
           }
         }
       },
@@ -391,7 +360,7 @@
             "rsi_overbought": false,
             "ema_fast_below": true,
             "low_vol": false,
-            "weekend": false
+            "weekend": true
           }
         }
       },
@@ -449,7 +418,7 @@
             "rsi_overbought": false,
             "low_vol": true,
             "weak_trend": true,
-            "weekend": false
+            "weekend": true
           }
         }
       },
@@ -578,7 +547,7 @@
             "strong_trend": true,
             "rsi_overbought": false,
             "weak_trend": false,
-            "weekend": false
+            "weekend": true
           }
         }
       }
@@ -608,7 +577,7 @@
             "strong_trend": false,
             "rsi_overbought": false,
             "ema_fast_below": true,
-            "weekend": false
+            "weekend": true
           }
         }
       },
