@@ -1,5 +1,5 @@
 {
-  "ts": "2026-10-04T13:44:19.203027+00:00",
+  "ts": "2026-10-04T17:51:43.881267+00:00",
   "by_account": {
     "gold": [
       {
@@ -55,7 +55,22 @@
         }
       }
     ],
-    "btc": [],
+    "btc": [
+      {
+        "symbol": "BTCUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "up",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": false,
+            "strong_trend": false,
+            "rsi_overbought": false,
+            "weak_trend": false
+          }
+        }
+      }
+    ],
     "eth": [
       {
         "symbol": "ETHUSDT",
@@ -135,7 +150,7 @@
           "vals": {
             "rsi_oversold": false,
             "high_vol": false,
-            "strong_trend": false,
+            "strong_trend": true,
             "rsi_overbought": false
           }
         }
@@ -148,7 +163,7 @@
           "vals": {
             "rsi_oversold": false,
             "high_vol": false,
-            "strong_trend": false,
+            "strong_trend": true,
             "rsi_overbought": false,
             "sweep_up": false
           }
@@ -162,7 +177,7 @@
         "values": {
           "regime": "up",
           "vals": {
-            "rsi_bear": true,
+            "rsi_bear": false,
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false
@@ -175,7 +190,7 @@
         "values": {
           "regime": "up",
           "vals": {
-            "rsi_bear": true,
+            "rsi_bear": false,
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
@@ -189,7 +204,7 @@
         "values": {
           "regime": "up",
           "vals": {
-            "rsi_bear": true,
+            "rsi_bear": false,
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
@@ -203,7 +218,7 @@
         "values": {
           "regime": "up",
           "vals": {
-            "rsi_bear": true,
+            "rsi_bear": false,
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
@@ -220,7 +235,7 @@
         "values": {
           "regime": "up",
           "vals": {
-            "rsi_bear": true,
+            "rsi_bear": false,
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false
@@ -233,7 +248,7 @@
         "values": {
           "regime": "up",
           "vals": {
-            "rsi_bear": true,
+            "rsi_bear": false,
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
@@ -250,7 +265,7 @@
         "values": {
           "regime": "up",
           "vals": {
-            "rsi_bear": true,
+            "rsi_bear": false,
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false
@@ -263,7 +278,7 @@
         "values": {
           "regime": "up",
           "vals": {
-            "rsi_bear": true,
+            "rsi_bear": false,
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
@@ -278,7 +293,7 @@
         "values": {
           "regime": "up",
           "vals": {
-            "rsi_bear": true,
+            "rsi_bear": false,
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
@@ -293,7 +308,7 @@
         "values": {
           "regime": "up",
           "vals": {
-            "rsi_bear": true,
+            "rsi_bear": false,
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
@@ -328,7 +343,7 @@
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
-            "ema_fast_below": true,
+            "ema_fast_below": false,
             "weekend": true
           }
         }
@@ -343,7 +358,7 @@
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
-            "ema_fast_below": true,
+            "ema_fast_below": false,
             "low_vol": true,
             "weekend": true
           }
