@@ -1,5 +1,5 @@
 {
-  "ts": "2026-10-11T08:56:01.868873+00:00",
+  "ts": "2026-10-11T15:23:52.722832+00:00",
   "by_account": {
     "gold": [
       {
@@ -49,7 +49,7 @@
             "rsi_overbought": false,
             "high_vol": false,
             "low_vol": true,
-            "session_ny": false,
+            "session_ny": true,
             "vol_quiet": false
           }
         }
@@ -476,7 +476,7 @@
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
-            "session_london": false
+            "session_london": true
           }
         }
       }
@@ -534,7 +534,7 @@
             "high_vol": false,
             "strong_trend": true,
             "rsi_overbought": false,
-            "session_london": false
+            "session_london": true
           }
         }
       }
@@ -715,7 +715,7 @@
             "high_vol": false,
             "strong_trend": true,
             "rsi_overbought": false,
-            "trend_down": false,
+            "trend_down": true,
             "ema_fast_below": true
           }
         }
@@ -730,7 +730,7 @@
             "high_vol": false,
             "strong_trend": true,
             "rsi_overbought": false,
-            "trend_down": false,
+            "trend_down": true,
             "ema_fast_below": true
           }
         }
