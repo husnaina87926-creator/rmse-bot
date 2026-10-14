@@ -1,6 +1,29 @@
 {
   "balance": 5388.7785961931795,
-  "open": [],
+  "open": [
+    {
+      "symbol": "OPUSDT",
+      "direction": "buy",
+      "entry": 0.1585,
+      "sl": 0.14568226663332426,
+      "tp": 0.17131773336667575,
+      "lots": 41395.67499506466,
+      "open_time": "2026-10-13 20:00:00+00:00",
+      "cost": 8.279134999012934,
+      "margin": 328.06072433588747,
+      "atr": 0.006408866683337878,
+      "rule": {
+        "direction": "buy",
+        "when": [
+          "rsi_overbought",
+          "high_vol",
+          "strong_trend"
+        ],
+        "regime": "up"
+      },
+      "regime_at_open": "up"
+    }
+  ],
   "closed": [
     {
       "symbol": "OPUSDT",
@@ -136,11 +159,6 @@
     }
   ],
   "history": [
-    {
-      "time": "2026-07-28 14:41:27.178634+00:00",
-      "balance": 5000.0,
-      "open_positions": 1
-    },
     {
       "time": "2026-07-28 16:24:42.767849+00:00",
       "balance": 5000.0,
@@ -5135,6 +5153,11 @@
       "time": "2026-10-13 21:25:03.433658+00:00",
       "balance": 5388.78,
       "open_positions": 0
+    },
+    {
+      "time": "2026-10-14 00:29:04.949844+00:00",
+      "balance": 5388.78,
+      "open_positions": 1
     }
   ]
 }
