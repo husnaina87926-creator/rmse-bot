@@ -1,5 +1,5 @@
 {
-  "ts": "2026-10-14T19:35:26.702469+00:00",
+  "ts": "2026-10-14T22:39:07.879008+00:00",
   "by_account": {
     "gold": [
       {
@@ -10,7 +10,7 @@
           "vals": {
             "trend_up": false,
             "rsi_overbought": false,
-            "high_vol": true
+            "high_vol": false
           }
         }
       },
@@ -22,7 +22,7 @@
           "vals": {
             "trend_up": false,
             "rsi_overbought": false,
-            "high_vol": true
+            "high_vol": false
           }
         }
       },
@@ -34,7 +34,7 @@
           "vals": {
             "trend_up": false,
             "rsi_overbought": false,
-            "high_vol": true,
+            "high_vol": false,
             "rsi_bear": false,
             "weekend": false
           }
@@ -48,8 +48,8 @@
           "vals": {
             "trend_up": false,
             "rsi_overbought": false,
-            "high_vol": true,
-            "ema_fast_below": true,
+            "high_vol": false,
+            "ema_fast_below": false,
             "rsi_bear": false,
             "weekend": false
           }
@@ -356,7 +356,7 @@
             "high_vol": true,
             "strong_trend": false,
             "rsi_overbought": false,
-            "session_london": true
+            "session_london": false
           }
         }
       },
@@ -415,7 +415,7 @@
             "high_vol": false,
             "strong_trend": true,
             "rsi_overbought": false,
-            "session_london": true
+            "session_london": false
           }
         }
       },
@@ -565,7 +565,7 @@
             "strong_trend": false,
             "rsi_overbought": false,
             "low_vol": true,
-            "weak_trend": true
+            "weak_trend": false
           }
         }
       },
@@ -579,7 +579,7 @@
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
-            "weak_trend": true,
+            "weak_trend": false,
             "weekend": false
           }
         }
