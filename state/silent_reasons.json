@@ -1,5 +1,5 @@
 {
-  "ts": "2026-10-15T19:12:24.530022+00:00",
+  "ts": "2026-10-15T22:22:19.118414+00:00",
   "by_account": {
     "gold": [
       {
@@ -387,7 +387,7 @@
             "high_vol": true,
             "strong_trend": true,
             "rsi_overbought": false,
-            "session_london": true
+            "session_london": false
           }
         }
       },
@@ -446,7 +446,7 @@
             "high_vol": true,
             "strong_trend": true,
             "rsi_overbought": false,
-            "session_london": true
+            "session_london": false
           }
         }
       },
