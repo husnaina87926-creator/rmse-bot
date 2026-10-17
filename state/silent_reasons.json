@@ -1,5 +1,5 @@
 {
-  "ts": "2026-10-17T03:16:07.216510+00:00",
+  "ts": "2026-10-17T07:58:19.834700+00:00",
   "by_account": {
     "gold": [
       {
@@ -66,7 +66,7 @@
             "strong_trend": true,
             "rsi_overbought": false,
             "ema_fast_above": false,
-            "weekend": false
+            "weekend": true
           }
         }
       },
@@ -82,7 +82,7 @@
             "rsi_overbought": false,
             "trend_up": false,
             "ema_fast_above": false,
-            "weekend": false
+            "weekend": true
           }
         }
       },
@@ -152,7 +152,7 @@
             "strong_trend": true,
             "rsi_overbought": false,
             "ema_fast_above": false,
-            "weekend": false
+            "weekend": true
           }
         }
       },
@@ -167,7 +167,7 @@
             "strong_trend": true,
             "rsi_overbought": false,
             "trend_up": false,
-            "weekend": false
+            "weekend": true
           }
         }
       },
@@ -238,7 +238,7 @@
             "rsi_overbought": false,
             "ema_fast_above": false,
             "rsi_bull": false,
-            "weekend": false
+            "weekend": true
           }
         }
       }
@@ -358,7 +358,7 @@
             "rsi_overbought": false,
             "ema_fast_below": false,
             "low_vol": false,
-            "weekend": false
+            "weekend": true
           }
         }
       },
@@ -386,7 +386,7 @@
             "high_vol": true,
             "strong_trend": false,
             "rsi_overbought": false,
-            "weak_trend": false
+            "weak_trend": true
           }
         }
       }
@@ -477,7 +477,7 @@
             "strong_trend": false,
             "rsi_overbought": false,
             "ema_fast_below": false,
-            "weekend": false
+            "weekend": true
           }
         }
       },
@@ -491,7 +491,7 @@
             "high_vol": true,
             "strong_trend": false,
             "rsi_overbought": false,
-            "weekend": false
+            "weekend": true
           }
         }
       }
@@ -566,7 +566,7 @@
             "strong_trend": false,
             "rsi_overbought": false,
             "weak_trend": false,
-            "weekend": false
+            "weekend": true
           }
         }
       }
