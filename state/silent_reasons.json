@@ -1,5 +1,5 @@
 {
-  "ts": "2026-10-18T04:56:08.853032+00:00",
+  "ts": "2026-10-18T09:22:33.875598+00:00",
   "by_account": {
     "gold": [
       {
@@ -385,7 +385,7 @@
             "strong_trend": false,
             "rsi_overbought": false,
             "ema_fast_below": true,
-            "sweep_down": true
+            "sweep_down": false
           }
         }
       },
@@ -399,7 +399,7 @@
             "high_vol": true,
             "strong_trend": false,
             "rsi_overbought": false,
-            "trend_down": false,
+            "trend_down": true,
             "ema_fast_below": true,
             "weekend": true
           }
@@ -415,7 +415,7 @@
             "high_vol": true,
             "strong_trend": false,
             "rsi_overbought": false,
-            "trend_up": true,
+            "trend_up": false,
             "ema_fast_below": true
           }
         }
@@ -668,7 +668,7 @@
           "regime": "up",
           "vals": {
             "rsi_bear": false,
-            "high_vol": false,
+            "high_vol": true,
             "strong_trend": true,
             "rsi_overbought": false
           }
@@ -681,7 +681,7 @@
           "regime": "up",
           "vals": {
             "rsi_bear": false,
-            "high_vol": false,
+            "high_vol": true,
             "strong_trend": true,
             "rsi_overbought": false,
             "trend_down": true,
@@ -696,12 +696,12 @@
           "regime": "up",
           "vals": {
             "rsi_bear": false,
-            "high_vol": false,
+            "high_vol": true,
             "strong_trend": true,
             "rsi_overbought": false,
             "trend_down": true,
             "ema_fast_below": true,
-            "low_vol": true
+            "low_vol": false
           }
         }
       },
@@ -712,11 +712,11 @@
           "regime": "up",
           "vals": {
             "rsi_bear": false,
-            "high_vol": false,
+            "high_vol": true,
             "strong_trend": true,
             "rsi_overbought": false,
             "trend_down": true,
-            "low_vol": true
+            "low_vol": false
           }
         }
       }
