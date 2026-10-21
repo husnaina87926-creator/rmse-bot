@@ -1,5 +1,5 @@
 {
-  "ts": "2026-10-21T14:53:16.516075+00:00",
+  "ts": "2026-10-21T19:07:58.094636+00:00",
   "by_account": {
     "gold": [
       {
@@ -35,7 +35,7 @@
             "trend_up": false,
             "rsi_overbought": false,
             "high_vol": true,
-            "rsi_bear": false,
+            "rsi_bear": true,
             "weekend": false
           }
         }
@@ -49,8 +49,8 @@
             "trend_up": false,
             "rsi_overbought": false,
             "high_vol": true,
-            "ema_fast_below": false,
-            "rsi_bear": false,
+            "ema_fast_below": true,
+            "rsi_bear": true,
             "weekend": false
           }
         }
@@ -64,7 +64,7 @@
           "regime": "up",
           "vals": {
             "rsi_bear": false,
-            "high_vol": false,
+            "high_vol": true,
             "strong_trend": true,
             "rsi_overbought": false
           }
@@ -77,7 +77,7 @@
           "regime": "up",
           "vals": {
             "rsi_bear": false,
-            "high_vol": false,
+            "high_vol": true,
             "strong_trend": true,
             "rsi_overbought": false,
             "weak_trend": false
@@ -91,7 +91,7 @@
           "regime": "up",
           "vals": {
             "rsi_bear": false,
-            "high_vol": false,
+            "high_vol": true,
             "strong_trend": true,
             "rsi_overbought": false,
             "trend_up": true,
@@ -107,7 +107,7 @@
           "regime": "up",
           "vals": {
             "rsi_bear": false,
-            "high_vol": false,
+            "high_vol": true,
             "strong_trend": true,
             "rsi_overbought": false,
             "ema_fast_above": true,
@@ -122,7 +122,7 @@
           "regime": "up",
           "vals": {
             "rsi_bear": false,
-            "high_vol": false,
+            "high_vol": true,
             "strong_trend": true,
             "rsi_overbought": false
           }
@@ -135,7 +135,7 @@
           "regime": "up",
           "vals": {
             "rsi_bear": false,
-            "high_vol": false,
+            "high_vol": true,
             "strong_trend": true,
             "rsi_overbought": false
           }
@@ -488,7 +488,7 @@
             "rsi_bear": false,
             "high_vol": false,
             "strong_trend": true,
-            "rsi_overbought": false
+            "rsi_overbought": true
           }
         }
       },
@@ -501,7 +501,7 @@
             "rsi_bear": false,
             "high_vol": false,
             "strong_trend": true,
-            "rsi_overbought": false,
+            "rsi_overbought": true,
             "low_vol": true,
             "weak_trend": false,
             "weekend": false
@@ -517,7 +517,7 @@
             "rsi_bear": false,
             "high_vol": false,
             "strong_trend": true,
-            "rsi_overbought": false,
+            "rsi_overbought": true,
             "session_london": true
           }
         }
@@ -531,7 +531,7 @@
             "rsi_bear": false,
             "high_vol": false,
             "strong_trend": true,
-            "rsi_overbought": false,
+            "rsi_overbought": true,
             "ema_fast_below": false,
             "weekend": false
           }
@@ -727,7 +727,7 @@
             "strong_trend": false,
             "rsi_overbought": false,
             "trend_down": true,
-            "ema_fast_below": true
+            "ema_fast_below": false
           }
         }
       },
@@ -742,7 +742,7 @@
             "strong_trend": false,
             "rsi_overbought": false,
             "trend_down": true,
-            "ema_fast_below": true,
+            "ema_fast_below": false,
             "low_vol": true
           }
         }
