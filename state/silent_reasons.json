@@ -1,5 +1,5 @@
 {
-  "ts": "2026-10-24T01:35:17.514165+00:00",
+  "ts": "2026-10-24T06:28:56.808881+00:00",
   "by_account": {
     "gold": [
       {
@@ -67,7 +67,7 @@
             "rsi_overbought": false,
             "trend_up": false,
             "ema_fast_above": false,
-            "weekend": false
+            "weekend": true
           }
         }
       },
@@ -82,7 +82,7 @@
             "strong_trend": false,
             "rsi_overbought": false,
             "ema_fast_above": false,
-            "weekend": false
+            "weekend": true
           }
         }
       },
@@ -152,7 +152,7 @@
             "strong_trend": false,
             "rsi_overbought": false,
             "ema_fast_above": false,
-            "weekend": false
+            "weekend": true
           }
         }
       },
@@ -167,7 +167,7 @@
             "strong_trend": false,
             "rsi_overbought": false,
             "trend_up": false,
-            "weekend": false
+            "weekend": true
           }
         }
       },
@@ -238,7 +238,7 @@
             "rsi_overbought": false,
             "ema_fast_above": false,
             "rsi_bull": false,
-            "weekend": false
+            "weekend": true
           }
         }
       }
@@ -284,37 +284,6 @@
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false
-          }
-        }
-      },
-      {
-        "symbol": "DOGEUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": true,
-            "high_vol": false,
-            "strong_trend": false,
-            "rsi_overbought": false,
-            "ema_fast_below": true,
-            "weekend": false
-          }
-        }
-      },
-      {
-        "symbol": "DOGEUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": true,
-            "high_vol": false,
-            "strong_trend": false,
-            "rsi_overbought": false,
-            "trend_down": true,
-            "low_vol": true,
-            "weekend": false
           }
         }
       }
@@ -386,7 +355,7 @@
         "values": {
           "regime": "up",
           "vals": {
-            "rsi_bear": true,
+            "rsi_bear": false,
             "high_vol": true,
             "strong_trend": false,
             "rsi_overbought": false
@@ -399,13 +368,13 @@
         "values": {
           "regime": "up",
           "vals": {
-            "rsi_bear": true,
+            "rsi_bear": false,
             "high_vol": true,
             "strong_trend": false,
             "rsi_overbought": false,
             "low_vol": false,
             "weak_trend": false,
-            "weekend": false
+            "weekend": true
           }
         }
       },
@@ -415,7 +384,7 @@
         "values": {
           "regime": "up",
           "vals": {
-            "rsi_bear": true,
+            "rsi_bear": false,
             "high_vol": true,
             "strong_trend": false,
             "rsi_overbought": false,
@@ -429,12 +398,12 @@
         "values": {
           "regime": "up",
           "vals": {
-            "rsi_bear": true,
+            "rsi_bear": false,
             "high_vol": true,
             "strong_trend": false,
             "rsi_overbought": false,
             "ema_fast_below": false,
-            "weekend": false
+            "weekend": true
           }
         }
       }
@@ -494,7 +463,7 @@
             "strong_trend": false,
             "rsi_overbought": false,
             "ema_fast_below": true,
-            "vol_quiet": false
+            "vol_quiet": true
           }
         }
       },
@@ -509,7 +478,7 @@
             "strong_trend": false,
             "rsi_overbought": false,
             "ema_fast_below": true,
-            "weekend": false
+            "weekend": true
           }
         }
       },
@@ -523,7 +492,7 @@
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
-            "weekend": false
+            "weekend": true
           }
         }
       }
