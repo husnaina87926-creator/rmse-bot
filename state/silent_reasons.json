@@ -1,5 +1,5 @@
 {
-  "ts": "2026-10-25T05:20:11.941723+00:00",
+  "ts": "2026-10-25T10:00:18.235651+00:00",
   "by_account": {
     "gold": [
       {
@@ -23,35 +23,6 @@
             "trend_up": false,
             "rsi_overbought": false,
             "high_vol": false
-          }
-        }
-      },
-      {
-        "symbol": "XAUUSD",
-        "reason": "conditions",
-        "values": {
-          "regime": "down",
-          "vals": {
-            "trend_up": false,
-            "rsi_overbought": false,
-            "high_vol": false,
-            "rsi_bear": false,
-            "weekend": true
-          }
-        }
-      },
-      {
-        "symbol": "XAUUSD",
-        "reason": "conditions",
-        "values": {
-          "regime": "down",
-          "vals": {
-            "trend_up": false,
-            "rsi_overbought": false,
-            "high_vol": false,
-            "ema_fast_below": true,
-            "rsi_bear": false,
-            "weekend": true
           }
         }
       }
