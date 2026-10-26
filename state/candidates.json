@@ -61,32 +61,32 @@
       "rule": {
         "direction": "buy",
         "when": [
+          "ema_fast_above",
+          "weekend"
+        ],
+        "regime": "up"
+      },
+      "score": 4113.56,
+      "return": 10666.03,
+      "pf": 1.32,
+      "slot": 1,
+      "born": "2026-08-31T01:01:49.173194+00:00"
+    },
+    {
+      "rule": {
+        "direction": "buy",
+        "when": [
           "trend_up",
           "ema_fast_above",
           "weekend"
         ],
         "regime": "up"
       },
-      "score": 2823.22,
+      "score": 53.43,
       "return": 3764.3,
       "pf": 1.19,
       "slot": 2,
       "born": "2026-09-07T00:35:01.731506+00:00"
-    },
-    {
-      "rule": {
-        "direction": "buy",
-        "when": [
-          "ema_fast_above",
-          "weekend"
-        ],
-        "regime": "up"
-      },
-      "score": 4084.41,
-      "return": 10666.03,
-      "pf": 1.32,
-      "slot": 1,
-      "born": "2026-08-31T01:01:49.173194+00:00"
     }
   ],
   "ETHUSDT": [
@@ -159,7 +159,7 @@
         ],
         "regime": "up"
       },
-      "score": 9871.31,
+      "score": 9886.25,
       "return": 11446.77,
       "pf": 1.58,
       "slot": 1,
@@ -186,21 +186,6 @@
       "rule": {
         "direction": "sell",
         "when": [
-          "ema_fast_below",
-          "high_vol"
-        ],
-        "regime": "down"
-      },
-      "score": 31842.13,
-      "return": 27974.5,
-      "pf": 1.92,
-      "slot": 0,
-      "born": "2026-08-23T23:16:16.564568+00:00"
-    },
-    {
-      "rule": {
-        "direction": "sell",
-        "when": [
           "trend_up",
           "ema_fast_below",
           "rsi_bear"
@@ -212,6 +197,21 @@
       "pf": 3.13,
       "slot": 1,
       "born": "2026-10-19T00:40:46.743592+00:00"
+    },
+    {
+      "rule": {
+        "direction": "sell",
+        "when": [
+          "ema_fast_below",
+          "high_vol"
+        ],
+        "regime": "down"
+      },
+      "score": 34158.34,
+      "return": 27974.5,
+      "pf": 1.92,
+      "slot": 0,
+      "born": "2026-08-23T23:16:16.564568+00:00"
     }
   ],
   "DOGEUSDT": [
@@ -365,22 +365,6 @@
       "rule": {
         "direction": "sell",
         "when": [
-          "low_vol",
-          "weak_trend",
-          "weekend"
-        ],
-        "regime": "down"
-      },
-      "score": 9932.27,
-      "return": 13243.02,
-      "pf": 1.61,
-      "slot": 1,
-      "born": "2026-09-07T00:36:07.757538+00:00"
-    },
-    {
-      "rule": {
-        "direction": "sell",
-        "when": [
           "rsi_bear",
           "session_london"
         ],
@@ -407,6 +391,21 @@
       "pf": 2.53,
       "slot": 0,
       "born": "2026-10-12T02:01:13.681421+00:00"
+    },
+    {
+      "rule": {
+        "direction": "sell",
+        "when": [
+          "rsi_bear",
+          "weekend"
+        ],
+        "regime": "down"
+      },
+      "score": 41300.1,
+      "return": 41300.1,
+      "pf": 2.24,
+      "slot": 1,
+      "born": "2026-10-26T00:56:31.012183+00:00"
     }
   ],
   "GALAUSDT": [
@@ -511,21 +510,6 @@
       "rule": {
         "direction": "sell",
         "when": [
-          "weak_trend",
-          "weekend"
-        ],
-        "regime": "down"
-      },
-      "score": 5420.87,
-      "return": 7227.83,
-      "pf": 1.18,
-      "slot": 2,
-      "born": "2026-09-07T00:36:49.767645+00:00"
-    },
-    {
-      "rule": {
-        "direction": "sell",
-        "when": [
           "rsi_bear",
           "weekend"
         ],
@@ -561,22 +545,6 @@
         "when": [
           "trend_down",
           "ema_fast_below",
-          "rsi_bear"
-        ],
-        "regime": "down"
-      },
-      "score": 11882.42,
-      "return": 11882.42,
-      "pf": 1.21,
-      "slot": 0,
-      "born": "2026-09-07T00:37:03.424557+00:00"
-    },
-    {
-      "rule": {
-        "direction": "sell",
-        "when": [
-          "trend_down",
-          "ema_fast_below",
           "low_vol"
         ],
         "regime": "down"
@@ -602,6 +570,21 @@
       "pf": 1.25,
       "slot": 2,
       "born": "2026-10-12T02:02:04.478724+00:00"
+    },
+    {
+      "rule": {
+        "direction": "sell",
+        "when": [
+          "ema_fast_below",
+          "rsi_bear"
+        ],
+        "regime": "down"
+      },
+      "score": 24286.12,
+      "return": 24286.12,
+      "pf": 1.24,
+      "slot": 0,
+      "born": "2026-10-26T00:57:16.407053+00:00"
     }
   ]
 }
