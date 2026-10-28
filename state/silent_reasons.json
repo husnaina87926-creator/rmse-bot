@@ -1,5 +1,5 @@
 {
-  "ts": "2026-10-28T07:27:39.313681+00:00",
+  "ts": "2026-10-28T14:21:37.862508+00:00",
   "by_account": {
     "gold": [
       {
@@ -10,7 +10,7 @@
           "vals": {
             "trend_up": true,
             "rsi_overbought": false,
-            "high_vol": false
+            "high_vol": true
           }
         }
       },
@@ -22,7 +22,7 @@
           "vals": {
             "trend_up": true,
             "rsi_overbought": false,
-            "high_vol": false
+            "high_vol": true
           }
         }
       },
@@ -34,7 +34,7 @@
           "vals": {
             "trend_up": true,
             "rsi_overbought": false,
-            "high_vol": false,
+            "high_vol": true,
             "rsi_bear": true,
             "weekend": false
           }
@@ -48,8 +48,8 @@
           "vals": {
             "trend_up": true,
             "rsi_overbought": false,
-            "high_vol": false,
-            "ema_fast_below": true,
+            "high_vol": true,
+            "ema_fast_below": false,
             "rsi_bear": true,
             "weekend": false
           }
@@ -94,7 +94,7 @@
             "high_vol": false,
             "strong_trend": true,
             "rsi_overbought": false,
-            "ema_fast_above": false,
+            "ema_fast_above": true,
             "weekend": false
           }
         }
@@ -110,7 +110,7 @@
             "strong_trend": true,
             "rsi_overbought": false,
             "trend_up": false,
-            "ema_fast_above": false,
+            "ema_fast_above": true,
             "weekend": false
           }
         }
@@ -210,7 +210,7 @@
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
-            "sweep_up": false
+            "sweep_up": true
           }
         }
       },
@@ -224,7 +224,7 @@
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
-            "ema_fast_above": false,
+            "ema_fast_above": true,
             "rsi_bull": true,
             "weekend": false
           }
