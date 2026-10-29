@@ -1,5 +1,5 @@
 {
-  "ts": "2026-10-29T04:40:59.261356+00:00",
+  "ts": "2026-10-29T11:07:06.563029+00:00",
   "by_account": {
     "gold": [
       {
@@ -10,7 +10,7 @@
           "vals": {
             "trend_up": false,
             "rsi_overbought": false,
-            "high_vol": true
+            "high_vol": false
           }
         }
       },
@@ -22,7 +22,7 @@
           "vals": {
             "trend_up": false,
             "rsi_overbought": false,
-            "high_vol": true
+            "high_vol": false
           }
         }
       },
@@ -34,7 +34,7 @@
           "vals": {
             "trend_up": false,
             "rsi_overbought": false,
-            "high_vol": true,
+            "high_vol": false,
             "rsi_bear": true,
             "weekend": false
           }
@@ -48,7 +48,7 @@
           "vals": {
             "trend_up": false,
             "rsi_overbought": false,
-            "high_vol": true,
+            "high_vol": false,
             "ema_fast_below": true,
             "rsi_bear": true,
             "weekend": false
@@ -94,7 +94,7 @@
             "high_vol": true,
             "strong_trend": false,
             "rsi_overbought": false,
-            "ema_fast_above": true,
+            "ema_fast_above": false,
             "weekend": false
           }
         }
@@ -110,7 +110,7 @@
             "strong_trend": false,
             "rsi_overbought": false,
             "trend_up": false,
-            "ema_fast_above": true,
+            "ema_fast_above": false,
             "weekend": false
           }
         }
@@ -422,7 +422,7 @@
             "strong_trend": true,
             "rsi_overbought": false,
             "trend_down": true,
-            "ema_fast_below": false,
+            "ema_fast_below": true,
             "weekend": false
           }
         }
@@ -437,7 +437,7 @@
             "high_vol": false,
             "strong_trend": true,
             "rsi_overbought": false,
-            "ema_fast_below": false,
+            "ema_fast_below": true,
             "weekend": false
           }
         }
