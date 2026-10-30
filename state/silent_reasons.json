@@ -1,5 +1,5 @@
 {
-  "ts": "2026-10-30T01:40:29.536887+00:00",
+  "ts": "2026-10-30T07:43:39.094808+00:00",
   "by_account": {
     "gold": [
       {
@@ -345,64 +345,7 @@
         }
       }
     ],
-    "vet": [
-      {
-        "symbol": "VETUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": true,
-            "strong_trend": true,
-            "rsi_overbought": false
-          }
-        }
-      },
-      {
-        "symbol": "VETUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": true,
-            "strong_trend": true,
-            "rsi_overbought": false,
-            "session_london": false
-          }
-        }
-      },
-      {
-        "symbol": "VETUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": true,
-            "strong_trend": true,
-            "rsi_overbought": false,
-            "ema_fast_below": true,
-            "weekend": false
-          }
-        }
-      },
-      {
-        "symbol": "VETUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": true,
-            "strong_trend": true,
-            "rsi_overbought": false,
-            "weekend": false
-          }
-        }
-      }
-    ],
+    "vet": [],
     "gala": [
       {
         "symbol": "GALAUSDT",
@@ -511,20 +454,6 @@
         }
       }
     ],
-    "hbar": [
-      {
-        "symbol": "HBARUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": true,
-            "strong_trend": true,
-            "rsi_overbought": false
-          }
-        }
-      }
-    ]
+    "hbar": []
   }
 }
