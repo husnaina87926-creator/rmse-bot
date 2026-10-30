@@ -1,5 +1,5 @@
 {
-  "ts": "2026-10-30T14:33:47.922685+00:00",
+  "ts": "2026-10-30T19:43:17.896089+00:00",
   "by_account": {
     "gold": [
       {
@@ -250,6 +250,21 @@
             "high_vol": true,
             "strong_trend": false,
             "rsi_overbought": false
+          }
+        }
+      },
+      {
+        "symbol": "DOGEUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "down",
+          "vals": {
+            "rsi_bear": true,
+            "high_vol": true,
+            "strong_trend": false,
+            "rsi_overbought": false,
+            "ema_fast_below": true,
+            "low_vol": false
           }
         }
       },
