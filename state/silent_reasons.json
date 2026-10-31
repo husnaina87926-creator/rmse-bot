@@ -1,5 +1,5 @@
 {
-  "ts": "2026-10-31T02:38:38.033690+00:00",
+  "ts": "2026-10-31T08:54:13.257479+00:00",
   "by_account": {
     "gold": [
       {
@@ -178,24 +178,9 @@
             "high_vol": true,
             "strong_trend": false,
             "rsi_overbought": false,
-            "ema_fast_below": true,
-            "weekend": false
-          }
-        }
-      },
-      {
-        "symbol": "DOGEUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": true,
-            "high_vol": true,
-            "strong_trend": false,
-            "rsi_overbought": false,
             "trend_down": true,
             "low_vol": false,
-            "weekend": false
+            "weekend": true
           }
         }
       }
@@ -226,7 +211,7 @@
             "rsi_overbought": false,
             "trend_down": true,
             "ema_fast_below": false,
-            "weekend": false
+            "weekend": true
           }
         }
       },
@@ -299,7 +284,7 @@
         "values": {
           "regime": "down",
           "vals": {
-            "rsi_bear": false,
+            "rsi_bear": true,
             "high_vol": true,
             "strong_trend": false,
             "rsi_overbought": false
@@ -312,44 +297,13 @@
         "values": {
           "regime": "down",
           "vals": {
-            "rsi_bear": false,
+            "rsi_bear": true,
             "high_vol": true,
             "strong_trend": false,
             "rsi_overbought": false,
             "ema_fast_below": true,
             "low_vol": false,
             "vol_rising": false
-          }
-        }
-      },
-      {
-        "symbol": "GALAUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": true,
-            "strong_trend": false,
-            "rsi_overbought": false,
-            "trend_down": true,
-            "ema_fast_below": true,
-            "weekend": false
-          }
-        }
-      },
-      {
-        "symbol": "GALAUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": true,
-            "strong_trend": false,
-            "rsi_overbought": false,
-            "ema_fast_below": true,
-            "weekend": false
           }
         }
       }
