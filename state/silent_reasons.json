@@ -1,5 +1,5 @@
 {
-  "ts": "2026-11-01T19:40:25.474646+00:00",
+  "ts": "2026-11-01T23:06:56.961811+00:00",
   "by_account": {
     "gold": [
       {
@@ -23,6 +23,20 @@
             "trend_up": false,
             "rsi_overbought": false,
             "high_vol": true
+          }
+        }
+      },
+      {
+        "symbol": "XAUUSD",
+        "reason": "conditions",
+        "values": {
+          "regime": "down",
+          "vals": {
+            "trend_up": false,
+            "rsi_overbought": false,
+            "high_vol": true,
+            "rsi_bear": false,
+            "weekend": true
           }
         }
       }
