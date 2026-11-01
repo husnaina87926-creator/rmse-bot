@@ -1,28 +1,6 @@
 {
-  "balance": 3262.0740672827756,
-  "open": [
-    {
-      "symbol": "XAUUSD",
-      "direction": "sell",
-      "entry": 3875.33512,
-      "sl": 3875.7960198120813,
-      "tp": 3874.874220187919,
-      "lots": 3.789144824409927,
-      "open_time": "2026-11-01 07:45:00+00:00",
-      "cost": 151.56579297639706,
-      "margin": 2936.841202560405,
-      "atr": 0.23044990604066887,
-      "rule": {
-        "direction": "sell",
-        "when": [
-          "ema_fast_below",
-          "rsi_bear",
-          "weekend"
-        ]
-      },
-      "regime_at_open": "down"
-    }
-  ],
+  "balance": 3083.6735506599407,
+  "open": [],
   "closed": [
     {
       "symbol": "XAUUSD",
@@ -245,6 +223,27 @@
       "open_time": "2026-10-31 22:15:00+00:00",
       "close_time": "2026-11-01 04:15:00+00:00",
       "balance_after": 3262.07,
+      "rule": {
+        "direction": "sell",
+        "when": [
+          "ema_fast_below",
+          "rsi_bear",
+          "weekend"
+        ]
+      },
+      "regime_at_open": "down"
+    },
+    {
+      "symbol": "XAUUSD",
+      "direction": "sell",
+      "entry": 3875.33512,
+      "exit": 3875.40594,
+      "outcome": "time",
+      "lots": 3.789144824409927,
+      "pnl": -178.4,
+      "open_time": "2026-11-01 07:45:00+00:00",
+      "close_time": "2026-11-01 13:45:00+00:00",
+      "balance_after": 3083.67,
       "rule": {
         "direction": "sell",
         "when": [
@@ -826,6 +825,11 @@
       "time": "2026-11-01 08:02:25.356894+00:00",
       "balance": 3262.07,
       "open_positions": 1
+    },
+    {
+      "time": "2026-11-01 15:09:05.294364+00:00",
+      "balance": 3083.67,
+      "open_positions": 0
     }
   ],
   "cand_born": "2026-10-12T01:59:32.121833+00:00"
