@@ -1,5 +1,5 @@
 {
-  "ts": "2026-11-06T20:42:30.614101+00:00",
+  "ts": "2026-11-07T00:23:23.776634+00:00",
   "by_account": {
     "gold": [
       {
@@ -36,7 +36,7 @@
             "rsi_overbought": false,
             "high_vol": false,
             "rsi_bear": false,
-            "weekend": false
+            "weekend": true
           }
         }
       },
@@ -51,7 +51,7 @@
             "high_vol": false,
             "ema_fast_below": false,
             "rsi_bear": false,
-            "weekend": false
+            "weekend": true
           }
         }
       }
@@ -279,6 +279,22 @@
             "high_vol": true,
             "strong_trend": false,
             "rsi_overbought": false
+          }
+        }
+      },
+      {
+        "symbol": "GALAUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "down",
+          "vals": {
+            "rsi_bear": true,
+            "high_vol": true,
+            "strong_trend": false,
+            "rsi_overbought": false,
+            "ema_fast_below": true,
+            "low_vol": false,
+            "vol_rising": false
           }
         }
       },
