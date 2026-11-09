@@ -1,29 +1,6 @@
 {
-  "balance": 5001.1991437649785,
-  "open": [
-    {
-      "symbol": "ADAUSDT",
-      "direction": "sell",
-      "entry": 0.1825,
-      "sl": 0.1927422589818068,
-      "tp": 0.1722577410181932,
-      "lots": 47439.53978360564,
-      "open_time": "2026-11-05 12:00:00+00:00",
-      "cost": 14.231861935081692,
-      "margin": 432.88580052540146,
-      "atr": 0.005121129490903407,
-      "rule": {
-        "direction": "sell",
-        "when": [
-          "rsi_bear",
-          "high_vol",
-          "strong_trend"
-        ],
-        "regime": "down"
-      },
-      "regime_at_open": "down"
-    }
-  ],
+  "balance": 5472.855334271313,
+  "open": [],
   "closed": [
     {
       "symbol": "ADAUSDT",
@@ -178,14 +155,31 @@
         "regime": "down"
       },
       "regime_at_open": "down"
+    },
+    {
+      "symbol": "ADAUSDT",
+      "direction": "sell",
+      "entry": 0.1825,
+      "exit": 0.17226,
+      "outcome": "tp",
+      "lots": 47439.53978360564,
+      "pnl": 471.66,
+      "open_time": "2026-11-05 12:00:00+00:00",
+      "close_time": "2026-11-08 20:00:00+00:00",
+      "balance_after": 5472.86,
+      "rule": {
+        "direction": "sell",
+        "when": [
+          "rsi_bear",
+          "high_vol",
+          "strong_trend"
+        ],
+        "regime": "down"
+      },
+      "regime_at_open": "down"
     }
   ],
   "history": [
-    {
-      "time": "2026-08-08 02:09:08.269272+00:00",
-      "balance": 5394.08,
-      "open_positions": 0
-    },
     {
       "time": "2026-08-08 03:43:10.909011+00:00",
       "balance": 5394.08,
@@ -5180,6 +5174,11 @@
       "time": "2026-11-08 22:45:18.156089+00:00",
       "balance": 5001.2,
       "open_positions": 1
+    },
+    {
+      "time": "2026-11-09 02:03:27.827198+00:00",
+      "balance": 5472.86,
+      "open_positions": 0
     }
   ]
 }
