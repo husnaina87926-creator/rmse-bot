@@ -1,6 +1,29 @@
 {
   "balance": 4631.063913486798,
-  "open": [],
+  "open": [
+    {
+      "symbol": "SOLUSDT",
+      "direction": "sell",
+      "entry": 85.57,
+      "sl": 88.91201776303325,
+      "tp": 82.22798223696674,
+      "lots": 132.99943391019886,
+      "open_time": "2026-11-09 04:00:00+00:00",
+      "cost": 18.61992074742784,
+      "margin": 569.0380779847858,
+      "atr": 1.671008881516626,
+      "rule": {
+        "direction": "sell",
+        "when": [
+          "rsi_oversold",
+          "high_vol",
+          "strong_trend"
+        ],
+        "regime": "down"
+      },
+      "regime_at_open": "down"
+    }
+  ],
   "closed": [
     {
       "symbol": "SOLUSDT",
@@ -3932,6 +3955,11 @@
       "time": "2026-11-09 02:03:27.827198+00:00",
       "balance": 4631.06,
       "open_positions": 0
+    },
+    {
+      "time": "2026-11-09 09:48:40.528448+00:00",
+      "balance": 4631.06,
+      "open_positions": 1
     }
   ],
   "cand_born": "2026-08-16T23:13:17.542207+00:00"
