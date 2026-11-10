@@ -1,5 +1,5 @@
 {
-  "ts": "2026-11-10T10:49:14.729515+00:00",
+  "ts": "2026-11-10T18:29:18.800604+00:00",
   "by_account": {
     "gold": [
       {
@@ -89,52 +89,7 @@
     "eth": [],
     "sol": [],
     "ada": [],
-    "doge": [
-      {
-        "symbol": "DOGEUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": true,
-            "high_vol": false,
-            "strong_trend": true,
-            "rsi_overbought": false
-          }
-        }
-      },
-      {
-        "symbol": "DOGEUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": true,
-            "high_vol": false,
-            "strong_trend": true,
-            "rsi_overbought": false,
-            "ema_fast_below": true,
-            "weekend": false
-          }
-        }
-      },
-      {
-        "symbol": "DOGEUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": true,
-            "high_vol": false,
-            "strong_trend": true,
-            "rsi_overbought": false,
-            "trend_down": true,
-            "low_vol": true,
-            "weekend": false
-          }
-        }
-      }
-    ],
+    "doge": [],
     "op": [
       {
         "symbol": "OPUSDT",
@@ -289,7 +244,7 @@
         "values": {
           "regime": "down",
           "vals": {
-            "rsi_bear": false,
+            "rsi_bear": true,
             "high_vol": false,
             "strong_trend": true,
             "rsi_overbought": false
