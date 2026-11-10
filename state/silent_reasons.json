@@ -1,5 +1,5 @@
 {
-  "ts": "2026-11-09T20:27:51.822849+00:00",
+  "ts": "2026-11-10T02:52:22.340470+00:00",
   "by_account": {
     "gold": [
       {
@@ -9,7 +9,7 @@
           "regime": "down",
           "vals": {
             "trend_up": true,
-            "rsi_overbought": true,
+            "rsi_overbought": false,
             "high_vol": true
           }
         }
@@ -21,9 +21,21 @@
           "regime": "down",
           "vals": {
             "trend_up": true,
-            "rsi_overbought": true,
+            "rsi_overbought": false,
+            "high_vol": true
+          }
+        }
+      },
+      {
+        "symbol": "XAUUSD",
+        "reason": "conditions",
+        "values": {
+          "regime": "down",
+          "vals": {
+            "trend_up": true,
+            "rsi_overbought": false,
             "high_vol": true,
-            "rsi_bear": false,
+            "rsi_bear": true,
             "weekend": false
           }
         }
@@ -35,10 +47,10 @@
           "regime": "down",
           "vals": {
             "trend_up": true,
-            "rsi_overbought": true,
+            "rsi_overbought": false,
             "high_vol": true,
-            "ema_fast_below": false,
-            "rsi_bear": false,
+            "ema_fast_below": true,
+            "rsi_bear": true,
             "weekend": false
           }
         }
@@ -166,7 +178,50 @@
       }
     ],
     "gala": [],
-    "xtz": [],
+    "xtz": [
+      {
+        "symbol": "XTZUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "down",
+          "vals": {
+            "rsi_bear": true,
+            "high_vol": true,
+            "strong_trend": false,
+            "rsi_overbought": false
+          }
+        }
+      },
+      {
+        "symbol": "XTZUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "down",
+          "vals": {
+            "rsi_bear": true,
+            "high_vol": true,
+            "strong_trend": false,
+            "rsi_overbought": false,
+            "ema_fast_below": true,
+            "weekend": false
+          }
+        }
+      },
+      {
+        "symbol": "XTZUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "down",
+          "vals": {
+            "rsi_bear": true,
+            "high_vol": true,
+            "strong_trend": false,
+            "rsi_overbought": false,
+            "weekend": false
+          }
+        }
+      }
+    ],
     "sand": [
       {
         "symbol": "SANDUSDT",
