@@ -1,5 +1,5 @@
 {
-  "ts": "2026-11-10T23:39:48.023769+00:00",
+  "ts": "2026-11-11T03:03:21.125360+00:00",
   "by_account": {
     "gold": [
       {
@@ -49,7 +49,7 @@
             "trend_up": false,
             "rsi_overbought": false,
             "high_vol": false,
-            "ema_fast_below": true,
+            "ema_fast_below": false,
             "rsi_bear": false,
             "weekend": false
           }
