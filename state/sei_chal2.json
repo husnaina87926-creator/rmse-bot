@@ -1,6 +1,28 @@
 {
   "balance": 6523.936658072409,
-  "open": [],
+  "open": [
+    {
+      "symbol": "SEIUSDT",
+      "direction": "sell",
+      "entry": 0.04246,
+      "sl": 0.04457073750996979,
+      "tp": 0.04034926249003021,
+      "lots": 295102.27372771903,
+      "open_time": "2026-11-12 12:00:00+00:00",
+      "cost": 29.510227372771904,
+      "margin": 626.5021271239475,
+      "atr": 0.0010553687549848944,
+      "rule": {
+        "direction": "sell",
+        "when": [
+          "rsi_bear",
+          "session_london"
+        ],
+        "regime": "down"
+      },
+      "regime_at_open": "down"
+    }
+  ],
   "closed": [
     {
       "symbol": "SEIUSDT",
@@ -1387,6 +1409,11 @@
       "time": "2026-11-12 08:19:50.568562+00:00",
       "balance": 6523.94,
       "open_positions": 0
+    },
+    {
+      "time": "2026-11-12 16:58:45.081060+00:00",
+      "balance": 6523.94,
+      "open_positions": 1
     }
   ],
   "cand_born": "2026-09-21T00:44:39.353734+00:00"
