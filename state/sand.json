@@ -1,6 +1,29 @@
 {
   "balance": 3536.4845808249324,
-  "open": [],
+  "open": [
+    {
+      "symbol": "SANDUSDT",
+      "direction": "sell",
+      "entry": 0.04063,
+      "sl": 0.04295124055411925,
+      "tp": 0.03830875944588075,
+      "lots": 146060.85193841305,
+      "open_time": "2026-11-13 04:00:00+00:00",
+      "cost": 14.606085193841306,
+      "margin": 296.7226207128861,
+      "atr": 0.001160620277059625,
+      "rule": {
+        "direction": "sell",
+        "when": [
+          "rsi_bear",
+          "high_vol",
+          "strong_trend"
+        ],
+        "regime": "down"
+      },
+      "regime_at_open": "down"
+    }
+  ],
   "closed": [
     {
       "symbol": "SANDUSDT",
@@ -180,11 +203,6 @@
     }
   ],
   "history": [
-    {
-      "time": "2026-08-08 14:39:03.402907+00:00",
-      "balance": 4896.56,
-      "open_positions": 0
-    },
     {
       "time": "2026-08-08 15:04:44.334279+00:00",
       "balance": 4896.56,
@@ -5179,6 +5197,11 @@
       "time": "2026-11-13 02:55:44.629651+00:00",
       "balance": 3536.48,
       "open_positions": 0
+    },
+    {
+      "time": "2026-11-13 10:39:27.652481+00:00",
+      "balance": 3536.48,
+      "open_positions": 1
     }
   ]
 }
