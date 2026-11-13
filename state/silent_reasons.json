@@ -1,5 +1,5 @@
 {
-  "ts": "2026-11-12T22:39:58.463820+00:00",
+  "ts": "2026-11-13T02:55:44.629651+00:00",
   "by_account": {
     "gold": [
       {
@@ -10,7 +10,7 @@
           "vals": {
             "trend_up": false,
             "rsi_overbought": false,
-            "high_vol": false
+            "high_vol": true
           }
         }
       },
@@ -22,7 +22,7 @@
           "vals": {
             "trend_up": false,
             "rsi_overbought": false,
-            "high_vol": false
+            "high_vol": true
           }
         }
       },
@@ -34,8 +34,8 @@
           "vals": {
             "trend_up": false,
             "rsi_overbought": false,
-            "high_vol": false,
-            "rsi_bear": true,
+            "high_vol": true,
+            "rsi_bear": false,
             "weekend": false
           }
         }
@@ -48,9 +48,9 @@
           "vals": {
             "trend_up": false,
             "rsi_overbought": false,
-            "high_vol": false,
-            "ema_fast_below": true,
-            "rsi_bear": true,
+            "high_vol": true,
+            "ema_fast_below": false,
+            "rsi_bear": false,
             "weekend": false
           }
         }
@@ -59,30 +59,55 @@
     "btc": [
       {
         "symbol": "BTCUSDT",
-        "reason": "regime_unknown",
+        "reason": "conditions",
         "values": {
-          "regime": null
+          "regime": "down",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": true,
+            "strong_trend": true,
+            "rsi_overbought": false
+          }
         }
       },
       {
         "symbol": "BTCUSDT",
-        "reason": "regime_unknown",
+        "reason": "conditions",
         "values": {
-          "regime": null
+          "regime": "down",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": true,
+            "strong_trend": true,
+            "rsi_overbought": false,
+            "weak_trend": false
+          }
         }
       },
       {
         "symbol": "BTCUSDT",
-        "reason": "regime_unknown",
+        "reason": "conditions",
         "values": {
-          "regime": null
+          "regime": "down",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": true,
+            "strong_trend": true,
+            "rsi_overbought": false
+          }
         }
       },
       {
         "symbol": "BTCUSDT",
-        "reason": "regime_unknown",
+        "reason": "conditions",
         "values": {
-          "regime": null
+          "regime": "down",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": true,
+            "strong_trend": true,
+            "rsi_overbought": false
+          }
         }
       }
     ],
