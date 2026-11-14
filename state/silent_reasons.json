@@ -1,5 +1,5 @@
 {
-  "ts": "2026-11-13T23:33:58.782437+00:00",
+  "ts": "2026-11-14T03:35:33.270093+00:00",
   "by_account": {
     "gold": [
       {
@@ -23,35 +23,6 @@
             "trend_up": false,
             "rsi_overbought": false,
             "high_vol": false
-          }
-        }
-      },
-      {
-        "symbol": "XAUUSD",
-        "reason": "conditions",
-        "values": {
-          "regime": "down",
-          "vals": {
-            "trend_up": false,
-            "rsi_overbought": false,
-            "high_vol": false,
-            "rsi_bear": true,
-            "weekend": false
-          }
-        }
-      },
-      {
-        "symbol": "XAUUSD",
-        "reason": "conditions",
-        "values": {
-          "regime": "down",
-          "vals": {
-            "trend_up": false,
-            "rsi_overbought": false,
-            "high_vol": false,
-            "ema_fast_below": true,
-            "rsi_bear": true,
-            "weekend": false
           }
         }
       }
@@ -111,15 +82,14 @@
         }
       }
     ],
-    "eth": [],
-    "sol": [
+    "eth": [
       {
-        "symbol": "SOLUSDT",
+        "symbol": "ETHUSDT",
         "reason": "conditions",
         "values": {
           "regime": "down",
           "vals": {
-            "rsi_oversold": false,
+            "rsi_bear": false,
             "high_vol": true,
             "strong_trend": true,
             "rsi_overbought": false
@@ -127,36 +97,48 @@
         }
       },
       {
-        "symbol": "SOLUSDT",
+        "symbol": "ETHUSDT",
         "reason": "conditions",
         "values": {
           "regime": "down",
           "vals": {
-            "rsi_oversold": false,
+            "rsi_bear": false,
             "high_vol": true,
             "strong_trend": true,
             "rsi_overbought": false,
-            "sweep_up": false
+            "trend_up": false,
+            "weekend": false
           }
         }
       },
       {
-        "symbol": "SOLUSDT",
+        "symbol": "ETHUSDT",
         "reason": "conditions",
         "values": {
           "regime": "down",
           "vals": {
-            "rsi_oversold": false,
+            "rsi_bear": false,
             "high_vol": true,
             "strong_trend": true,
-            "rsi_overbought": false,
-            "ema_fast_above": false,
-            "rsi_bull": false,
-            "weekend": false
+            "rsi_overbought": false
+          }
+        }
+      },
+      {
+        "symbol": "ETHUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "down",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": true,
+            "strong_trend": true,
+            "rsi_overbought": false
           }
         }
       }
     ],
+    "sol": [],
     "ada": [],
     "doge": [],
     "op": [
@@ -363,6 +345,21 @@
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false
+          }
+        }
+      },
+      {
+        "symbol": "XTZUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "down",
+          "vals": {
+            "rsi_bear": true,
+            "high_vol": false,
+            "strong_trend": false,
+            "rsi_overbought": false,
+            "ema_fast_below": true,
+            "vol_quiet": false
           }
         }
       },
