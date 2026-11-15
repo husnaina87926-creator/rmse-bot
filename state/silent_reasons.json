@@ -1,5 +1,5 @@
 {
-  "ts": "2026-11-14T21:09:39.363714+00:00",
+  "ts": "2026-11-15T01:03:25.675090+00:00",
   "by_account": {
     "gold": [
       {
@@ -194,7 +194,7 @@
           "regime": "down",
           "vals": {
             "rsi_bear": false,
-            "high_vol": false,
+            "high_vol": true,
             "strong_trend": true,
             "rsi_overbought": false
           }
@@ -207,7 +207,7 @@
           "regime": "down",
           "vals": {
             "rsi_bear": false,
-            "high_vol": false,
+            "high_vol": true,
             "strong_trend": true,
             "rsi_overbought": false,
             "trend_up": false,
@@ -225,7 +225,7 @@
           "regime": "down",
           "vals": {
             "rsi_bear": false,
-            "high_vol": false,
+            "high_vol": true,
             "strong_trend": true,
             "rsi_overbought": false
           }
@@ -308,6 +308,35 @@
             "trend_down": true,
             "ema_fast_below": true,
             "low_vol": false
+          }
+        }
+      },
+      {
+        "symbol": "HBARUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "down",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": true,
+            "strong_trend": true,
+            "rsi_overbought": false,
+            "trend_down": true,
+            "low_vol": false
+          }
+        }
+      },
+      {
+        "symbol": "HBARUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "down",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": true,
+            "strong_trend": true,
+            "rsi_overbought": false,
+            "ema_fast_below": true
           }
         }
       }
