@@ -1,6 +1,29 @@
 {
   "balance": 4461.744270624102,
-  "open": [],
+  "open": [
+    {
+      "symbol": "MANAUSDT",
+      "direction": "sell",
+      "entry": 0.0616,
+      "sl": 0.06519533756130683,
+      "tp": 0.05800466243869318,
+      "lots": 120089.87600724868,
+      "open_time": "2026-11-15 08:00:00+00:00",
+      "cost": 14.410785120869841,
+      "margin": 369.87681810232596,
+      "atr": 0.0017976687806534107,
+      "rule": {
+        "direction": "sell",
+        "when": [
+          "rsi_bear",
+          "high_vol",
+          "strong_trend"
+        ],
+        "regime": "down"
+      },
+      "regime_at_open": "down"
+    }
+  ],
   "closed": [
     {
       "symbol": "MANAUSDT",
@@ -92,11 +115,6 @@
     }
   ],
   "history": [
-    {
-      "time": "2026-08-08 20:29:45.026909+00:00",
-      "balance": 4532.98,
-      "open_positions": 0
-    },
     {
       "time": "2026-08-08 21:01:16.457436+00:00",
       "balance": 4532.98,
@@ -5091,6 +5109,11 @@
       "time": "2026-11-15 07:52:13.296870+00:00",
       "balance": 4461.74,
       "open_positions": 0
+    },
+    {
+      "time": "2026-11-15 15:24:37.512257+00:00",
+      "balance": 4461.74,
+      "open_positions": 1
     }
   ]
 }
