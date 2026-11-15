@@ -1,5 +1,5 @@
 {
-  "ts": "2026-11-15T01:03:25.675090+00:00",
+  "ts": "2026-11-15T07:52:13.296870+00:00",
   "by_account": {
     "gold": [
       {
@@ -23,6 +23,35 @@
             "trend_up": false,
             "rsi_overbought": false,
             "high_vol": false
+          }
+        }
+      },
+      {
+        "symbol": "XAUUSD",
+        "reason": "conditions",
+        "values": {
+          "regime": "down",
+          "vals": {
+            "trend_up": false,
+            "rsi_overbought": false,
+            "high_vol": false,
+            "rsi_bear": false,
+            "weekend": true
+          }
+        }
+      },
+      {
+        "symbol": "XAUUSD",
+        "reason": "conditions",
+        "values": {
+          "regime": "down",
+          "vals": {
+            "trend_up": false,
+            "rsi_overbought": false,
+            "high_vol": false,
+            "ema_fast_below": false,
+            "rsi_bear": false,
+            "weekend": true
           }
         }
       }
@@ -82,62 +111,7 @@
         }
       }
     ],
-    "eth": [
-      {
-        "symbol": "ETHUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": true,
-            "strong_trend": true,
-            "rsi_overbought": false
-          }
-        }
-      },
-      {
-        "symbol": "ETHUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": true,
-            "strong_trend": true,
-            "rsi_overbought": false,
-            "trend_up": false,
-            "weekend": true
-          }
-        }
-      },
-      {
-        "symbol": "ETHUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": true,
-            "strong_trend": true,
-            "rsi_overbought": false
-          }
-        }
-      },
-      {
-        "symbol": "ETHUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": true,
-            "strong_trend": true,
-            "rsi_overbought": false
-          }
-        }
-      }
-    ],
+    "eth": [],
     "sol": [],
     "ada": [],
     "doge": [
@@ -217,21 +191,7 @@
       }
     ],
     "sei": [],
-    "vet": [
-      {
-        "symbol": "VETUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": true,
-            "strong_trend": true,
-            "rsi_overbought": false
-          }
-        }
-      }
-    ],
+    "vet": [],
     "gala": [],
     "xtz": [
       {
@@ -241,7 +201,7 @@
           "regime": "down",
           "vals": {
             "rsi_bear": false,
-            "high_vol": false,
+            "high_vol": true,
             "strong_trend": true,
             "rsi_overbought": false
           }
@@ -294,52 +254,6 @@
         }
       }
     ],
-    "hbar": [
-      {
-        "symbol": "HBARUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": true,
-            "strong_trend": true,
-            "rsi_overbought": false,
-            "trend_down": true,
-            "ema_fast_below": true,
-            "low_vol": false
-          }
-        }
-      },
-      {
-        "symbol": "HBARUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": true,
-            "strong_trend": true,
-            "rsi_overbought": false,
-            "trend_down": true,
-            "low_vol": false
-          }
-        }
-      },
-      {
-        "symbol": "HBARUSDT",
-        "reason": "conditions",
-        "values": {
-          "regime": "down",
-          "vals": {
-            "rsi_bear": false,
-            "high_vol": true,
-            "strong_trend": true,
-            "rsi_overbought": false,
-            "ema_fast_below": true
-          }
-        }
-      }
-    ]
+    "hbar": []
   }
 }
