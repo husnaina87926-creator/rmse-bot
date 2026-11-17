@@ -1,7 +1,61 @@
 {
-  "ts": "2026-11-16T17:01:08.311175+00:00",
+  "ts": "2026-11-17T00:48:06.933935+00:00",
   "by_account": {
-    "gold": [],
+    "gold": [
+      {
+        "symbol": "XAUUSD",
+        "reason": "conditions",
+        "values": {
+          "regime": "down",
+          "vals": {
+            "trend_up": false,
+            "rsi_overbought": false,
+            "high_vol": false
+          }
+        }
+      },
+      {
+        "symbol": "XAUUSD",
+        "reason": "conditions",
+        "values": {
+          "regime": "down",
+          "vals": {
+            "trend_up": false,
+            "rsi_overbought": false,
+            "high_vol": false
+          }
+        }
+      },
+      {
+        "symbol": "XAUUSD",
+        "reason": "conditions",
+        "values": {
+          "regime": "down",
+          "vals": {
+            "trend_up": false,
+            "rsi_overbought": false,
+            "high_vol": false,
+            "rsi_bear": false,
+            "weekend": false
+          }
+        }
+      },
+      {
+        "symbol": "XAUUSD",
+        "reason": "conditions",
+        "values": {
+          "regime": "down",
+          "vals": {
+            "trend_up": false,
+            "rsi_overbought": false,
+            "high_vol": false,
+            "ema_fast_below": false,
+            "rsi_bear": false,
+            "weekend": false
+          }
+        }
+      }
+    ],
     "btc": [],
     "eth": [],
     "sol": [
@@ -50,6 +104,21 @@
             "rsi_overbought": false,
             "trend_up": false,
             "ema_fast_below": true
+          }
+        }
+      },
+      {
+        "symbol": "OPUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "down",
+          "vals": {
+            "rsi_bear": false,
+            "high_vol": false,
+            "strong_trend": true,
+            "rsi_overbought": false,
+            "ema_fast_below": true,
+            "sweep_down": false
           }
         }
       }
