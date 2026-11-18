@@ -1,29 +1,6 @@
 {
-  "balance": 4703.44981872937,
-  "open": [
-    {
-      "symbol": "BTCUSDT",
-      "direction": "sell",
-      "entry": 65351.0,
-      "sl": 68408.33208419602,
-      "tp": 62293.66791580398,
-      "lots": 0.14803142051547657,
-      "open_time": "2026-11-15 08:00:00+00:00",
-      "cost": 17.763770461857188,
-      "margin": 483.7000681053455,
-      "atr": 1528.6660420980097,
-      "rule": {
-        "direction": "sell",
-        "when": [
-          "rsi_bear",
-          "high_vol",
-          "strong_trend"
-        ],
-        "regime": "down"
-      },
-      "regime_at_open": "down"
-    }
-  ],
+  "balance": 5138.267259678593,
+  "open": [],
   "closed": [
     {
       "symbol": "BTCUSDT",
@@ -134,14 +111,31 @@
         "regime": "up"
       },
       "regime_at_open": "up"
+    },
+    {
+      "symbol": "BTCUSDT",
+      "direction": "sell",
+      "entry": 65351.0,
+      "exit": 62293.66792,
+      "outcome": "tp",
+      "lots": 0.14803142051547657,
+      "pnl": 434.82,
+      "open_time": "2026-11-15 08:00:00+00:00",
+      "close_time": "2026-11-18 16:00:00+00:00",
+      "balance_after": 5138.27,
+      "rule": {
+        "direction": "sell",
+        "when": [
+          "rsi_bear",
+          "high_vol",
+          "strong_trend"
+        ],
+        "regime": "down"
+      },
+      "regime_at_open": "down"
     }
   ],
   "history": [
-    {
-      "time": "2026-08-09 07:16:09.598725+00:00",
-      "balance": 5000.0,
-      "open_positions": 0
-    },
     {
       "time": "2026-08-09 08:08:02.599996+00:00",
       "balance": 5000.0,
@@ -5136,6 +5130,11 @@
       "time": "2026-11-18 17:27:15.360941+00:00",
       "balance": 4703.45,
       "open_positions": 1
+    },
+    {
+      "time": "2026-11-18 23:30:08.391322+00:00",
+      "balance": 5138.27,
+      "open_positions": 0
     }
   ]
 }
