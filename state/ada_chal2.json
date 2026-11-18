@@ -1,6 +1,29 @@
 {
   "balance": 6837.944528591443,
-  "open": [],
+  "open": [
+    {
+      "symbol": "ADAUSDT",
+      "direction": "sell",
+      "entry": 0.1554,
+      "sl": 0.1637838786470958,
+      "tp": 0.14701612135290423,
+      "lots": 78742.9765716304,
+      "open_time": "2026-11-17 20:00:00+00:00",
+      "cost": 23.622892971489115,
+      "margin": 611.8329279615682,
+      "atr": 0.004191939323547894,
+      "rule": {
+        "direction": "sell",
+        "when": [
+          "rsi_bear",
+          "high_vol",
+          "strong_trend"
+        ],
+        "regime": "down"
+      },
+      "regime_at_open": "down"
+    }
+  ],
   "closed": [
     {
       "symbol": "ADAUSDT",
@@ -771,6 +794,11 @@
       "time": "2026-11-17 18:12:16.159989+00:00",
       "balance": 6837.94,
       "open_positions": 0
+    },
+    {
+      "time": "2026-11-18 00:58:45.630373+00:00",
+      "balance": 6837.94,
+      "open_positions": 1
     }
   ],
   "cand_born": "2026-10-19T00:40:46.743592+00:00"
