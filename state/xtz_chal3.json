@@ -1,6 +1,28 @@
 {
   "balance": 4922.469191036018,
-  "open": [],
+  "open": [
+    {
+      "symbol": "XTZUSDT",
+      "direction": "sell",
+      "entry": 0.1939,
+      "sl": 0.20597524695970781,
+      "tp": 0.18182475304029216,
+      "lots": 39457.88974706842,
+      "open_time": "2026-11-21 04:00:00+00:00",
+      "cost": 15.783155898827367,
+      "margin": 382.54424109782826,
+      "atr": 0.006037623479853907,
+      "rule": {
+        "direction": "sell",
+        "when": [
+          "rsi_bear",
+          "weekend"
+        ],
+        "regime": "down"
+      },
+      "regime_at_open": "down"
+    }
+  ],
   "closed": [
     {
       "symbol": "XTZUSDT",
@@ -986,6 +1008,11 @@
       "time": "2026-11-21 00:48:47.450494+00:00",
       "balance": 4922.47,
       "open_positions": 0
+    },
+    {
+      "time": "2026-11-21 08:01:28.492138+00:00",
+      "balance": 4922.47,
+      "open_positions": 1
     }
   ],
   "cand_born": "2026-10-12T02:01:39.092799+00:00"
