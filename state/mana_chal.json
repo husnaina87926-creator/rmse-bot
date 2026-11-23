@@ -1,29 +1,6 @@
 {
-  "balance": 5146.644163364337,
-  "open": [
-    {
-      "symbol": "MANAUSDT",
-      "direction": "sell",
-      "entry": 0.0557,
-      "sl": 0.05887553535926122,
-      "tp": 0.05252446464073878,
-      "lots": 156170.20005265836,
-      "open_time": "2026-11-21 12:00:00+00:00",
-      "cost": 18.740424006319003,
-      "margin": 434.93400714665347,
-      "atr": 0.0015877676796306106,
-      "rule": {
-        "direction": "sell",
-        "when": [
-          "rsi_bear",
-          "high_vol",
-          "strong_trend"
-        ],
-        "regime": "down"
-      },
-      "regime_at_open": "down"
-    }
-  ],
+  "balance": 4631.979747027904,
+  "open": [],
   "closed": [
     {
       "symbol": "MANAUSDT",
@@ -57,6 +34,28 @@
       "open_time": "2026-11-15 08:00:00+00:00",
       "close_time": "2026-11-19 08:00:00+00:00",
       "balance_after": 5146.64,
+      "rule": {
+        "direction": "sell",
+        "when": [
+          "rsi_bear",
+          "high_vol",
+          "strong_trend"
+        ],
+        "regime": "down"
+      },
+      "regime_at_open": "down"
+    },
+    {
+      "symbol": "MANAUSDT",
+      "direction": "sell",
+      "entry": 0.0557,
+      "exit": 0.05888,
+      "outcome": "loss",
+      "lots": 156170.20005265836,
+      "pnl": -514.66,
+      "open_time": "2026-11-21 12:00:00+00:00",
+      "close_time": "2026-11-23 12:00:00+00:00",
+      "balance_after": 4631.98,
       "rule": {
         "direction": "sell",
         "when": [
@@ -849,6 +848,11 @@
       "time": "2026-11-23 12:10:08.569688+00:00",
       "balance": 5146.64,
       "open_positions": 1
+    },
+    {
+      "time": "2026-11-23 23:53:44.963506+00:00",
+      "balance": 4631.98,
+      "open_positions": 0
     }
   ],
   "cand_born": "2026-10-19T00:41:51.022985+00:00"
