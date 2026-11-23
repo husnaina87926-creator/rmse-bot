@@ -1,29 +1,6 @@
 {
-  "balance": 5527.352642058741,
-  "open": [
-    {
-      "symbol": "SOLUSDT",
-      "direction": "sell",
-      "entry": 68.36,
-      "sl": 72.02871749454815,
-      "tp": 64.69128250545185,
-      "lots": 145.12372340481207,
-      "open_time": "2026-11-20 12:00:00+00:00",
-      "cost": 20.31732127667369,
-      "margin": 496.0328865976477,
-      "atr": 1.8343587472740734,
-      "rule": {
-        "direction": "sell",
-        "when": [
-          "rsi_oversold",
-          "high_vol",
-          "strong_trend"
-        ],
-        "regime": "down"
-      },
-      "regime_at_open": "down"
-    }
-  ],
+  "balance": 4974.617377852867,
+  "open": [],
   "closed": [
     {
       "symbol": "SOLUSDT",
@@ -212,6 +189,28 @@
       "open_time": "2026-11-13 20:00:00+00:00",
       "close_time": "2026-11-14 12:00:00+00:00",
       "balance_after": 5527.35,
+      "rule": {
+        "direction": "sell",
+        "when": [
+          "rsi_oversold",
+          "high_vol",
+          "strong_trend"
+        ],
+        "regime": "down"
+      },
+      "regime_at_open": "down"
+    },
+    {
+      "symbol": "SOLUSDT",
+      "direction": "sell",
+      "entry": 68.36,
+      "exit": 72.02872,
+      "outcome": "loss",
+      "lots": 145.12372340481207,
+      "pnl": -552.74,
+      "open_time": "2026-11-20 12:00:00+00:00",
+      "close_time": "2026-11-23 04:00:00+00:00",
+      "balance_after": 4974.62,
       "rule": {
         "direction": "sell",
         "when": [
@@ -4249,6 +4248,11 @@
       "time": "2026-11-23 02:57:59.982230+00:00",
       "balance": 5527.35,
       "open_positions": 1
+    },
+    {
+      "time": "2026-11-23 12:10:08.569688+00:00",
+      "balance": 4974.62,
+      "open_positions": 0
     }
   ],
   "cand_born": "2026-08-16T23:13:17.542207+00:00"
