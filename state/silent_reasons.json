@@ -1,5 +1,5 @@
 {
-  "ts": "2026-11-25T03:11:18.135231+00:00",
+  "ts": "2026-11-25T12:58:12.367431+00:00",
   "by_account": {
     "gold": [
       {
@@ -66,7 +66,7 @@
           "regime": "down",
           "vals": {
             "rsi_oversold": false,
-            "high_vol": true,
+            "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false
           }
@@ -79,7 +79,7 @@
           "regime": "down",
           "vals": {
             "rsi_oversold": false,
-            "high_vol": true,
+            "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
             "sweep_up": false
@@ -93,11 +93,11 @@
           "regime": "down",
           "vals": {
             "rsi_oversold": false,
-            "high_vol": true,
+            "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
             "rsi_bull": false,
-            "low_vol": false,
+            "low_vol": true,
             "weekend": false
           }
         }
@@ -109,7 +109,7 @@
           "regime": "down",
           "vals": {
             "rsi_oversold": false,
-            "high_vol": true,
+            "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
             "ema_fast_above": false,
@@ -120,6 +120,19 @@
       }
     ],
     "ada": [
+      {
+        "symbol": "ADAUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "down",
+          "vals": {
+            "rsi_bear": true,
+            "high_vol": false,
+            "strong_trend": false,
+            "rsi_overbought": false
+          }
+        }
+      },
       {
         "symbol": "ADAUSDT",
         "reason": "conditions",
@@ -248,7 +261,7 @@
           "regime": "down",
           "vals": {
             "rsi_bear": true,
-            "high_vol": true,
+            "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false
           }
@@ -261,16 +274,48 @@
           "regime": "down",
           "vals": {
             "rsi_bear": true,
-            "high_vol": true,
+            "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false,
             "weak_trend": false,
-            "session_london": false
+            "session_london": true
           }
         }
       }
     ],
-    "gala": [],
+    "gala": [
+      {
+        "symbol": "GALAUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "down",
+          "vals": {
+            "rsi_bear": true,
+            "high_vol": false,
+            "strong_trend": false,
+            "rsi_overbought": false,
+            "trend_down": true,
+            "ema_fast_below": true,
+            "weekend": false
+          }
+        }
+      },
+      {
+        "symbol": "GALAUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "down",
+          "vals": {
+            "rsi_bear": true,
+            "high_vol": false,
+            "strong_trend": false,
+            "rsi_overbought": false,
+            "ema_fast_below": true,
+            "weekend": false
+          }
+        }
+      }
+    ],
     "xtz": [
       {
         "symbol": "XTZUSDT",
@@ -278,10 +323,24 @@
         "values": {
           "regime": "down",
           "vals": {
-            "rsi_bear": false,
+            "rsi_bear": true,
             "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false
+          }
+        }
+      },
+      {
+        "symbol": "XTZUSDT",
+        "reason": "conditions",
+        "values": {
+          "regime": "down",
+          "vals": {
+            "rsi_bear": true,
+            "high_vol": false,
+            "strong_trend": false,
+            "rsi_overbought": false,
+            "weekend": false
           }
         }
       }
@@ -296,7 +355,7 @@
           "regime": "down",
           "vals": {
             "rsi_bear": true,
-            "high_vol": true,
+            "high_vol": false,
             "strong_trend": false,
             "rsi_overbought": false
           }
