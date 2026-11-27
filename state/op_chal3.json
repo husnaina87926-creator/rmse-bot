@@ -1,28 +1,6 @@
 {
-  "balance": 6543.245338234927,
-  "open": [
-    {
-      "symbol": "OPUSDT",
-      "direction": "sell",
-      "entry": 0.0691,
-      "sl": 0.07335067947028728,
-      "tp": 0.0648493205297127,
-      "lots": 147016.7730998738,
-      "open_time": "2026-11-25 16:00:00+00:00",
-      "cost": 29.40335461997476,
-      "margin": 507.94295106006393,
-      "atr": 0.002125339735143641,
-      "rule": {
-        "direction": "sell",
-        "when": [
-          "ema_fast_below",
-          "sweep_down"
-        ],
-        "regime": "down"
-      },
-      "regime_at_open": "down"
-    }
-  ],
+  "balance": 5888.920804411434,
+  "open": [],
   "closed": [
     {
       "symbol": "OPUSDT",
@@ -77,6 +55,27 @@
       "open_time": "2026-11-17 20:00:00+00:00",
       "close_time": "2026-11-20 00:00:00+00:00",
       "balance_after": 6543.25,
+      "rule": {
+        "direction": "sell",
+        "when": [
+          "ema_fast_below",
+          "sweep_down"
+        ],
+        "regime": "down"
+      },
+      "regime_at_open": "down"
+    },
+    {
+      "symbol": "OPUSDT",
+      "direction": "sell",
+      "entry": 0.0691,
+      "exit": 0.07335,
+      "outcome": "loss",
+      "lots": 147016.7730998738,
+      "pnl": -654.32,
+      "open_time": "2026-11-25 16:00:00+00:00",
+      "close_time": "2026-11-27 12:00:00+00:00",
+      "balance_after": 5888.92,
       "rule": {
         "direction": "sell",
         "when": [
@@ -923,6 +922,11 @@
       "time": "2026-11-27 15:05:10.502779+00:00",
       "balance": 6543.25,
       "open_positions": 1
+    },
+    {
+      "time": "2026-11-27 23:27:30.796369+00:00",
+      "balance": 5888.92,
+      "open_positions": 0
     }
   ],
   "cand_born": "2026-10-19T00:41:00.822526+00:00"
